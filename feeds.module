@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.5 2009/09/16 22:33:22 alexb Exp $
+// $Id: feeds.module,v 1.6 2009/09/16 22:42:01 alexb Exp $
 /**
  * @file
  * Feeds module.
@@ -18,6 +18,25 @@ function feeds_cron() {
  */
 function feeds_perm() {
   return array('use feeds', 'administer feeds');
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function feeds_form_alter(&$form, $form_state, $form_id) {
+  if ($form['#id'] == 'node-form') {
+    $feeds = feeds_load_all();
+    foreach ($feeds as $feed) {
+      $config = $feed->getConfig();
+      if ($config['content_type'] == $form['type']['#value']) {
+        $form['feeds'] = array(
+          '#type' => 'fieldset',
+          '#title' => t('Feed'),
+        );
+        $form['feeds'] += $feed->fetcher->sourceForm($form_state);
+      }
+    }
+  }
 }
 
 /**

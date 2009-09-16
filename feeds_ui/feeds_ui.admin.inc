@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.8 2009/09/16 22:33:22 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.9 2009/09/16 22:42:01 alexb Exp $
 /**
  * @file
  */
@@ -82,6 +82,8 @@ function feeds_ui_build_create_form(&$form_state) {
 
 /**
  * Validation handler for feeds_build_create_form().
+ * 
+ * @todo: don't allow attaching more than one configuration to one content type.
  */
 function feeds_ui_build_create_form_validate($form, &$form_state) {
   ctools_include('export');
