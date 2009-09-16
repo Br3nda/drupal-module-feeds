@@ -1,0 +1,68 @@
+<?php
+// $Id: feeds.install,v 1.1 2009/09/16 17:58:12 alexb Exp $
+/**
+ * @file
+ */
+
+/**
+ * Implementation of hook_schema().
+ */
+function feeds_schema() {
+  $schema['feeds_configuration'] = array(
+    'description' => 'Configuration of feeds objects.',
+    'export' => array(
+      'key' => 'name',
+      'identifier' => 'feed_object',
+      'default hook' => 'feeds',  // Function hook name.
+      'api' => array(
+        'owner' => 'data',
+        'api' => 'feeds_default',  // Base name for api include files.
+        'minimum_version' => 1,
+        'current_version' => 1,
+      ),
+    ),
+    'fields' => array(
+      'id' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Id of the fields object.',
+      ),
+      'class' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Class name of the feeds object.',
+      ),
+      'config' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'description' => 'Configuration of the feeds object.',
+        'serialize' => TRUE,
+      ),
+    ),
+    'indexes' => array(
+        'id' => array('id'),
+        'class' => array('class'),
+      ),
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function feeds_install() {
+  // Create tables.
+  drupal_install_schema('feeds');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function feeds_uninstall() {
+  // Remove tables.
+  drupal_uninstall_schema('feeds');
+}

@@ -1,0 +1,6 @@
+;$Id: feeds.info,v 1.1 2009/09/16 17:58:12 alexb Exp $
+name = Feeds
+description = API for importing feeds of data.
+package = Feeds
+dependencies[] = ctools
+core = 6.x

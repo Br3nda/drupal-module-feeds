@@ -1,0 +1,203 @@
+<?php
+// $Id: feeds.module,v 1.1 2009/09/16 17:58:12 alexb Exp $
+/**
+ * @file
+ * Feeds module.
+ */
+
+/**
+ * Implementation of hook_cron().
+ */
+function feeds_cron() {
+  feeds_include('queue');
+  feeds_queue_refresh();
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function feeds_perm() {
+  return array('use feeds', 'administer feeds');
+}
+
+/**
+ * Implementation of hook_feeds_plugin().
+ */
+function feeds_feeds_plugin() {
+  return array(
+    'FeedsHttpFetcher' => array(
+      'name' => t('HTTP fetcher'),
+      'file' => drupal_get_path('module', 'feeds') .'/plugins/FeedsHttpFetcher.inc',
+      'parent' => 'FeedsFetcher',
+    ),
+    'FeedsSyndicationParser' => array(
+      'name' => t('Common syndication parser'),
+      'file' => drupal_get_path('module', 'feeds') .'/plugins/FeedsSyndicationParser.inc',
+      'parent' => 'FeedsParser',
+    ),
+    'FeedsNodeProcessor' => array(
+      'name' => t('Node processor'),
+      'file' => drupal_get_path('module', 'feeds') .'/plugins/FeedsNodeProcessor.inc',
+      'parent' => 'FeedsProcessor',
+    ),
+  );
+}
+
+/**
+ * Get all available plugins.
+ * 
+ * @todo: more powerful tracing of parents.
+ */
+function feeds_get_plugins() {
+  feeds_include('feed');
+
+  $result = array();
+  $plugins = module_invoke_all('feeds_plugin');
+  foreach ($plugins as $plugin => $info) {
+    if ($info['parent'] == 'FeedsFetcher') { // @todo: walk tree.
+      $result['fetcher'][$plugin] = $info['name'] ? $info['name'] : $plugin;
+    }
+    elseif ($info['parent'] == 'FeedsParser') {
+      $result['parser'][$plugin] = $info['name'] ? $info['name'] : $plugin;
+    }
+    elseif ($info['parent'] == 'FeedsProcessor') {
+      $result['processor'][$plugin] = $info['name'] ? $info['name'] : $plugin;
+    }
+  }
+  return $result;
+}
+
+/**
+ * Load a plugin's file.
+ */
+function feeds_require_plugin($plugin) {
+  static $required;
+  $plugins = module_invoke_all('feeds_plugin');
+  if ($plugins[$plugin]['file'] && empty($required[$plugin])) {
+    require($plugins[$plugin]['file']);
+    $required[$plugin] = TRUE;
+  }
+}
+
+/**
+ * Menu loader. Loads a feeds configuration.
+ */
+function feeds_load($id) {
+  return feeds_get_feed($id);
+}
+
+/**
+ * Load all feeds.
+ */
+function feeds_load_all() {
+  ctools_include('export');
+  $configs = ctools_export_load_object('feeds_configuration', 'conditions', array('class' => 'Feed'));
+  foreach ($configs as $config) {
+    $feeds[$config->id] = feeds_get_feed($config->id);
+  }
+  return $feeds;
+}
+
+/**
+ * Singleton function.
+ */
+function feeds_get_feed($id) {
+  static $instantiated;
+  feeds_include('feed');
+  if (!isset($instantiated[$id])) {
+    $instantiated[$id] = new Feed($id);
+  }
+  return $instantiated[$id];
+}
+
+/**
+ * Create a configuration object.
+ */
+function feeds_create_configuration($id) {
+  feeds_include('configuration');
+}
+
+/**
+ * Get a configuration object for a given id.
+ */
+function feeds_get_configuration($id) {
+  feeds_include('configuration');
+}
+
+/**
+ * Delete a configuration object.
+ */
+function feeds_delete_configuration($id) {
+
+}
+
+/**
+ * Attach a configuration to a content type.
+ */
+function feeds_attach_configuration($id, $content_type) {
+  
+}
+
+/**
+ * Detach a configuration from a content type.
+ */
+function feeds_detach_configuration($content_type) {
+  
+}
+
+/**
+ * Create a feed.
+ */
+function feeds_create_feed($configuration) {
+  feeds_include('configuration');
+  feeds_include('feed');
+  $feed = new Feed($configuration);
+  return $feed;
+}
+
+/**
+ * Retrieve a feed object that is attached to a feed node.
+ * @todo.
+ */
+function feeds_get_feed_node($nid) {
+  $node = node_load($nid);
+  $configuration = feeds_get_configuration($node->type, TRUE);
+}
+
+/**
+ * Fetches, parses and processes a feed.
+ * 
+ * @return 
+ *   TRUE if the feed could be imported completely,
+ *   FALSE if a timeout occurred.
+ */
+function feeds_import($id, FeedsResource $source, $timeout = NULL) {
+  $importer = new FeedImporter($id, $source, $timeout);
+  return $importer->import();
+}
+
+/**
+ * Determines whether execution time is up.
+ */
+function feeds_timeout($timeout = NULL) {
+  $timeout_time = 0;
+  if ($timeout) {
+    $timeout_time = time() + $timeout;
+  }
+  if (time() > $timeout_time) {
+    return FALSE;
+  }
+  return TRUE;
+}
+
+/**
+ * Includes a feeds module include file.
+ */
+function feeds_include($file) {
+  static $included = array();
+  if (!isset($included[$file])) {
+    require_once './' . drupal_get_path('module', 'feeds') . "/includes/$file.inc";
+  }
+
+  $included[$file] = TRUE;
+}
