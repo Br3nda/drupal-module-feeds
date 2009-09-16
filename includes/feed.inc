@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.10 2009/09/16 23:27:09 alexb Exp $
+// $Id: feed.inc,v 1.11 2009/09/16 23:27:30 alexb Exp $
 /**
  * @file
  */
@@ -366,12 +366,5 @@ class FeedsProcessor extends FeedsConfigurable {
   }
   public function getMappingTargets() {
     return NULL;
-  }
-
-  /**
-   * Build the mapping form.
-   */
-  public function mappingForm() {
-    return array();
   }
 }
