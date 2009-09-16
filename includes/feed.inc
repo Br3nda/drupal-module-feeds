@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.11 2009/09/16 23:27:30 alexb Exp $
+// $Id: feed.inc,v 1.12 2009/09/16 23:32:31 alexb Exp $
 /**
  * @file
  */
@@ -339,6 +339,8 @@ class FeedsFetcher extends FeedsConfigurable {
    *
    * @param $source 
    *   Source value as entered by user through sourceForm().
+   * 
+   * @todo: Define format of return value?
    */
   public function fetch($source) {
     return NULL;
@@ -349,9 +351,28 @@ class FeedsFetcher extends FeedsConfigurable {
  * Abstract class, defines interface for parsers.
  */
 class FeedsParser extends FeedsConfigurable {
+
+  /**
+   * Parse content fetched by fetcher.
+   * 
+   * Stub method. Extending classes must implement this method.
+   *
+   * @param $raw
+   *   Content returned by fetcher.
+   * @return
+   *   A parsed array. 
+   *   @todo: define this array (object?).
+   */
   public function parse($raw) {
     return NULL;
   }
+
+  /**
+   * Declare the possible mapping sources that this parser produces.
+   * 
+   * @return 
+   *   An array of mapping sources.
+   */
   public function getMappingSources() {
     return NULL;
   }
@@ -361,9 +382,24 @@ class FeedsParser extends FeedsConfigurable {
  * Abstract class, defines interface for processors.
  */
 class FeedsProcessor extends FeedsConfigurable {
+
+  /**
+   * Process the result of the parser or previous processors.
+   * 
+   * Stub method. Extending classes must implement this method.
+   *
+   * @param $feed
+   *   Result returned by parser.
+   */
   public function process($feed) {
-    return NULL;
   }
+
+  /**
+   * Declare possible mapping targets.
+   *
+   * @return
+   *   An array of mapping targets.
+   */
   public function getMappingTargets() {
     return NULL;
   }
