@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.4 2009/09/16 22:08:48 alexb Exp $
+// $Id: feeds.module,v 1.5 2009/09/16 22:33:22 alexb Exp $
 /**
  * @file
  * Feeds module.
@@ -41,6 +41,11 @@ function feeds_feeds_plugin() {
     'FeedsHttpFetcher' => array(
       'name' => t('HTTP fetcher'),
       'file' => drupal_get_path('module', 'feeds') .'/plugins/FeedsHttpFetcher.inc',
+      'parent' => 'FeedsFetcher',
+    ),
+    'FeedsFileFetcher' => array(
+      'name' => t('File fetcher'),
+      'file' =>  drupal_get_path('module', 'feeds') .'/plugins/FeedsFileFetcher.inc',
       'parent' => 'FeedsFetcher',
     ),
     'FeedsCSVParser' => array(

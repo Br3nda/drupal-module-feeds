@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.7 2009/09/16 21:57:10 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.8 2009/09/16 22:33:22 alexb Exp $
 /**
  * @file
  */
@@ -64,6 +64,7 @@ function feeds_ui_build_create_form(&$form_state) {
     );
   }
   else {
+    // @todo: present plugin form first.
     feeds_include('feed');
     $feed = feeds_get_feed($form_state['storage']['id']);
     $form['settings'] = array(

@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.8 2009/09/16 22:11:05 alexb Exp $
+// $Id: feed.inc,v 1.9 2009/09/16 22:33:22 alexb Exp $
 /**
  * @file
  */
@@ -56,25 +56,15 @@ class Feed extends FeedsConfigurable {
       '#options' => array('' => t('None')) + node_get_types('names'),
       '#default_value' => $this->config['content_type'],
     );
-    $form['source'] = array(
-      '#type' => 'textfield',
-      '#title' => t('URL'),
-      '#description' => t('Enter the URL for this feed @todo: delegate this form to plugin, hide if content type is picked.'),
-      '#default_value' => $config['source']['id'],
-      );
-    $form['update'] = array(
-      '#type' => 'radios',
-      '#title' => t('Update existing'),
-      '#options' => array(1 => t('Yes'), 0 => t('No')),
-      '#default_value' => $this->config['update'],
-    );
-    $period = drupal_map_assoc(array(1, 900, 1800, 3600, 10800, 21600, 32400, 43200, 86400, 172800, 259200, 604800, 1209600, 2419200, 3628800, 4838400, 7257600, 15724800, 31536000), 'format_interval');
+    $form['source'] = $this->fetcher->sourceForm($form_state);
+    $period = drupal_map_assoc(array(1, 900, 1800, 3600, 10800, 21600, 43200, 86400, 259200, 604800, 2419200), 'format_interval');
     $period[FEEDAPI_CRON_NEVER_REFRESH] = t('Do not refresh periodically');
     $period[1] = t('As often as possible');
     $form['refresh_period'] = array(
       '#type' => 'select',
       '#title' => t('Minimum refresh period'),
       '#options' => $period,
+      '#description' => t('This is the minimum time that must elapse before a feed may be refreshed automatically.'),
       '#default_value' => $this->config['refresh_period'],
     );
     return $form;
@@ -327,6 +317,29 @@ class FeedsConfigurable {
  * plugin type. See hook_feeds_plugin().
  */
 class FeedsFetcher extends FeedsConfigurable {
+
+  /**
+   * Source form.
+   */
+  public function sourceForm(&$form_state) {
+    $form = array();
+    $form['source'] = array(
+      '#type' => 'textfield',
+      '#title' => t('URL'),
+      '#description' => t('Enter the URL for this feed.'),
+      '#default_value' => $this->config['source'],
+    );
+    return $form;
+  }
+
+  /**
+   * Fetch content from a source and return it.
+   * 
+   * Stub method. Every class that extends FeedsFetcher must implement this method.
+   *
+   * @param $source 
+   *   Source value as entered by user through sourceForm().
+   */
   public function fetch($source) {
     return NULL;
   }
