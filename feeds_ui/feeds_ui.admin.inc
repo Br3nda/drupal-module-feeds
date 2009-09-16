@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.3 2009/09/16 21:24:44 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.4 2009/09/16 21:41:30 alexb Exp $
 /**
  * @file
  */
@@ -85,16 +85,19 @@ function feeds_ui_build_create_form(&$form_state) {
 function feeds_ui_build_create_form_validate($form, &$form_state) {
   ctools_include('export');
   if (isset($form_state['values']['id'])) {
+    $feed = feeds_get_feed($form_state['values']['id']);
     if (ctools_export_load_object('feeds_configuration', 'conditions', array('id' => $form_state['values']['id'], 'class' => 'Feed'))) {
       form_set_error('id', t('Id is taken.'));
     }
   }
   elseif (isset($form_state['storage']['id'])) {
+    $feed = feeds_get_feed($form_state['storage']['id']);
     if (ctools_export_load_object('feeds_configuration', 'conditions', array('id' => $form_state['storage']['id'], 'class' => 'Feed'))) {
       form_set_error('id', t('Id is taken.'));
       drupal_goto('admin/build/feeds/create');
     }
   }
+  $feed->configFormValidate($form, &$form_state);
 }
 
 /**
@@ -107,8 +110,7 @@ function feeds_ui_build_create_form_submit($form, &$form_state) {
   else {
     // Save feed.
     $feed = feeds_get_feed($form_state['storage']['id']);
-    $feed->addConfig($form_state['values']);
-    $feed->save();
+    $feed->configFormSubmit($form, &$form_state);
     drupal_set_message(t('Created configuration'));
 
     // Unset storage to enable redirect.
@@ -150,7 +152,7 @@ function feeds_ui_build_edit_form_submit($form, &$form_state) {
 }
 
 /**
- * Edit an existing configuration.
+ * Edit mapping.
  */
 function feeds_ui_build_mapping_form(&$form_state, $feed) {
   $form = array();
@@ -163,6 +165,8 @@ function feeds_ui_build_mapping_form(&$form_state, $feed) {
 
 /**
  * Edit plugin configuration.
+ * 
+ * @todo: move plugin form generation into feed class.
  */
 function feeds_ui_build_plugin_form(&$form_state, $feed) {
   $form = array();
@@ -205,4 +209,25 @@ function feeds_ui_build_plugin_form(&$form_state, $feed) {
     '#value' => t('Save'),
   );
   return $form;
+}
+
+/**
+ * Delete form.
+ */
+function feeds_ui_build_delete_form(&$form_state, $feed) {
+  $form['#redirect'] = 'admin/build/feeds';
+  $form['#feed'] = $feed;
+  return confirm_form($form,
+    t('Would you really like to delete the configuration !id?', array('!id' => $feed->getId())),
+    $form['#redirect'],
+    t('This action cannot be undone.'),
+    t('Delete')
+  );
+}
+
+/**
+ * Submit handler for feeds_ui_build_delete_form().
+ */
+function feeds_ui_build_delete_form_submit($form, &$form_state) {
+  feeds_delete($form['#feed']->getId());
 }
