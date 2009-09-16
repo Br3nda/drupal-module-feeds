@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.9 2009/09/16 22:33:22 alexb Exp $
+// $Id: feed.inc,v 1.10 2009/09/16 23:27:09 alexb Exp $
 /**
  * @file
  */
@@ -373,12 +373,5 @@ class FeedsProcessor extends FeedsConfigurable {
    */
   public function mappingForm() {
     return array();
-  }
-
-  /**
-   * Return TRUE if processor requires that the feed configuration be attached to a feed node.
-   */
-  public function requiresFeedAsNode() {
-    return TRUE;
   }
 }
