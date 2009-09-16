@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.4 2009/09/16 21:41:30 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.5 2009/09/16 21:49:03 alexb Exp $
 /**
  * @file
  */
@@ -170,40 +170,11 @@ function feeds_ui_build_mapping_form(&$form_state, $feed) {
  */
 function feeds_ui_build_plugin_form(&$form_state, $feed) {
   $form = array();
-  $plugins = feeds_get_plugins();
   $form['plugins'] = array(
     '#type' => 'fieldset',
     '#title' => t('Plugins'),
   );
-  $form['plugins']['fetcher'] = array(
-    '#type' => 'radios',
-    '#title' => t('Fetcher'),
-    '#options' => $plugins['fetcher'],
-    '#description' => t('Select a fetcher for this configuration.'),
-    '#default_value' => empty($feed) ? key($plugins['fetcher']) : get_class($feed->fetcher),
-  );
-  $form['plugins']['parser'] = array(
-    '#type' => 'radios',
-    '#title' => t('Parser'),
-    '#options' => $plugins['parser'],
-    '#description' => t('Select a parser for this configuration.'),
-    '#default_value' =>  empty($feed) ? key($plugins['parser']) : get_class($feed->parser),
-  );
-  if (empty($feed)) {
-    $default = array(key($plugins['processor']));
-  }
-  else {
-    foreach ($feed->processors as $processor) {
-      $default[get_class($processor)] = get_class($processor);
-    }
-  }
-  $form['plugins']['processors'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Processors'),
-    '#options' => $plugins['processor'],
-    '#description' => t('Select processors for this configuration.'),
-    '#default_value' => $default,
-  );
+  $form['plugins'] += $feed->pluginsForm($form_state);
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),

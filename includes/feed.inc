@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.4 2009/09/16 21:42:55 alexb Exp $
+// $Id: feed.inc,v 1.5 2009/09/16 21:49:03 alexb Exp $
 /**
  * @file
  */
@@ -76,6 +76,36 @@ class Feed extends FeedsConfigurable {
       '#title' => t('Minimum refresh period'),
       '#options' => $period,
       '#default_value' => $this->config['refresh_period'],
+    );
+    return $form;
+  }
+
+  /**
+   * Feed class specific plugin form.
+   */
+  public function pluginsForm(&$form_state) {
+    $form = array();
+    $plugins = feeds_get_plugins();
+    $form['fetcher'] = array(
+      '#type' => 'radios',
+      '#title' => t('Fetcher'),
+      '#options' => $plugins['fetcher'],
+      '#description' => t('Select a fetcher for this configuration.'),
+      '#default_value' => $this->config['fetcher'],
+    );
+    $form['parser'] = array(
+      '#type' => 'radios',
+      '#title' => t('Parser'),
+      '#options' => $plugins['parser'],
+      '#description' => t('Select a parser for this configuration.'),
+      '#default_value' => $this->config['parser'],
+    );
+    $form['processors'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Processors'),
+      '#options' => $plugins['processor'],
+      '#description' => t('Select processors for this configuration.'),
+      '#default_value' => $this->config['processors'],
     );
     return $form;
   }
