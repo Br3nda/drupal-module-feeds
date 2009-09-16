@@ -1,14 +1,11 @@
 <?php
-// $Id: feed.inc,v 1.3 2009/09/16 21:24:44 alexb Exp $
+// $Id: feed.inc,v 1.4 2009/09/16 21:42:55 alexb Exp $
 /**
  * @file
  */
 
 /**
  * Importer class.
- * 
- * After fetch() has been invoked, it can be cached and revoked in a subsequent 
- * page callback until it is reset().
  */
 class Feed extends FeedsConfigurable {
 
