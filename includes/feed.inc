@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.12 2009/09/16 23:32:31 alexb Exp $
+// $Id: feed.inc,v 1.13 2009/09/16 23:33:28 alexb Exp $
 /**
  * @file
  */
@@ -38,7 +38,6 @@ class Feed extends FeedsConfigurable {
       'parser' => 'FeedsSyndicationParser',
       'processors' => array('FeedsNodeProcessor'),
       'content_type' => '',
-      'source' => array(),
       'update' => 0,
       'refresh_period' => FEEDAPI_CRON_NEVER_REFRESH,
     );
