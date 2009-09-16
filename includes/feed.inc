@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.6 2009/09/16 21:50:03 alexb Exp $
+// $Id: feed.inc,v 1.7 2009/09/16 21:57:10 alexb Exp $
 /**
  * @file
  */
@@ -108,6 +108,24 @@ class Feed extends FeedsConfigurable {
       '#default_value' => $this->config['processors'],
     );
     return $form;
+  }
+
+  /**
+   * Validation handler for pluginForm().
+   */
+  public function pluginFormValidate($form, &$form_state) {
+    $form_state['values']['processors'] = array_filter($form_state['values']['processors']);
+    if (!count($form_state['values']['processors'])) {
+      form_set_error('processors', t('At least one processor needs to be enabled.'));
+    }
+  }
+
+  /**
+   * Submit handler for pluginForm().
+   */
+  public function pluginFormSubmit($form, &$form_state) {
+    $this->addConfig($form_state['values']);
+    $this->save();
   }
 
   /**
@@ -289,8 +307,6 @@ class FeedsConfigurable {
 
   /**
    * Validation handler for configForm().
-   *
-   * @return unknown
    */
   public function configFormValidate($form, &$form_state) {
   }

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.6 2009/09/16 21:50:03 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.7 2009/09/16 21:57:10 alexb Exp $
 /**
  * @file
  */
@@ -165,11 +165,10 @@ function feeds_ui_build_mapping_form(&$form_state, $feed) {
 
 /**
  * Edit plugin configuration.
- * 
- * @todo: move plugin form generation into feed class.
  */
 function feeds_ui_build_plugin_form(&$form_state, $feed) {
   $form = array();
+  $form['#feed'] = $feed;
   $form['plugins'] = array(
     '#type' => 'fieldset',
     '#title' => t('Plugins'),
@@ -180,6 +179,21 @@ function feeds_ui_build_plugin_form(&$form_state, $feed) {
     '#value' => t('Save'),
   );
   return $form;
+}
+
+/**
+ * Validation handler for feeds_ui_build_edit_form().
+ */
+function feeds_ui_build_plugin_form_validate($form, &$form_state) {
+  $form['#feed']->pluginFormValidate($form, &$form_state);
+}
+
+/**
+ * Submit handler for feeds_ui_build_edit_form().
+ */
+function feeds_ui_build_plugin_form_submit($form, &$form_state) {
+  $form['#feed']->pluginFormSubmit($form, &$form_state);
+  drupal_set_message(t('Saved configuration'));
 }
 
 /**
