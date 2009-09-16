@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.5 2009/09/16 21:49:03 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.6 2009/09/16 21:50:03 alexb Exp $
 /**
  * @file
  */
@@ -174,7 +174,7 @@ function feeds_ui_build_plugin_form(&$form_state, $feed) {
     '#type' => 'fieldset',
     '#title' => t('Plugins'),
   );
-  $form['plugins'] += $feed->pluginsForm($form_state);
+  $form['plugins'] += $feed->pluginForm($form_state);
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),

@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.5 2009/09/16 21:49:03 alexb Exp $
+// $Id: feed.inc,v 1.6 2009/09/16 21:50:03 alexb Exp $
 /**
  * @file
  */
@@ -83,7 +83,7 @@ class Feed extends FeedsConfigurable {
   /**
    * Feed class specific plugin form.
    */
-  public function pluginsForm(&$form_state) {
+  public function pluginForm(&$form_state) {
     $form = array();
     $plugins = feeds_get_plugins();
     $form['fetcher'] = array(
