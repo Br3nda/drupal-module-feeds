@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.1 2009/09/16 17:58:12 alexb Exp $
+// $Id: feeds.module,v 1.2 2009/09/16 20:26:05 alexb Exp $
 /**
  * @file
  * Feeds module.
@@ -18,6 +18,19 @@ function feeds_cron() {
  */
 function feeds_perm() {
   return array('use feeds', 'administer feeds');
+}
+
+/**
+ * Implementation of hook_ctools_plugin_api().
+ * 
+ * @todo: switch hook_feeds_plugin() over to hook_ctools_plugin_api().
+ */
+function feeds_ctools_plugin_api($owner, $api) {
+  if ($owner == 'feeds' && $api == 'plugins') {
+    return array(
+      'version' => 1,
+      '');
+  }
 }
 
 /**

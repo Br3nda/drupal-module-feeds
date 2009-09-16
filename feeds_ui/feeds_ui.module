@@ -1,8 +1,22 @@
 <?php
-// $Id: feeds_ui.module,v 1.1 2009/09/16 17:58:12 alexb Exp $
+// $Id: feeds_ui.module,v 1.2 2009/09/16 20:26:06 alexb Exp $
 /**
  * @file
  */
+
+/**
+ * Implementation of hook_help().
+ */
+function feeds_ui_help($path, $arg) {
+  switch ($path) {
+    case 'admin/build/feeds':
+      $output = '<p>'. t('Configure one or more feeds to import content into Drupal. You can use these feed configurations directly here or - if you attach them to a content type - simply by creating a node from that content type.') .'</p>';
+      return $output;
+    case 'admin/content/feeds':
+      $output = '<p>'. t('Import content into Drupal.') .'</p>';
+      return $output;
+  }
+}
 
 /**
  * Implementation of hook_menu().
@@ -45,8 +59,17 @@ function feeds_ui_menu() {
     'type' => MENU_CALLBACK,
   );
   $items['admin/build/feeds/edit/%feeds/edit'] = array(
-    'title' => t('Configuration'),
+    'title' => t('Basic'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items['admin/build/feeds/edit/%feeds/plugins'] = array(
+    'title' => t('Plugins'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('feeds_ui_build_plugin_form', 4),
+    'access arguments' => array('administer feeds'),
+    'file' => 'feeds_ui.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
   );
   $items['admin/build/feeds/edit/%feeds/map'] = array(
     'title' => t('Mapping'),
@@ -55,15 +78,7 @@ function feeds_ui_menu() {
     'access arguments' => array('administer feeds'),
     'file' => 'feeds_ui.admin.inc',
     'type' => MENU_LOCAL_TASK,
-  );
-  $items['admin/build/feeds/edit/%feeds/advanced'] = array(
-    'title' => t('Advanced'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('feeds_ui_build_advanced_form', 4),
-    'access arguments' => array('administer feeds'),
-    'file' => 'feeds_ui.admin.inc',
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 10,
+    'weight' => 2,
   );
   return $items;
 }

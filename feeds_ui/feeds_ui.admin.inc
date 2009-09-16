@@ -1,8 +1,26 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.1 2009/09/16 17:58:12 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.2 2009/09/16 20:26:06 alexb Exp $
 /**
  * @file
  */
+
+/**
+ * List available feed configurations.
+ */
+function feeds_ui_content_overview() {
+  $rows = array();
+  if ($feeds = feeds_load_all()) {
+    foreach ($feeds as $feed) {
+      $rows[] = array(
+        $feed->getId(),
+      );
+    }
+  }
+  $header = array(
+    t('Configurations'),
+  );
+  return theme('table', $header, $rows);
+}
 
 /**
  * Build overview of available configurations.
@@ -38,7 +56,7 @@ function feeds_ui_build_create_form(&$form_state) {
     $form['id'] = array(
       '#type' => 'textfield',
       '#title' => t('Id'),
-      '#description' => t('A unique identifier for this preset.'),
+      '#description' => t('A unique identifier for this configuration.'),
     );
     $form['submit'] = array(
       '#type' => 'submit',
@@ -79,12 +97,22 @@ function feeds_ui_build_create_form_submit($form, &$form_state) {
  * Edit an existing configuration.
  */
 function feeds_ui_build_edit_form(&$form_state, $feed) {
-  $form = _feeds_ui_config_form ($feed);
+  $form = _feeds_ui_config_form($feed);
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
   );
   return $form;
+}
+
+/**
+ * Submit handler for feeds_ui_build_edit_form().
+ */
+function feeds_ui_build_edit_form_submit($form, &$form_state) {
+  $feed = $form['#feed'];
+  $form['#feed']->addConfig($form_state['values']);
+  $form['#feed']->save();
+    drupal_set_message(t('Saved configuration'));
 }
 
 /**
@@ -100,21 +128,9 @@ function feeds_ui_build_mapping_form(&$form_state, $feed) {
 }
 
 /**
- * Edit an existing configuration.
+ * Edit plugin configuration.
  */
-function feeds_ui_build_advanced_form(&$form_state, $feed) {
-  $form = array();
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save'),
-  );
-  return $form;
-}
-
-/**
- * Helper, build edit UI for a feed. Used for editing and creating.
- */
-function _feeds_ui_config_form($feed = NULL) {
+function feeds_ui_build_plugin_form(&$form_state, $feed) {
   $form = array();
   $plugins = feeds_get_plugins();
   $form['plugins'] = array(
@@ -125,14 +141,14 @@ function _feeds_ui_config_form($feed = NULL) {
     '#type' => 'radios',
     '#title' => t('Fetcher'),
     '#options' => $plugins['fetcher'],
-    '#description' => t('Select a fetcher for this preset'),
+    '#description' => t('Select a fetcher for this configuration.'),
     '#default_value' => empty($feed) ? key($plugins['fetcher']) : get_class($feed->fetcher),
   );
   $form['plugins']['parser'] = array(
     '#type' => 'radios',
     '#title' => t('Parser'),
     '#options' => $plugins['parser'],
-    '#description' => t('Select a parser for this preset'),
+    '#description' => t('Select a parser for this configuration.'),
     '#default_value' =>  empty($feed) ? key($plugins['parser']) : get_class($feed->parser),
   );
   if (empty($feed)) {
@@ -147,34 +163,57 @@ function _feeds_ui_config_form($feed = NULL) {
     '#type' => 'checkboxes',
     '#title' => t('Processors'),
     '#options' => $plugins['processor'],
-    '#description' => t('Select processors for this preset'),
+    '#description' => t('Select processors for this configuration.'),
     '#default_value' => $default,
   );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+  );
+  return $form;
+}
+
+/**
+ * Helper, build edit UI for a feed. Used for editing and creating.
+ * @todo: pull form from feed object.
+ */
+function _feeds_ui_config_form($feed = NULL) {
+  $form = array();
+  if ($feed) {
+    $config = $feed->getConfig();
+    $form['#feed'] = $feed;
+  }
   $form['settings'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Basic settings'),
+    '#title' => t('Basic configuration'),
   );
   $form['settings']['content_type'] = array(
     '#type' => 'select',
     '#title' => t('Attach to content type'),
-    '#description' => t('When you attach a feeds configuration to a node, you can use nodes for creating feeds on your site.'),
+    '#description' => t('When you attach a configuration to a node, you can use nodes for creating feeds on your site.'),
     '#options' => array('' => t('None')) + node_get_types('names'),
-    '#default_value' => '',
+    '#default_value' => $config['content_type'],
   );
+  $form['settings']['source'] = array(
+    '#type' => 'textfield',
+    '#title' => t('URL'),
+    '#description' => t('Enter the URL for this feed @todo: delegate this form to plugin, hide if content type is picked.'),
+    '#default_value' => $config['source']['id'],
+    );
   $form['settings']['update'] = array(
     '#type' => 'radios',
     '#title' => t('Update existing'),
     '#options' => array(1 => t('Yes'), 0 => t('No')),
-    '#default_value' => 0, // @todo
+    '#default_value' => $config['update'],
   );
   $period = drupal_map_assoc(array(1, 900, 1800, 3600, 10800, 21600, 32400, 43200, 86400, 172800, 259200, 604800, 1209600, 2419200, 3628800, 4838400, 7257600, 15724800, 31536000), 'format_interval');
-  $period[FEEDAPI_CRON_NEVER_REFRESH] = t('Never refresh');
+  $period[FEEDAPI_CRON_NEVER_REFRESH] = t('Do not refresh periodically');
   $period[1] = t('As often as possible');
   $form['settings']['refresh_period'] = array(
     '#type' => 'select',
     '#title' => t('Minimum refresh period'),
     '#options' => $period,
-    '#default_value' => 0, // @todo
+    '#default_value' => $config['refresh_period'],
   );
   return $form;
 }

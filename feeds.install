@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.install,v 1.1 2009/09/16 17:58:12 alexb Exp $
+// $Id: feeds.install,v 1.2 2009/09/16 20:26:05 alexb Exp $
 /**
  * @file
  */
@@ -11,7 +11,7 @@ function feeds_schema() {
   $schema['feeds_configuration'] = array(
     'description' => 'Configuration of feeds objects.',
     'export' => array(
-      'key' => 'name',
+      'key' => 'id',
       'identifier' => 'feed_object',
       'default hook' => 'feeds',  // Function hook name.
       'api' => array(

@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.1 2009/09/16 17:58:13 alexb Exp $
+// $Id: feed.inc,v 1.2 2009/09/16 20:26:06 alexb Exp $
 /**
  * @file
  */
@@ -30,6 +30,21 @@ class Feed extends FeedsConfigurable {
       feeds_require_plugin($processor);
       $this->processors[$processor] = new $processor($id);
     }
+  }
+
+  /**
+   * Return defaults for feed configuration.
+   */
+  public function getDefaultConfig() {
+    return array(
+      'fetcher' => 'FeedsHttpFetcher',
+      'parser' => 'FeedsSyndicationParser',
+      'processors' => array('FeedsNodeProcessor'),
+      'content_type' => '',
+      'source' => array(),
+      'update' => 0,
+      'refresh_period' => FEEDAPI_CRON_NEVER_REFRESH,
+    );
   }
 
   /**
@@ -146,7 +161,14 @@ class FeedsConfigurable {
   }
 
   public function setConfig($config) {
-    $this->config = $config;
+    $default_keys = $this->getDefaultConfig();
+    $this->config = array_intersect_key($config, $default_keys);
+  }
+
+  public function addConfig($config) {
+    $this->config = array_merge($this->config, $config);
+    $default_keys = $this->getDefaultConfig();
+    $this->config = array_intersect_key($this->config, $default_keys);
   }
 
   public function getDefaultConfig() {
