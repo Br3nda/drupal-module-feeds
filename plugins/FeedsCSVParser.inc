@@ -1,7 +1,7 @@
 <?php
-// $Id: FeedsSyndicationParser.inc,v 1.2 2009/09/16 22:08:48 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.1 2009/09/16 22:08:48 alexb Exp $
 
-class FeedsSyndicationParser extends FeedsParser {
+class FeedsCSVParser extends FeedsParser {
 
   /**
    * Parses a raw string and returns a Feed object from it.
@@ -14,6 +14,6 @@ class FeedsSyndicationParser extends FeedsParser {
    * Return mapping sources.
    */
   public function getMappingSources() {
-    return array('title', 'description', 'url', 'guid', 'tags');
+    return array();
   }
 }
