@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.7 2009/09/16 21:57:10 alexb Exp $
+// $Id: feed.inc,v 1.8 2009/09/16 22:11:05 alexb Exp $
 /**
  * @file
  */
@@ -52,7 +52,7 @@ class Feed extends FeedsConfigurable {
     $form['content_type'] = array(
       '#type' => 'select',
       '#title' => t('Attach to content type'),
-      '#description' => t('When you attach a configuration to a node, you can use nodes for creating feeds on your site.'),
+      '#description' => t('If you attach a configuration to a node you can use nodes for creating feeds on your site.'),
       '#options' => array('' => t('None')) + node_get_types('names'),
       '#default_value' => $this->config['content_type'],
     );
