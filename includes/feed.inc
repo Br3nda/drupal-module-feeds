@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.2 2009/09/16 20:26:06 alexb Exp $
+// $Id: feed.inc,v 1.3 2009/09/16 21:24:44 alexb Exp $
 /**
  * @file
  */
@@ -45,6 +45,42 @@ class Feed extends FeedsConfigurable {
       'update' => 0,
       'refresh_period' => FEEDAPI_CRON_NEVER_REFRESH,
     );
+  }
+
+  /**
+   * Override parent::configForm().
+   */
+  public function configForm(&$form_state) {
+    $form = array();
+    $form['content_type'] = array(
+      '#type' => 'select',
+      '#title' => t('Attach to content type'),
+      '#description' => t('When you attach a configuration to a node, you can use nodes for creating feeds on your site.'),
+      '#options' => array('' => t('None')) + node_get_types('names'),
+      '#default_value' => $this->config['content_type'],
+    );
+    $form['source'] = array(
+      '#type' => 'textfield',
+      '#title' => t('URL'),
+      '#description' => t('Enter the URL for this feed @todo: delegate this form to plugin, hide if content type is picked.'),
+      '#default_value' => $config['source']['id'],
+      );
+    $form['update'] = array(
+      '#type' => 'radios',
+      '#title' => t('Update existing'),
+      '#options' => array(1 => t('Yes'), 0 => t('No')),
+      '#default_value' => $this->config['update'],
+    );
+    $period = drupal_map_assoc(array(1, 900, 1800, 3600, 10800, 21600, 32400, 43200, 86400, 172800, 259200, 604800, 1209600, 2419200, 3628800, 4838400, 7257600, 15724800, 31536000), 'format_interval');
+    $period[FEEDAPI_CRON_NEVER_REFRESH] = t('Do not refresh periodically');
+    $period[1] = t('As often as possible');
+    $form['refresh_period'] = array(
+      '#type' => 'select',
+      '#title' => t('Minimum refresh period'),
+      '#options' => $period,
+      '#default_value' => $this->config['refresh_period'],
+    );
+    return $form;
   }
 
   /**
@@ -121,7 +157,10 @@ class FeedsConfigurable {
   public function __construct($id, $config = NULL) {
     $this->id = $id;
     if (empty($config)) {
-      $this->load();
+      if (!$this->load()) {
+        // Make sure configuration is populated.
+        $this->config = $this->getDefaultConfig();
+      }
     }
     else {
       $this->config = $config;
@@ -153,6 +192,33 @@ class FeedsConfigurable {
     return FALSE;
   }
 
+  /**
+   * Retrieve this configurable's Id.
+   * 
+   * By convention, a number of configurable objects are associated to each 
+   * other by their common id.
+   */
+  public function getId() {
+    return $this->id;
+  }
+
+  /**
+   * Return default configuration.
+   * 
+   * @return 
+   *   Array where keys are the variable names of the configuration elements and
+   *   values are their default values.
+   */
+  public function getDefaultConfig() {
+    return array();
+  }
+
+  /**
+   * Get configuration.
+   * 
+   * @param $fallback
+   *   Set to false if method should NOT fall back to default configuration.
+   */
   public function getConfig($fallback = TRUE) {
     if ($fallback) {
       return empty($this->config) ? $this->getDefaultConfig() : $this->config;
@@ -160,27 +226,54 @@ class FeedsConfigurable {
     return $this->config;
   }
 
+  /**
+   * Set configuration.
+   * 
+   * @param $config
+   *   Array containing configuration information. Will be filtered by the keys returned by
+   *   getDefaultConfig().
+   */
   public function setConfig($config) {
     $default_keys = $this->getDefaultConfig();
     $this->config = array_intersect_key($config, $default_keys);
   }
 
+  /**
+   * Similar to setConfig but adds to existing configuration.
+   *
+   * @param $config
+   *   Array containing configuration information. Will be filtered by the keys returned by
+   *   getDefaultConfig().
+   */
   public function addConfig($config) {
     $this->config = array_merge($this->config, $config);
     $default_keys = $this->getDefaultConfig();
     $this->config = array_intersect_key($this->config, $default_keys);
   }
 
-  public function getDefaultConfig() {
+  /**
+   * Return configuration form for this object.
+   * 
+   * @return FormAPI style form definition.
+   */
+  public function configForm(&$form_state) {
     return array();
   }
 
-  public function getId() {
-    return $this->id;
+  /**
+   * Validation handler for configForm().
+   *
+   * @return unknown
+   */
+  public function configFormValidate($form, &$form_state) {
   }
 
-  public function form() {
-    return array();
+  /**
+   * Submit handler for configForm().
+   */
+  public function configFormSubmit($form, &$form_state) {
+    $this->addConfig($form_state['values']);
+    $this->save();
   }
 }
 

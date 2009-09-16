@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.2 2009/09/16 20:26:06 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.3 2009/09/16 21:24:44 alexb Exp $
 /**
  * @file
  */
@@ -64,13 +64,37 @@ function feeds_ui_build_create_form(&$form_state) {
     );
   }
   else {
-    $form += _feeds_ui_config_form();
+    feeds_include('feed');
+    $feed = feeds_get_feed($form_state['storage']['id']);
+    $form['settings'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Basic configuration'),
+    );
+    $form['settings'] += $feed->configForm($form_state);
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Create'),
     );
   }
   return $form;
+}
+
+/**
+ * Validation handler for feeds_build_create_form().
+ */
+function feeds_ui_build_create_form_validate($form, &$form_state) {
+  ctools_include('export');
+  if (isset($form_state['values']['id'])) {
+    if (ctools_export_load_object('feeds_configuration', 'conditions', array('id' => $form_state['values']['id'], 'class' => 'Feed'))) {
+      form_set_error('id', t('Id is taken.'));
+    }
+  }
+  elseif (isset($form_state['storage']['id'])) {
+    if (ctools_export_load_object('feeds_configuration', 'conditions', array('id' => $form_state['storage']['id'], 'class' => 'Feed'))) {
+      form_set_error('id', t('Id is taken.'));
+      drupal_goto('admin/build/feeds/create');
+    }
+  }
 }
 
 /**
@@ -81,9 +105,9 @@ function feeds_ui_build_create_form_submit($form, &$form_state) {
     $form_state['storage']['id'] = $form_state['values']['id'];
   }
   else {
-    // Build and save feed.
-    feeds_include('feed');
-    $feed = new Feed($form_state['storage']['id'], $form_state['values']);
+    // Save feed.
+    $feed = feeds_get_feed($form_state['storage']['id']);
+    $feed->addConfig($form_state['values']);
     $feed->save();
     drupal_set_message(t('Created configuration'));
 
@@ -97,7 +121,12 @@ function feeds_ui_build_create_form_submit($form, &$form_state) {
  * Edit an existing configuration.
  */
 function feeds_ui_build_edit_form(&$form_state, $feed) {
-  $form = _feeds_ui_config_form($feed);
+  $form['#feed'] = $feed;
+  $form['settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Basic configuration'),
+  );
+  $form['settings'] += $feed->configForm($form_state);
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
@@ -106,13 +135,18 @@ function feeds_ui_build_edit_form(&$form_state, $feed) {
 }
 
 /**
+ * Validation handler for feeds_ui_build_edit_form().
+ */
+function feeds_ui_build_edit_form_validate($form, &$form_state) {
+  $form['#feed']->configFormValidate($form, &$form_state);
+}
+
+/**
  * Submit handler for feeds_ui_build_edit_form().
  */
 function feeds_ui_build_edit_form_submit($form, &$form_state) {
-  $feed = $form['#feed'];
-  $form['#feed']->addConfig($form_state['values']);
-  $form['#feed']->save();
-    drupal_set_message(t('Saved configuration'));
+  $form['#feed']->configFormSubmit($form, &$form_state);
+  drupal_set_message(t('Saved configuration'));
 }
 
 /**
@@ -169,51 +203,6 @@ function feeds_ui_build_plugin_form(&$form_state, $feed) {
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
-  );
-  return $form;
-}
-
-/**
- * Helper, build edit UI for a feed. Used for editing and creating.
- * @todo: pull form from feed object.
- */
-function _feeds_ui_config_form($feed = NULL) {
-  $form = array();
-  if ($feed) {
-    $config = $feed->getConfig();
-    $form['#feed'] = $feed;
-  }
-  $form['settings'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Basic configuration'),
-  );
-  $form['settings']['content_type'] = array(
-    '#type' => 'select',
-    '#title' => t('Attach to content type'),
-    '#description' => t('When you attach a configuration to a node, you can use nodes for creating feeds on your site.'),
-    '#options' => array('' => t('None')) + node_get_types('names'),
-    '#default_value' => $config['content_type'],
-  );
-  $form['settings']['source'] = array(
-    '#type' => 'textfield',
-    '#title' => t('URL'),
-    '#description' => t('Enter the URL for this feed @todo: delegate this form to plugin, hide if content type is picked.'),
-    '#default_value' => $config['source']['id'],
-    );
-  $form['settings']['update'] = array(
-    '#type' => 'radios',
-    '#title' => t('Update existing'),
-    '#options' => array(1 => t('Yes'), 0 => t('No')),
-    '#default_value' => $config['update'],
-  );
-  $period = drupal_map_assoc(array(1, 900, 1800, 3600, 10800, 21600, 32400, 43200, 86400, 172800, 259200, 604800, 1209600, 2419200, 3628800, 4838400, 7257600, 15724800, 31536000), 'format_interval');
-  $period[FEEDAPI_CRON_NEVER_REFRESH] = t('Do not refresh periodically');
-  $period[1] = t('As often as possible');
-  $form['settings']['refresh_period'] = array(
-    '#type' => 'select',
-    '#title' => t('Minimum refresh period'),
-    '#options' => $period,
-    '#default_value' => $config['refresh_period'],
   );
   return $form;
 }
