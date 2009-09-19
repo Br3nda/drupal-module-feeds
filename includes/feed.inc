@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.15 2009/09/19 16:31:24 alexb Exp $
+// $Id: feed.inc,v 1.16 2009/09/19 16:36:55 alexb Exp $
 /**
  * @file
  */
@@ -409,8 +409,8 @@ class FeedsProcessor extends FeedsConfigurable {
   public function addMapping($source, $target, $unique = NULL) {
     if (!empty($source) && !empty($target)) {
       $config = $this->getConfig();
-      $config['mappings'][$source] = array(
-        'target' => $target,
+      $config['mappings'][$target] = array(
+        'source' => $source,
         'unique' => $unique,
       );
     }
