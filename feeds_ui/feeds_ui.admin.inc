@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.9 2009/09/16 22:42:01 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.10 2009/09/19 15:52:45 alexb Exp $
 /**
  * @file
  */
@@ -159,10 +159,31 @@ function feeds_ui_build_edit_form_submit($form, &$form_state) {
  */
 function feeds_ui_build_mapping_form(&$form_state, $feed) {
   $form = array();
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save'),
-  );
+
+  // Build a mapping form for each processor configured.
+  $sources = $feed->parser->getMappingSources();
+  foreach ($feed->processors as $class => $processor) {
+    $mappings = $processor->getMappings();
+    $targets = $processor->getMappingTargets();
+    $form['processors'][$class] = array(
+      '#type' => 'fieldset',
+      '#title' => $class, // @todo: human readable title.
+    );
+    $form['processors'][$class]['#mappings'] = $mappings;
+    $form['processors'][$class]['#targets'] = $targets;
+    $form['processors'][$class]['sources'] = array(
+      '#type' => 'select',
+      '#options' => array('' => t('Select a source')) + drupal_map_assoc($sources),
+    );
+    $form['processors'][$class]['targets'] = array(
+      '#type' => 'select',
+      '#options' => array('' => t('Select a target')) + drupal_map_assoc(array_keys($targets)),
+    );
+    $form['processors'][$class]['add'] = array(
+      '#type' => 'submit',
+      '#value' => t('Add'),
+    );
+  }
   return $form;
 }
 
@@ -218,4 +239,45 @@ function feeds_ui_build_delete_form(&$form_state, $feed) {
  */
 function feeds_ui_build_delete_form_submit($form, &$form_state) {
   feeds_delete($form['#feed']->getId());
+}
+
+/**
+ * Theme function for feeds_ui_build_mapping_form().
+ */
+function theme_feeds_ui_build_mapping_form($form) {
+  $output = '';
+  $header = array(
+    t('Source'),
+    t('Target'),
+    t('Unique'),
+    t('Remove'),
+  );
+
+  foreach (element_children($form['processors']) as $processor) {
+    $rows = array();
+    if (is_array($form['processors'][$processor]['#mappings'])) {
+      foreach ($form['processors'][$processor]['#mappings'] as $mapping) {
+        $rows[] = array(
+          // @todo.
+        ); 
+      }
+    }
+    if (!count($rows)) {
+      $rows[] = array(
+        array(
+          'colspan' => 4,
+          'data' => t('No mappings defined.'),
+        ),
+      );
+    }
+    $rows[] = array(
+      drupal_render($form['processors'][$processor]['sources']),
+      drupal_render($form['processors'][$processor]['targets']),
+      '',
+      drupal_render($form['processors'][$processor]['add']),
+    );
+    $form['processors'][$processor]['#value'] = theme('table', $header, $rows);
+  }
+  $output .= drupal_render($form);
+  return $output;
 }

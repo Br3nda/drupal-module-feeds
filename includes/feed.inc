@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.13 2009/09/16 23:33:28 alexb Exp $
+// $Id: feed.inc,v 1.14 2009/09/19 15:52:46 alexb Exp $
 /**
  * @file
  */
@@ -397,9 +397,33 @@ class FeedsProcessor extends FeedsConfigurable {
    * Declare possible mapping targets.
    *
    * @return
-   *   An array of mapping targets.
+   *   An array of mapping targets. Keys are paths to targets
+   *   separated by ->, values are TRUE if target can be unique, 
+   *   FALSE otherwise.
    */
   public function getMappingTargets() {
-    return NULL;
+    // @todo: invoke hook_feeds_mapper() here.
+    return array();
+  }
+
+  /**
+   * Get mappings.
+   */
+  public function getMappings() {
+    return $this->config->mappings;
+  }
+
+  /**
+   * Execute mapping on an item.
+   */
+  public function map($item) {
+    // @todo.
+  }
+
+  /**
+   * Determine whether a given item is unique.
+   */
+  public function unique($item) {
+    // @todo.
   }
 }
