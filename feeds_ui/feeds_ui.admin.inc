@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.12 2009/09/19 16:36:55 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.13 2009/09/19 16:54:42 alexb Exp $
 /**
  * @file
  */
@@ -270,8 +270,8 @@ function theme_feeds_ui_build_mapping_form($form) {
     if (is_array($form['processors'][$processor]['#mappings'])) {
       foreach ($form['processors'][$processor]['#mappings'] as $target => $mapping) {
         $rows[] = array(
-          $source,
           $mapping['source'],
+          $target,
           $mapping['unique'] ? t('Yes') : t('No'),
           t('Remove'),
         ); 
