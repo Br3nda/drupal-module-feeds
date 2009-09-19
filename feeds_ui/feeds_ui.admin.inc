@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.10 2009/09/19 15:52:45 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.11 2009/09/19 16:31:23 alexb Exp $
 /**
  * @file
  */
@@ -159,23 +159,26 @@ function feeds_ui_build_edit_form_submit($form, &$form_state) {
  */
 function feeds_ui_build_mapping_form(&$form_state, $feed) {
   $form = array();
+  $form['#feed'] = $feed;
 
   // Build a mapping form for each processor configured.
   $sources = $feed->parser->getMappingSources();
   foreach ($feed->processors as $class => $processor) {
+    // @todo: move actual form building into processors?
     $mappings = $processor->getMappings();
     $targets = $processor->getMappingTargets();
     $form['processors'][$class] = array(
       '#type' => 'fieldset',
       '#title' => $class, // @todo: human readable title.
+      '#tree' => TRUE,
     );
     $form['processors'][$class]['#mappings'] = $mappings;
     $form['processors'][$class]['#targets'] = $targets;
-    $form['processors'][$class]['sources'] = array(
+    $form['processors'][$class]['source'] = array(
       '#type' => 'select',
       '#options' => array('' => t('Select a source')) + drupal_map_assoc($sources),
     );
-    $form['processors'][$class]['targets'] = array(
+    $form['processors'][$class]['target'] = array(
       '#type' => 'select',
       '#options' => array('' => t('Select a target')) + drupal_map_assoc(array_keys($targets)),
     );
@@ -185,6 +188,15 @@ function feeds_ui_build_mapping_form(&$form_state, $feed) {
     );
   }
   return $form;
+}
+
+/**
+ * Submit handler for feeds_ui_build_mapping_form().
+ */
+function feeds_ui_build_mapping_form_submit($form, &$form_state) {
+  foreach ($form['#feed']->processors as $class => $processor) {
+    $processor->addMapping($form_state['values'][$class]['source'], $form_state['values'][$class]['target']);
+  }
 }
 
 /**
@@ -250,15 +262,18 @@ function theme_feeds_ui_build_mapping_form($form) {
     t('Source'),
     t('Target'),
     t('Unique'),
-    t('Remove'),
+    '&nbsp;',
   );
 
   foreach (element_children($form['processors']) as $processor) {
     $rows = array();
     if (is_array($form['processors'][$processor]['#mappings'])) {
-      foreach ($form['processors'][$processor]['#mappings'] as $mapping) {
+      foreach ($form['processors'][$processor]['#mappings'] as $source => $mapping) {
         $rows[] = array(
-          // @todo.
+          $source,
+          $mapping['target'],
+          $mapping['unique'] ? t('Yes') : t('No'),
+          t('Remove'),
         ); 
       }
     }
@@ -271,8 +286,8 @@ function theme_feeds_ui_build_mapping_form($form) {
       );
     }
     $rows[] = array(
-      drupal_render($form['processors'][$processor]['sources']),
-      drupal_render($form['processors'][$processor]['targets']),
+      drupal_render($form['processors'][$processor]['source']),
+      drupal_render($form['processors'][$processor]['target']),
       '',
       drupal_render($form['processors'][$processor]['add']),
     );

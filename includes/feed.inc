@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.14 2009/09/19 15:52:46 alexb Exp $
+// $Id: feed.inc,v 1.15 2009/09/19 16:31:24 alexb Exp $
 /**
  * @file
  */
@@ -209,7 +209,7 @@ class FeedsConfigurable {
     $save->id = $this->id;
     $save->class = get_class($this);
     $save->config = $this->config;
-    db_query('DELETE FROM {feeds_configuration} WHERE id = "%s"', $save->id);
+    db_query('DELETE FROM {feeds_configuration} WHERE id = "%s" AND class = "%s"', $save->id, $save->class);
     drupal_write_record('feeds_configuration', $save);
   }
 
@@ -250,6 +250,8 @@ class FeedsConfigurable {
   /**
    * Get configuration.
    * 
+   * @todo: clean up fallback. Not clear when to use and when not to use getConfig().
+   * 
    * @param $fallback
    *   Set to false if method should NOT fall back to default configuration.
    */
@@ -262,6 +264,7 @@ class FeedsConfigurable {
 
   /**
    * Set configuration.
+   * @todo: save() automatically?
    * 
    * @param $config
    *   Array containing configuration information. Will be filtered by the keys returned by
@@ -394,6 +397,28 @@ class FeedsProcessor extends FeedsConfigurable {
   }
 
   /**
+   * Declare default configuration.
+   */
+  public function getDefaultConfig() {
+    return array('mappings' => array());
+  }
+  
+  /**
+   * Add a mapping to existing mappings.
+   */
+  public function addMapping($source, $target, $unique = NULL) {
+    if (!empty($source) && !empty($target)) {
+      $config = $this->getConfig();
+      $config['mappings'][$source] = array(
+        'target' => $target,
+        'unique' => $unique,
+      );
+    }
+    $this->setConfig($config);
+    $this->save();
+  }
+
+  /**
    * Declare possible mapping targets.
    *
    * @return
@@ -410,7 +435,7 @@ class FeedsProcessor extends FeedsConfigurable {
    * Get mappings.
    */
   public function getMappings() {
-    return $this->config->mappings;
+    return $this->config['mappings'];
   }
 
   /**
