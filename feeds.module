@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.6 2009/09/16 22:42:01 alexb Exp $
+// $Id: feeds.module,v 1.7 2009/09/21 14:55:47 alexb Exp $
 /**
  * @file
  * Feeds module.
@@ -133,7 +133,7 @@ function feeds_load($id) {
  */
 function feeds_load_all() {
   ctools_include('export');
-  $configs = ctools_export_load_object('feeds_configuration', 'conditions', array('class' => 'Feed'));
+  $configs = ctools_export_load_object('feeds_config', 'conditions', array('class' => 'Feed'));
   foreach ($configs as $config) {
     $feeds[$config->id] = feeds_get_feed($config->id);
   }
@@ -156,7 +156,7 @@ function feeds_get_feed($id) {
  * Delete a feed.
  */
 function feeds_delete($id) {
-  db_query('DELETE FROM {feeds_configuration} WHERE id = "%s"', $id);
+  db_query('DELETE FROM {feeds_config} WHERE id = "%s"', $id);
 }
 
 /**

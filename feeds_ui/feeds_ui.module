@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.module,v 1.5 2009/09/19 15:52:46 alexb Exp $
+// $Id: feeds_ui.module,v 1.6 2009/09/21 14:55:47 alexb Exp $
 /**
  * @file
  */
@@ -79,6 +79,13 @@ function feeds_ui_menu() {
     'file' => 'feeds_ui.admin.inc',
     'type' => MENU_LOCAL_TASK,
     'weight' => 2,
+  );
+  $items['admin/build/feeds/map-remove/%feeds'] = array(
+    'page callback' => 'feeds_ui_build_mapping_remove',
+    'page arguments' => array(4),
+    'access arguments' => array('administer feeds'),
+    'file' => 'feeds_ui.admin.inc',
+    'type' => MENU_CALLBACK,
   );
   $items['admin/build/feeds/delete/%feeds'] = array(
     'title' => t('Create configuration'),

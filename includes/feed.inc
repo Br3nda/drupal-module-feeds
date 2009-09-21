@@ -1,5 +1,5 @@
 <?php
-// $Id: feed.inc,v 1.16 2009/09/19 16:36:55 alexb Exp $
+// $Id: feed.inc,v 1.17 2009/09/21 14:55:48 alexb Exp $
 /**
  * @file
  */
@@ -209,8 +209,8 @@ class FeedsConfigurable {
     $save->id = $this->id;
     $save->class = get_class($this);
     $save->config = $this->config;
-    db_query('DELETE FROM {feeds_configuration} WHERE id = "%s" AND class = "%s"', $save->id, $save->class);
-    drupal_write_record('feeds_configuration', $save);
+    db_query('DELETE FROM {feeds_config} WHERE id = "%s" AND class = "%s"', $save->id, $save->class);
+    drupal_write_record('feeds_config', $save);
   }
 
   /**
@@ -218,7 +218,7 @@ class FeedsConfigurable {
    */
   public function load() {
     ctools_include('export');
-    if ($config = ctools_export_load_object('feeds_configuration', 'conditions', array('id' => $this->id, 'class' => get_class($this)))) {
+    if ($config = ctools_export_load_object('feeds_config', 'conditions', array('id' => $this->id, 'class' => get_class($this)))) {
       $config = array_shift($config);
       $this->config = $config->config;
       return TRUE;
@@ -400,21 +400,27 @@ class FeedsProcessor extends FeedsConfigurable {
    * Declare default configuration.
    */
   public function getDefaultConfig() {
-    return array('mappings' => array());
+    return array('mappings' => FALSE);
   }
-  
+
   /**
    * Add a mapping to existing mappings.
    */
   public function addMapping($source, $target, $unique = NULL) {
     if (!empty($source) && !empty($target)) {
-      $config = $this->getConfig();
-      $config['mappings'][$target] = array(
+      $this->config['mappings'][$target] = array(
         'source' => $source,
         'unique' => $unique,
       );
     }
-    $this->setConfig($config);
+    $this->save();
+  }
+
+  /**
+   * Remove a mapping.
+   */
+  public function removeMapping($target) {
+    unset($this->config['mappings'][$target]);
     $this->save();
   }
 
