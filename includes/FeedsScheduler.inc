@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.1 2009/10/20 21:01:35 alexb Exp $
+// $Id: FeedsScheduler.inc,v 1.2 2009/10/20 21:22:18 alexb Exp $
 
 /**
  * @file
@@ -112,7 +112,7 @@ class FeedsScheduler implements IFeedsScheduler {
     // parameters accordingly.
     if ($importers = feeds_importer_load_all()) {
       $use_queue = module_exists('drupal_queue');
-      $num = variable_get('feeds_schedule_num', $use_queue ? 200 : 5);
+      $num = variable_get('feeds_schedule_num', $use_queue ? 200 : 10);
       $num = $num ? $num : 1;
 
       // Iterate over feed configurations, pick $num feeds for each
