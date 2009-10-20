@@ -1,43 +1,85 @@
 <?php
-// $Id: FeedsHttpFetcher.inc,v 1.1 2009/09/16 17:58:13 alexb Exp $
+// $Id: FeedsHttpFetcher.inc,v 1.2 2009/10/20 20:59:04 alexb Exp $
+
 /**
  * @file
- * Home of the FeedsHttpFetcher.
- *
+ * Home of the FeedsHTTPFetcher.
+ * @todo: Use all caps for HTTP.
  */
 
 /**
  * Fetches data via HTTP.
  */
-class FeedsHttpFetcher extends FeedsFetcher {
+class FeedsHTTPFetcher extends FeedsFetcher {
 
   /**
    * Fetch a resource via http.
-   * 
-   * @todo: Use Curl, fall back to drupal_http_request.
-   * @todo: Add caching.
    *
    * @param $resource
    *   A resource description of type FeedsResource.
-   * 
-   * @return 
+   *
+   * @return
    *   A string from the requested location if successful, or FALSE if not.
    */
-  public function fetch($resource) {
-    if ($resource->type == 'http') {
-      $result = drupal_http_request($resource->identifier);
-      $count = 0;
-      while ($result->redirect_url) {
-        $result = drupal_http_request($result->redirect_url);
-        $count++;
-        if ($count > 100) {
-          return FALSE;
-        }
-      }
-      if (!$result->error) {
-        return $result->response;
-      }
-      return FALSE;
+  public function fetch(FeedsSource $source) {
+    $source_config = $source->getConfigFor($this);
+    $url = $source_config['source'];
+    feeds_include_library('http_request.inc', 'http_request');
+    if ($this->config['auto_detect_feeds']) {
+      $result = http_request_get_common_syndication($url);
     }
+    else {
+      $result = http_request_get($url);
+    }
+    return new FeedsFetcherResult($result->data, 'text/xml');
+  }
+
+  /**
+   * Clear caches.
+   */
+  public function clear(FeedsSource $source) {
+    $source_config = $source->getConfigFor($this);
+    $url = $source_config['source'];
+    feeds_include_library('http_request.inc', 'http_request');
+    http_request_clear_cache($url);
+  }
+
+  /**
+   * Expose source form.
+   */
+  public function sourceForm($source_config) {
+    $form = array();
+    $form['source'] = array(
+      '#type' => 'textfield',
+      '#title' => t('URL'),
+      '#description' => t('Enter a feed URL.'),
+      '#default_value' => isset($source_config['source']) ? $source_config['source'] : '',
+      '#required' => TRUE,
+    );
+    return $form;
+  }
+
+  /**
+   * Override parent::configDefaults().
+   */
+  public function configDefaults() {
+    return array('auto_detect_feeds' => FALSE);
+  }
+
+  /**
+   * Configuration form.
+   */
+  public function configForm(&$form_state) {
+    $form = array();
+    return $form;
+    // @todo:
+    $form['auto_detect_feeds'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Auto detect feeds (not tested)'),
+      '#description' => t('Auto detect RSS or Atom feeds in the downloaded document and use them instead of the given URL.'),
+      '#default_value' => $this->config['auto_detect_feeds'],
+      );
+    return $form;
   }
 }
+
