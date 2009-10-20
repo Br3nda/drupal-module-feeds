@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.4 2009/10/20 21:29:53 alexb Exp $
+$Id: README.txt,v 1.5 2009/10/20 22:14:22 alexb Exp $
 
 
 "It feeds"
@@ -35,9 +35,7 @@ Features
 Requirements
 ============
 
-- CTools 1.x-dev or CTools 1.0 with patches
-  http://drupal.org/node/599136
-  http://drupal.org/node/531522
+- CTools 1.1
 - Drupal 6.14 or higher.
 - PHP 5.2.x
 
