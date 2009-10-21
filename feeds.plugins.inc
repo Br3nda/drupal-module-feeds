@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.plugins.inc,v 1.1 2009/10/20 21:03:08 alexb Exp $
+// $Id: feeds.plugins.inc,v 1.2 2009/10/21 20:01:18 alexb Exp $
 
 /**
  * @file
@@ -67,7 +67,7 @@ function _feeds_feeds_plugins() {
     ),
   );
   $info['FeedsFileFetcher'] = array(
-    'name' => 'File fetcher',
+    'name' => 'File upload',
     'description' => 'Upload content from a local file.',
     'handler' => array(
       'parent' => 'FeedsFetcher',
