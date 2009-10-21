@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.9 2009/10/21 22:49:46 alexb Exp $
+// $Id: feeds.module,v 1.10 2009/10/21 23:17:01 alexb Exp $
 
 /**
  * @file
@@ -242,8 +242,9 @@ function feeds_feeds_plugins() {
  * Implementation of hook_node_info().
  */
 function feeds_node_info() {
-  $items = array(
-    'feed' => array(
+  $items = array();
+  if (feeds_importer_enabled('feed')) {
+    $items['feed'] = array(
       'name' => t('Feed'),
       'module' => 'features',
       'description' => t('Subscribe to RSS or Atom feeds. Creates nodes of the content type "Feed item" from feed content.'),
@@ -252,8 +253,8 @@ function feeds_node_info() {
       'has_body' => '1',
       'body_label' => t('Body'),
       'locked' => TRUE,
-    ),
-    'feed_item' => array(
+    );
+    $items['feed_item'] = array(
       'name' => t('Feed item'),
       'module' => 'features',
       'description' => t('This content type is being used for automatically aggregated content from feeds.'),
@@ -262,9 +263,9 @@ function feeds_node_info() {
       'has_body' => '1',
       'body_label' => t('Body'),
       'locked' => TRUE,
-    ),
-  );
-  if (module_exists('data')) {
+    );
+  }
+  if (feeds_importer_enabled('feed_light')) {
     $items['feed_light'] = array(
       'name' => t('Feed (light)'),
       'module' => 'features',
@@ -462,6 +463,35 @@ function feeds_importer_load_all() {
     }
   }
   return $feeds;
+}
+
+/**
+ * Return whether a importer is enabled or not.
+ *
+ * Use only for importer configurations that ship with feeds. This function
+ * assumes that importers are initially off and then enabled manually on
+ * admin/build/feeds.
+ *
+ * @return
+ *   TRUE if the importer is enabled, FALSE if not.
+ */
+function feeds_importer_enabled($id) {
+  // 'default_feeds_importer' variable is used internally by CTools to determine
+  // the enabled/disabled state of a configuration. This variable may not be
+  // completely populated.
+  $disabled = variable_get('default_feeds_importer', FALSE);
+  if ($disabled === FALSE) {
+    $disabled = array();
+    foreach (feeds_importer_load_all() as $importer) {
+      $disabled[$importer->id] = $disabled->disabled;
+    }
+    variable_set('default_feeds_importer', $disabled);
+  }
+  // If disabled is not present, assume that importer configuration is disabled.
+  if (!isset($disabled[$id])) {
+    return FALSE;
+  }
+  return !$disabled[$id];
 }
 
 /**

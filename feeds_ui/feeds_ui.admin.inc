@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.16 2009/10/21 22:49:47 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.17 2009/10/21 23:17:01 alexb Exp $
 
 /**
  * @file
@@ -139,6 +139,11 @@ function feeds_ui_overview_form_submit($form, &$form_state) {
     $disabled[$importer->id] = !$form_state['values'][$importer->id];
   }
   variable_set('default_feeds_importer', $disabled);
+
+  // Clear caches.
+  node_get_types('types', NULL, TRUE);
+  cache_clear_all();
+  menu_rebuild();
 }
 
 /**
