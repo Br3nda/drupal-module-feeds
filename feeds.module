@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.10 2009/10/21 23:17:01 alexb Exp $
+// $Id: feeds.module,v 1.11 2009/10/21 23:24:14 alexb Exp $
 
 /**
  * @file
@@ -495,7 +495,7 @@ function feeds_importer_enabled($id) {
 }
 
 /**
- * Get a feed configuration by content type.
+ * Get a an enabled importer configuration by content type.
  *
  * @todo: speed this up by DB caching the result.
  *
@@ -511,7 +511,7 @@ function feeds_importer_by_content_type($content_type) {
   if (!isset($feeds[$content_type])) {
     $feeds[$content_type] = FALSE;
     foreach (feeds_importer_load_all() as $importer) {
-      if ($importer->config['content_type'] == $content_type) {
+      if ((!$importer->disabled) && $importer->config['content_type'] == $content_type) {
         $feeds[$content_type] = $importer;
         break;
       }
