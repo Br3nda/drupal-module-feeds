@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.1 2009/10/20 21:03:08 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.2 2009/10/21 14:17:15 alexb Exp $
 
 /**
  * @file
@@ -211,7 +211,7 @@ class FeedsDataProcessor extends FeedsProcessor {
    */
   protected function existingItemId($source_item, FeedsSource $source) {
     foreach ($this->uniqueTargets($source_item) as $target => $value) {
-      if ($records = $this->handler()->load(array($target => $value))) {
+      if ($records = $this->handler()->load(array('feed_nid' => $source->feed_nid, $target => $value))) {
         return $records[0]['id'];
       }
     }
