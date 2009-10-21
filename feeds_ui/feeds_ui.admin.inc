@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.15 2009/10/20 20:59:04 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.16 2009/10/21 22:49:47 alexb Exp $
 
 /**
  * @file
@@ -49,16 +49,34 @@ function feeds_ui_mapping_help() {
 /**
  * Build overview of available configurations.
  */
-function feeds_ui_overview_page() {
+function feeds_ui_overview_form(&$form_status) {
 
-  $rows = array();
+  $form = $form['enabled'] = $form['disabled'] = array();
+
+  $form['#header'] = array(
+    t('Name'),
+    t('Description'),
+    t('Attached to'),
+    t('Status'),
+    t('Operations'),
+    t('Enabled'),
+  );
   foreach (feeds_importer_load_all() as $importer) {
+    $importer_form = array();
+    $importer_form['name']['#value'] = $importer->config['name'];
+    $importer_form['description']['#value'] = $importer->config['description'];
     if (empty($importer->config['content_type'])) {
-      $attached = '[none]';
+      $importer_form['attached']['#value'] = '[none]';
     }
     else {
-      $attached = l(node_get_types('name', $importer->config['content_type']), 'node/add/'. $importer->config['content_type']);
+      if (!$importer->disabled) {
+        $importer_form['attached']['#value'] = l(node_get_types('name', $importer->config['content_type']), 'node/add/'. $importer->config['content_type']);
+      }
+      else {
+        $importer_form['attached']['#value'] = node_get_types('name', $importer->config['content_type']);
+      }
     }
+
     if ($importer->export_type == EXPORT_IN_CODE) {
       $status = t('Default');
       $edit = t('Override');
@@ -74,32 +92,53 @@ function feeds_ui_overview_page() {
       $edit = t('Edit');
       $delete = t('Revert');
     }
-    $rows[] = array(
-      $importer->config['name'],
-      $importer->config['description'],
-      $attached,
-      $status,
-      l($edit, 'admin/build/feeds/edit/'. $importer->id) .' | '.
-      l(t('Export'), 'admin/build/feeds/export/'. $importer->id) .' | '.
-      l(t('Clone'), 'admin/build/feeds/clone/'. $importer->id) .
-      (empty($delete) ? '' :  ' | '. l($delete, 'admin/build/feeds/delete/'. $importer->id)),
+    $importer_form['status'] = array(
+      '#value' => $status,
     );
+    if (!$importer->disabled) {
+      $importer_form['operations'] = array(
+        '#value' =>
+          l($edit, 'admin/build/feeds/edit/'. $importer->id) .' | '.
+          l(t('Export'), 'admin/build/feeds/export/'. $importer->id) .' | '.
+          l(t('Clone'), 'admin/build/feeds/clone/'. $importer->id) .
+          (empty($delete) ? '' :  ' | '. l($delete, 'admin/build/feeds/delete/'. $importer->id)),
+      );
+    }
+    else {
+      $importer_form['operations']['#value'] = '&nbsp;';
+    }
+
+    $importer_form[$importer->id] = array(
+      '#type' => 'checkbox',
+      '#default_value' => !$importer->disabled,
+      '#attributes' => array('class' => 'feeds-ui-trigger-submit'),
+    );
+
+    if ($importer->disabled) {
+      $form['disabled'][$importer->id] = $importer_form;
+    }
+    else {
+      $form['enabled'][$importer->id] = $importer_form;
+    }
   }
-  $rows[] = array(
-    l(t('New configuration'), 'admin/build/feeds/create'),
-    '&nbsp;',
-    '&nbsp;',
-    '&nbsp;',
-    '&nbsp;',
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+    '#attributes' => array('class' => 'feeds-ui-hidden-submit'),
   );
-  $header = array(
-    t('Name'),
-    t('Description'),
-    t('Attached to'),
-    t('Status'),
-    t('Operations'),
-  );
-  return theme('table', $header, $rows);
+  return $form;
+}
+
+/**
+ * Submit handler for feeds_ui_overview_form().
+ */
+function feeds_ui_overview_form_submit($form, &$form_state) {
+
+  $disabled = array();
+  foreach (feeds_importer_load_all() as $importer) {
+    $disabled[$importer->id] = !$form_state['values'][$importer->id];
+  }
+  variable_set('default_feeds_importer', $disabled);
 }
 
 /**
@@ -578,6 +617,37 @@ function _feeds_ui_format_options($options) {
     }
   }
   return $result;
+}
+
+/**
+ * Theme feeds_ui_overview_form().
+ */
+function theme_feeds_ui_overview_form($form) {
+  drupal_add_js(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.js');
+  drupal_add_css(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.css');
+
+  // Iterate through all importers and build a table.
+  foreach (array('enabled', 'disabled') as $type) {
+    foreach (element_children($form[$type]) as $id) {
+      $row = array();
+      foreach (element_children($form[$type][$id]) as $col) {
+        $row[$col] = array(
+          'data' => drupal_render($form[$type][$id][$col]),
+          'class' => $type,
+        );
+      }
+      $rows[] = array(
+        'data' => $row,
+        'class' => $type,
+      );
+    }
+  }
+  if (count($rows)) {
+    $output = theme('table', $form['#header'], $rows, array('class' => 'feeds-admin-importers'));
+  }
+
+  $output .= drupal_render($form);
+  return $output;
 }
 
 /**

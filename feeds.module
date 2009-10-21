@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.8 2009/10/20 20:59:04 alexb Exp $
+// $Id: feeds.module,v 1.9 2009/10/21 22:49:46 alexb Exp $
 
 /**
  * @file
@@ -236,6 +236,47 @@ function feeds_ctools_plugin_api($owner, $api) {
 function feeds_feeds_plugins() {
   module_load_include('inc', 'feeds', 'feeds.plugins');
   return _feeds_feeds_plugins();
+}
+
+/**
+ * Implementation of hook_node_info().
+ */
+function feeds_node_info() {
+  $items = array(
+    'feed' => array(
+      'name' => t('Feed'),
+      'module' => 'features',
+      'description' => t('Subscribe to RSS or Atom feeds. Creates nodes of the content type "Feed item" from feed content.'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+      'locked' => TRUE,
+    ),
+    'feed_item' => array(
+      'name' => t('Feed item'),
+      'module' => 'features',
+      'description' => t('This content type is being used for automatically aggregated content from feeds.'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+      'locked' => TRUE,
+    ),
+  );
+  if (module_exists('data')) {
+    $items['feed_light'] = array(
+      'name' => t('Feed (light)'),
+      'module' => 'features',
+      'description' => t('Subscribe to RSS or Atom feeds. Create light weight database records from feed content.'),
+      'has_title' => '1',
+      'title_label' => t('Title'),
+      'has_body' => '1',
+      'body_label' => t('Body'),
+      'locked' => TRUE,
+    );
+  }
+  return $items;
 }
 
 /**

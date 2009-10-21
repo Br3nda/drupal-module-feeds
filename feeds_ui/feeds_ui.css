@@ -1,4 +1,16 @@
-/* $Id: feeds_ui.css,v 1.1 2009/10/20 21:01:35 alexb Exp $ */
+/* $Id: feeds_ui.css,v 1.2 2009/10/21 22:49:47 alexb Exp $ */
+
+/* Feeds admin overview form. */
+table.feeds-admin-importers td.disabled {
+  color: #ccc;
+  }
+table.feeds-admin-importers tr.disabled.odd,
+table.feeds-admin-importers tr.disabled.even {
+  border-color: #eee;
+  }
+table.feeds-admin-importers tr.disabled.odd {
+  background-color: #f5f5f5;
+  }
 
 /* Feeds edit form layout. */
 div.feeds-settings {

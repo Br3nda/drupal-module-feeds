@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsConfigurable.inc,v 1.1 2009/10/20 21:01:35 alexb Exp $
+// $Id: FeedsConfigurable.inc,v 1.2 2009/10/21 22:49:47 alexb Exp $
 
 /**
  * @file
@@ -20,6 +20,9 @@ abstract class FeedsConfigurable {
   /*
   CTools export type of this object.
 
+  @todo: should live in FeedsImporter. Not all child classes
+  of FeedsConfigurable are exportable. Same goes for $disabled.
+
   Export type can be one of
   FEEDS_EXPORT_NONE - the configurable only exists in memory
   EXPORT_IN_DATABASE - the configurable is defined in the database.
@@ -27,6 +30,11 @@ abstract class FeedsConfigurable {
   EXPORT_IN_CODE | EXPORT_IN_DATABASE - the configurable is defined in code, but
                                         overridden in the database.*/
   protected $export_type;
+
+  /**
+   * CTools export enabled status of this object.
+   */
+  protected $disabled;
 
   /**
    * Instantiate a FeedsConfigurable object.
