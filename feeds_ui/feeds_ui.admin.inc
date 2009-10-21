@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.17 2009/10/21 23:17:01 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.18 2009/10/21 23:39:00 alexb Exp $
 
 /**
  * @file
@@ -61,7 +61,7 @@ function feeds_ui_overview_form(&$form_status) {
     t('Operations'),
     t('Enabled'),
   );
-  foreach (feeds_importer_load_all() as $importer) {
+  foreach (feeds_importer_load_all(TRUE) as $importer) {
     $importer_form = array();
     $importer_form['name']['#value'] = $importer->config['name'];
     $importer_form['description']['#value'] = $importer->config['description'];
@@ -135,7 +135,7 @@ function feeds_ui_overview_form(&$form_status) {
 function feeds_ui_overview_form_submit($form, &$form_state) {
 
   $disabled = array();
-  foreach (feeds_importer_load_all() as $importer) {
+  foreach (feeds_importer_load_all(TRUE) as $importer) {
     $disabled[$importer->id] = !$form_state['values'][$importer->id];
   }
   variable_set('default_feeds_importer', $disabled);
