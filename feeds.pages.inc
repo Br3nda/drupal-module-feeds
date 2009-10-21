@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.4 2009/10/21 20:11:42 alexb Exp $
+// $Id: feeds.pages.inc,v 1.5 2009/10/21 23:18:30 alexb Exp $
 
 /**
  * @file
@@ -15,6 +15,9 @@ function feeds_page() {
   $rows = array();
   if ($importers = feeds_importer_load_all()) {
     foreach ($importers as $importer) {
+      if ($importer->disabled) {
+        continue;
+      }
       if (empty($importer->config['content_type'])) {
         $link = 'import/'. $importer->id;
         $title = $importer->config['name'];
