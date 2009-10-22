@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.1 2009/10/20 21:03:08 alexb Exp $
+// $Id: feeds.test,v 1.2 2009/10/22 02:35:20 alexb Exp $
 
 /**
  * @file
@@ -562,8 +562,9 @@ class FeedsSchedulerTestCase extends FeedsWebTestCase {
     // This implicitly tests the import_on_create node setting being 0.
     $this->assertTrue($nids[0] == 1 && $nids[1] == 2, 'Node ids sequential.');
 
-    // Log out and run cron.
+    // Log out and run cron twice.
     $this->drupalLogout();
+    $this->drupalGet($GLOBALS['base_url'] .'/cron.php');
     $this->drupalGet($GLOBALS['base_url'] .'/cron.php');
 
     // There should be feeds_schedule_num (= 10) feeds updated now.
@@ -575,7 +576,8 @@ class FeedsSchedulerTestCase extends FeedsWebTestCase {
     $count = db_result(db_query('SELECT COUNT(*) FROM {node} WHERE type = "story"'));
     $this->assertEqual($count, 100, 'There are 100 story nodes aggregated.');
 
-    // Hit cron again.
+    // Hit twice cron again.
+    $this->drupalGet($GLOBALS['base_url'] .'/cron.php');
     $this->drupalGet($GLOBALS['base_url'] .'/cron.php');
 
     // There should be feeds_schedule_num X 2 (= 20) feeds updated now.
@@ -622,7 +624,8 @@ class FeedsSchedulerTestCase extends FeedsWebTestCase {
     $this->drupalPost('admin/build/feeds/edit/syndication/settings', $edit, 'Save');
     $this->assertText('Refresh: as often as possible');
 
-    // Hit cron again twice.
+    // Hit cron again, 4 times now.
+    $this->drupalGet($GLOBALS['base_url'] .'/cron.php');
     $this->drupalGet($GLOBALS['base_url'] .'/cron.php');
     $this->drupalGet($GLOBALS['base_url'] .'/cron.php');
     $this->drupalGet($GLOBALS['base_url'] .'/cron.php');
