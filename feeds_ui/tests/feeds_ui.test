@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.test,v 1.1 2009/10/20 21:03:30 alexb Exp $
+// $Id: feeds_ui.test,v 1.2 2009/10/22 02:39:36 alexb Exp $
 /**
  * @file
  * Tests for Feeds Admin UI module.
@@ -66,7 +66,7 @@ class FeedsUIUserInterfaceTestCase extends FeedsWebTestCase {
     $this->assertRaw('admin/build/feeds/edit/test_feed/parser');
     $this->assertRaw('admin/build/feeds/edit/test_feed/processor');
     $this->drupalGet('import');
-    $this->assertText('Test feed');
+    $this->assertText('Page');
 
     // Select some other plugins.
     $this->drupalGet('admin/build/feeds/edit/test_feed');
