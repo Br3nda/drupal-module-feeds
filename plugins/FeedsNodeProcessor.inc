@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.3 2009/10/20 20:59:04 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.4 2009/10/23 20:23:52 alexb Exp $
 
 /**
  * @file
@@ -22,7 +22,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     foreach ($parserResult->value['items'] as $item) {
       // If the target item does not exist OR if update_existing is enabled,
       // map and save.
-      if (!$nid = $this->existingItemId($item, $source) || $this->config['update_existing']) {
+      if (!($nid = $this->existingItemId($item, $source)) || $this->config['update_existing']) {
 
         // Map item to a node.
         $node = $this->map($item);
@@ -149,7 +149,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
         ),
         '1' => array(
           'source' => 'description',
-          'target' => 'teaser',
+          'target' => 'body',
           'unique' => FALSE,
         ),
         '2' => array(
@@ -208,7 +208,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
     if (in_array($target_element, array('url', 'guid'))) {
       $target_node->feeds_node_item->$target_element = $value;
     }
-    elseif (in_array($target_element, array('title', 'teaser', 'status', 'created'))) {
+    elseif ($target_element == 'body') {
+      $target_node->teaser = $value;
+      $target_node->body = $value;
+    }
+    elseif (in_array($target_element, array('title', 'status', 'created'))) {
       $target_node->$target_element = $value;
     }
   }
@@ -228,7 +232,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
         'name' => t('Published date'),
       ),
       // Using 'teaser' instead of 'body' forces entire content above the break.
-      'teaser' => array(
+      'body' => array(
         'name' => t('Body'),
       ),
       'url' => array(
