@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.6 2009/10/21 15:45:56 alexb Exp $
+$Id: README.txt,v 1.7 2009/10/23 22:27:12 alexb Exp $
 
 
 "It feeds"
@@ -93,12 +93,6 @@ Default:     5
 Description: The number of feeds to refresh on cron time.
              If drupal_queue is enabled, the maximum number of feeds to move to
              queue.
-
-Name:        feeds_use_defaults
-Default:     TRUE
-Description: Whether or not to use default content type and importer
-             configurations. Set to FALSE if you would like to use Feeds without
-             any default configurations.
 
 Glossary
 ========

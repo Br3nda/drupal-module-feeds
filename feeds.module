@@ -1,15 +1,10 @@
 <?php
-// $Id: feeds.module,v 1.13 2009/10/22 04:00:36 alexb Exp $
+// $Id: feeds.module,v 1.14 2009/10/23 22:27:12 alexb Exp $
 
 /**
  * @file
  * Feeds - basic API functions and hook implementations.
  */
-
-// Include default definitions of content types and importer configurations.
-if (variable_get('feeds_use_defaults', TRUE)) {
-  include(dirname(__FILE__) .'/feeds.defaults.inc');
-}
 
 // Vague request time. Use as common point of reference and to avoid costly
 // calls to time().
