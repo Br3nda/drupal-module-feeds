@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.4 2009/10/23 20:23:52 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.5 2009/10/23 22:38:41 alexb Exp $
 
 /**
  * @file
@@ -49,10 +49,10 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
     // Set messages.
     if ($created) {
-      drupal_set_message(t('Created !number !type nodes.', array('!number' => $created, '!type' => $this->config['content_type'])));
+      drupal_set_message(t('Created !number !type nodes.', array('!number' => $created, '!type' => node_get_types('name', $this->config['content_type']))));
     }
     elseif ($updated) {
-      drupal_set_message(t('Updated !number !type nodes.', array('!number' => $updated, '!type' => $this->config['content_type'])));
+      drupal_set_message(t('Updated !number !type nodes.', array('!number' => $updated, '!type' => node_get_types('name', $this->config['content_type']))));
     }
     else {
       drupal_set_message(t('There is no new content.'));
