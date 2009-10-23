@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.2 2009/10/21 14:17:15 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.3 2009/10/23 20:24:47 alexb Exp $
 
 /**
  * @file
@@ -42,13 +42,13 @@ class FeedsDataProcessor extends FeedsProcessor {
 
     // Set messages.
     if ($inserted) {
-      drupal_set_message(t('Created !number records in !table.', array('!number' => $inserted, '!table' => $this->tableName())));
+      drupal_set_message(t('Created !number items.', array('!number' => $inserted)));
     }
     elseif ($updated) {
-      drupal_set_message(t('Updated !number records in !table.', array('!number' => $updated, '!table' => $this->tableName())));
+      drupal_set_message(t('Updated !number items.', array('!number' => $updated)));
     }
     else {
-      drupal_set_message(t('There are no new records.'));
+      drupal_set_message(t('There are no new items.'));
     }
   }
 
@@ -62,7 +62,7 @@ class FeedsDataProcessor extends FeedsProcessor {
       'feed_nid' => $source->feed_nid,
     );
     $num = $this->handler()->delete($clause);
-    drupal_set_message(t('Deleted !number records from !table.', array('!number' => $num, '!table' => $this->tableName())));
+    drupal_set_message(t('Deleted !number items.', array('!number' => $num)));
   }
 
   /**
