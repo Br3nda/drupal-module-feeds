@@ -1,7 +1,0 @@
-; $Id: feeds_test.info,v 1.1 2009/10/23 21:13:47 alexb Exp $
-name = "Feeds tests"
-description = "Test module for Feeds."
-package = Testing
-version = VERSION
-core = 6.x
-; hidden = TRUE
