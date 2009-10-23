@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.2 2009/10/22 02:35:20 alexb Exp $
+// $Id: feeds.test,v 1.3 2009/10/23 22:38:20 alexb Exp $
 
 /**
  * @file
@@ -52,7 +52,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
 
     $nid = $this->createFeedNode();
     // Assert 10 items aggregated after creation of the node.
-    $this->assertText('Created 10 story nodes.');
+    $this->assertText('Created 10 Story nodes.');
 
 
     // Navigate to feed node, there should be Feeds tabs visible.
@@ -121,7 +121,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
 
     // Import again, we should find new content.
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $this->assertText('Created 10 story nodes.');
+    $this->assertText('Created 10 Story nodes.');
 
     // Assert DB status, there should be 10 again.
     $count = db_result(db_query('SELECT COUNT(*) FROM {feeds_node_item}'));
@@ -184,7 +184,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
 
     // Import, assert 10 items aggregated after creation of the node.
     $this->importURL('syndication_standalone');
-    $this->assertText('Created 10 story nodes.');
+    $this->assertText('Created 10 Story nodes.');
 
     // Assert accuracy of aggregated information.
     $this->drupalGet('node');
@@ -241,7 +241,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
 
     // Import again, we should find new content.
     $this->drupalPost('import/syndication_standalone', array(), 'Import');
-    $this->assertText('Created 10 story nodes.');
+    $this->assertText('Created 10 Story nodes.');
 
     // Assert DB status, there should be 10 again.
     $count = db_result(db_query('SELECT COUNT(*) FROM {feeds_node_item}'));
@@ -350,7 +350,7 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
     // Create standard feed node.
     $nid = $this->createFeedNode('rss');
     // Assert 10 items aggregated after creation of the node.
-    $this->assertText('Created 10 records in feeds_data_rss.');
+    $this->assertText('Created 10 items.');
 
     // Login with a user with administer data permissions and review aggregated
     // content.
@@ -392,7 +392,7 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
 
     // Import again.
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $this->assertText('There are no new records.');
+    $this->assertText('There are no new items.');
 
     // Assert DB status, there still shouldn't be more than 10 items.
     $count = db_result(db_query('SELECT COUNT(*) FROM {feeds_data_rss}'));
@@ -400,7 +400,7 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
 
     // Now delete all items.
     $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
-    $this->assertText('Deleted 10 records from feeds_data_rss.');
+    $this->assertText('Deleted 10 items.');
 
     // Assert DB status, now there should be no items.
     // @todo: fails, is there something cached?
@@ -409,7 +409,7 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
 
     // Import again, we should find new content.
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $this->assertText('Created 10 records in feeds_data_rss.');
+    $this->assertText('Created 10 items.');
 
     // Assert DB status, there should be 10 again.
     $count = db_result(db_query('SELECT COUNT(*) FROM {feeds_data_rss}'));
@@ -492,12 +492,7 @@ class FeedsCSVtoUsersTest extends FeedsWebTestCase {
     $this->drupalPost('admin/build/feeds/edit/user_import/settings', $edit, 'Save');
 
     // Import CSV file.
-    $file = dirname($GLOBALS['_SERVER']['SCRIPT_FILENAME']) .'/'. drupal_get_path('module', 'feeds') .'/tests/feeds/users.csv';
-    $this->assertTrue(file_exists($file), 'Source file exists');
-    $edit = array(
-      'files[feeds]' => $file,
-    );
-    $this->drupalPost('import/user_import', $edit, 'Import');
+    $this->importFile('user_import', $this->absolutePath() .'/tests/feeds/users.csv');
 
     // Assert result.
     $this->assertText('Created 4 users.');
@@ -691,7 +686,7 @@ class FeedsSyndicationParserTestCase extends FeedsWebTestCase {
       $this->setPlugin('syndication', $parser);
       foreach ($this->feedUrls() as $url => $assertions) {
         $this->createFeedNode('syndication', $url);
-        $this->assertText('Created '. $assertions['item_count'] .' story nodes.');
+        $this->assertText('Created '. $assertions['item_count'] .' Story nodes.');
       }
     }
   }

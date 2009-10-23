@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.1 2009/10/20 21:03:08 alexb Exp $
+// $Id: feeds.test.inc,v 1.2 2009/10/23 22:38:20 alexb Exp $
 
 /**
  * @file
@@ -14,10 +14,62 @@ class FeedsWebTestCase extends DrupalWebTestCase {
   /**
    * Debug utility. Shows current screen.
    */
-  public function show() {
+  public function show($path = NULL) {
+    if ($path !== NULL) {
+      $this->drupalGet($path);
+    }
     // Use error, this will make sure we don't forget accidental calls to show()
     // in our tests.
     $this->error($this->content);
+  }
+
+  /**
+   * Absolute path to Drupal root.
+   */
+  public function absolute() {
+    return dirname($GLOBALS['_SERVER']['SCRIPT_FILENAME']);
+  }
+
+  /**
+   * Get the absolute directory path of the feeds module.
+   */
+  public function absolutePath() {
+    return  $this->absolute() .'/'. drupal_get_path('module', 'feeds');
+  }
+
+  /**
+   * Generate an OPML test feed.
+   *
+   * The purpose of this function is to create a dynamic OPML feed that points
+   * too feeds included in this test.
+   */
+  public function generateOPML() {
+    $path = $GLOBALS['base_url'] .'/'. drupal_get_path('module', 'feeds') .'/tests/feeds/';
+
+  $output =
+'<?xml version="1.0" encoding="utf-8"?>
+<opml version="1.1">
+<head>
+    <title>Feeds test OPML</title>
+    <dateCreated>Fri, 16 Oct 2009 02:53:17 GMT</dateCreated>
+    <ownerName></ownerName>
+</head>
+<body>
+  <outline text="Feeds test group" >
+       <outline title="Development Seed - Technological Solutions for Progressive Organizations" text="" xmlUrl="'. $path .'developmentseed.rss2" type="rss" />
+       <outline title="Magyar Nemzet Online - H’rek" text="" xmlUrl="'. $path .'feed_without_guid.rss2" type="rss" />
+       <outline title="Drupal planet" text="" type="rss" xmlUrl="'. $path .'drupalplanet.rss2" />
+    </outline>
+</body>
+</opml>';
+
+    // UTF 8 encode output string and write it to disk
+    $output = utf8_encode($output);
+    $file = $this->absolute() .'/'. file_directory_path() .'/test-opml-'. $this->randomName() .'.opml';
+    $handle = fopen($file, 'w');
+    fwrite($handle, $output);
+    fclose($handle);
+    return $file;
   }
 
   /**
@@ -82,21 +134,23 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    * @return
    *   The node id of the node created.
    */
-  public function createFeedNode($id = 'syndication', $feed_url = NULL, $title = '') {
+  public function createFeedNode($id = 'syndication', $feed_url = NULL, $title = '', $content_type = NULL) {
     if (empty($feed_url)) {
       $feed_url = $GLOBALS['base_url'] .'/'. drupal_get_path('module', 'feeds') .'/tests/feeds/developmentseed.rss2';
     }
-    // Ask the configuration for the content type to create.
-    $config = unserialize(db_result(db_query('SELECT config FROM {feeds_importer} WHERE id = "%s"', $id)));
-    $content_type = $config['content_type'];
-    $this->assertFalse(empty($content_type), 'Valid content type found: '. $content_type);
+    // If content type not given, retrieve it.
+    if (!$content_type) {
+      $config = unserialize(db_result(db_query('SELECT config FROM {feeds_importer} WHERE id = "%s"', $id)));
+      $content_type = $config['content_type'];
+      $this->assertFalse(empty($content_type), 'Valid content type found: '. $content_type);
+    }
 
     // Create a feed node.
     $edit = array(
       'title' => $title,
       'feeds[FeedsHTTPFetcher][source]' => $feed_url,
     );
-    $this->drupalPost('node/add/'. $content_type, $edit, 'Save');
+    $this->drupalPost('node/add/'. str_replace('_', '-', $content_type), $edit, 'Save');
     $this->assertText('has been created.');
 
     // Get the node id from URL.
@@ -127,10 +181,10 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    * @return
    *   An array of node ids of the nodes created.
    */
-  public function createFeedNodes($id = 'syndication', $num = 20) {
+  public function createFeedNodes($id = 'syndication', $num = 20, $content_type = NULL) {
     $nids = array();
     for ($i = 0; $i < $num; $i++) {
-      $nids[] = $this->createFeedNode($id, NULL, $this->randomName());
+      $nids[] = $this->createFeedNode($id, NULL, $this->randomName(), $content_type);
     }
     return $nids;
   }
@@ -157,6 +211,18 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $this->assertEqual(1, db_result(db_query('SELECT COUNT(*) FROM {feeds_schedule} WHERE id = "%s" AND feed_nid = 0 AND callback = "import" AND last_scheduled_time = 0 AND scheduled = 0', $id)));
     // There must be only one entry for callback 'expire' - no matter what the feed_nid is.
     $this->assertEqual(1, db_result(db_query('SELECT COUNT(*) FROM {feeds_schedule} WHERE id = "%s" AND callback = "expire" AND last_scheduled_time = 0 AND scheduled = 0', $id)));
+  }
+
+  /**
+   * Import a file through the import form. Assumes FeedsFileFetcher in place.
+   */
+  public function importFile($id, $file) {
+
+    $this->assertTrue(file_exists($file), 'Source file exists');
+    $edit = array(
+      'files[feeds]' => $file,
+    );
+    $this->drupalPost('import/'. $id, $edit, 'Import');
   }
 
   /**
