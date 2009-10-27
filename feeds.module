@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.14 2009/10/23 22:27:12 alexb Exp $
+// $Id: feeds.module,v 1.15 2009/10/27 23:04:55 alexb Exp $
 
 /**
  * @file
@@ -358,20 +358,8 @@ function feeds_form_alter(&$form, $form_state, $form_id) {
 
       // Cannot pass on the FeedsImporter object, pass on id.
       $form['#feed_id'] = $importer->id;
-      // Only set validation handler. Save object on hook_nodeapi('insert')
-//      $form['#validate'][] = 'feeds_node_form_validate';
     }
   }
-}
-
-/**
- * Additional validation handler for node forms.
- *
- * @see feeds_form_alter().
- */
-function feeds_node_form_validate($form, &$form_state) {
-  feeds_include('feeds.pages', '.');
-  feeds_import_form_validate($form, $form_state);
 }
 
 /**
