@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.5 2009/10/23 22:38:41 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.6 2009/10/27 22:56:22 alexb Exp $
 
 /**
  * @file
@@ -238,16 +238,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
       'url' => array(
         'name' => t('URL'),
         'optional_unique' => TRUE,
-        ),
+      ),
       'guid' => array(
         'name' => t('GUID'),
         'optional_unique' => TRUE,
-        ),
-        /* @todo: move to mapper api.
-      'taxonomy' => array(
-        'options' => taxonomy_get_vocabularies(),
-        ),
-        */
+      ),
     );
     // @todo: document.
     drupal_alter('feeds_node_processor_targets', $targets);
