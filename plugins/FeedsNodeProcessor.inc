@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.6 2009/10/27 22:56:22 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.7 2009/10/28 00:02:21 alexb Exp $
 
 /**
  * @file
@@ -120,6 +120,9 @@ class FeedsNodeProcessor extends FeedsProcessor {
     // @todo: change to feed node uid to keep in line with feedapi.
     $target_node->uid = 0;
 
+    // Load all mappers. parent::map() might invoke their callbacks.
+    self::loadMappers();
+
     // Have parent class do the iterating.
     return parent::map($source_item, $target_node);
   }
@@ -219,33 +222,38 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
   /**
    * Return available mapping targets.
+   *
+   * Static cached, may be called multiple times in a page load.
    */
   public function getMappingTargets() {
-    $targets = array(
-      'title' => array(
-        'name' => t('Title'),
-       ),
-      'status' => array(
-        'name' => t('Published status'),
-      ),
-      'created' => array(
-        'name' => t('Published date'),
-      ),
-      // Using 'teaser' instead of 'body' forces entire content above the break.
-      'body' => array(
-        'name' => t('Body'),
-      ),
-      'url' => array(
-        'name' => t('URL'),
-        'optional_unique' => TRUE,
-      ),
-      'guid' => array(
-        'name' => t('GUID'),
-        'optional_unique' => TRUE,
-      ),
-    );
-    // @todo: document.
-    drupal_alter('feeds_node_processor_targets', $targets);
+    static $targets;
+    if (empty($targets)) {
+      $targets = array(
+        'title' => array(
+          'name' => t('Title'),
+         ),
+        'status' => array(
+          'name' => t('Published status'),
+        ),
+        'created' => array(
+          'name' => t('Published date'),
+        ),
+        // Using 'teaser' instead of 'body' forces entire content above the break.
+        'body' => array(
+          'name' => t('Body'),
+        ),
+        'url' => array(
+          'name' => t('URL'),
+          'optional_unique' => TRUE,
+        ),
+        'guid' => array(
+          'name' => t('GUID'),
+          'optional_unique' => TRUE,
+        ),
+      );
+      self::loadMappers();
+      drupal_alter('feeds_node_processor_targets', $targets, $this->config['content_type']);
+    }
     return $targets;
   }
 
@@ -271,5 +279,25 @@ class FeedsNodeProcessor extends FeedsProcessor {
       }
     }
     return 0;
+  }
+
+  /**
+   * Loads on-behalf implementations from mappers/
+   */
+  protected static function loadMappers() {
+    static $loaded = FALSE;
+
+    if (!$loaded) {
+      $path = drupal_get_path('module', 'feeds') .'/mappers';
+      $files = drupal_system_listing('.*\.inc$', $path, 'name', 0);
+      foreach ($files as $file) {
+        if (strstr($file->filename, '/mappers/')) {
+  	      require_once("./$file->filename");
+        }
+      }
+      // Rebuild cache.
+      module_implements('', FALSE, TRUE);
+    }
+    $loaded = TRUE;
   }
 }

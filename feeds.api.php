@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.api.php,v 1.1 2009/10/20 21:03:08 alexb Exp $
+// $Id: feeds.api.php,v 1.2 2009/10/28 00:02:21 alexb Exp $
 
 /**
  * @file
@@ -19,7 +19,28 @@ function hook_feeds_after_import(FeedsImporter $importer, FeedsSource $source) {
 }
 
 /**
- * Alter mapping targets.
+ * Alter mapping targets for nodes. Use this hook to add additional target
+ * options to the mapping form of Node processors.
+ *
+ * For an example implementation, see mappers/content.inc
+ *
+ * @param &$targets
+ *   Array containing the targets to be offered to the user. Add to this array
+ *   to expose additional options. Remove from this array to suppress options.
+ *   Remove with caution.
+ * @param $content_type
+ *   The content type of the target node.
+ */
+function hook_feeds_node_processor_targets_alter(&$targts, $content_type) {
+  $targets['my_node_field'] = array(
+    'name' => t('My custom node field'),
+    'callback' => 'my_callback',
+  );
+}
+
+/**
+ * Alter mapping targets for taxonomy terms. Use this hook to add additional
+ * target options to the mapping form of Taxonomy term processor.
  *
  * @param &$targets
  *   Array containing the targets to be offered to the user. Add to this array

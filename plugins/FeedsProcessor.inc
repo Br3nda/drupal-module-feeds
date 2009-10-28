@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.1 2009/10/20 21:03:08 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.2 2009/10/28 00:02:21 alexb Exp $
 
 /**
  * Abstract class, defines interface for processors.
@@ -61,10 +61,21 @@ abstract class FeedsProcessor extends FeedsPlugin {
     the parser's getSourceElement() method to retrieve the value of the source
     element and pass it to the processor's setTargetElement() to stick it
     on the right place of the target item.
+
+    If the mapping specifies a callback method, use the callback instead of
+    setTargetElement().
     */
+    $targets = $this->getMappingTargets();
     foreach ($this->config['mappings'] as $mapping) {
       $value = $parser->getSourceElement($source_item, $mapping['source']);
-      $this->setTargetElement($target_item, $mapping['target'], $value);
+
+      if (isset($targets[$mapping['target']]['callback']) && function_exists($targets[$mapping['target']]['callback'])) {
+        $callback = $targets[$mapping['target']]['callback'];
+        $callback($target_item, $mapping['target'], $value);
+      }
+      else {
+        $this->setTargetElement($target_item, $mapping['target'], $value);
+      }
     }
     return $target_item;
   }
