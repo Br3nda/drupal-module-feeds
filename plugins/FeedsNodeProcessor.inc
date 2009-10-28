@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.9 2009/10/28 01:08:30 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.10 2009/10/28 01:12:47 alexb Exp $
 
 /**
  * @file
@@ -229,7 +229,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $targets = array(
       'title' => array(
         'name' => t('Title'),
-        'description' => t('The title of the node'),
+        'description' => t('The title of the node.'),
        ),
       'status' => array(
         'name' => t('Published status'),

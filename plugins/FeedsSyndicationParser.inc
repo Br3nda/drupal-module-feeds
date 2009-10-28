@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSyndicationParser.inc,v 1.4 2009/10/20 20:59:04 alexb Exp $
+// $Id: FeedsSyndicationParser.inc,v 1.5 2009/10/28 01:12:47 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -31,13 +31,34 @@ class FeedsSyndicationParser extends FeedsParser {
    */
   public function getMappingSources() {
     return array(
-      'title' => t('Title'),
-      'description' => t('Description'),
-      'author' => t('Author'),
-      'timestamp' => t('Published date'),
-      'url' => t('Item URL (link)'),
-      'guid' => t('Item GUID'),
-      'tags' => t('Categories'),
+      'title' => array(
+        'name' => t('Title'),
+        'description' => t('The title of the feed item.'),
+      ),
+      'description' => array(
+        'name' => t('Description'),
+        'description' => t('Description of the feed item.'),
+      ),
+      'author' => array(
+        'name' => t('Author'),
+        'description' => t('Author of the feed item (string).'),
+      ),
+      'timestamp' => array(
+        'name' => t('Published date'),
+        'description' => t('The published date as UNIX time GMT of the feed item.'),
+      ),
+      'url' => array(
+        'name' => t('Item URL (link)'),
+        'description' => t('The URLl of the feed item.'),
+      ),
+      'guid' => array(
+        'name' => t('Item GUID'),
+        'description' => t('The Global Unique Identifier of the feed item.'),
+      ),
+      'tags' => array(
+        'name' => t('Categories'),
+        'description' => t('An array of categories that have been assigned to the feed item.'),
+      ),
      );
   }
 }
