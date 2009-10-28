@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.21 2009/10/28 01:02:54 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.22 2009/10/28 01:13:27 alexb Exp $
 
 /**
  * @file
@@ -807,7 +807,7 @@ function theme_feeds_ui_mapping_form($form) {
     );
   }
   if (count($rows)) {
-    $legend .= '<h3>'. t('Sources') .'</h3>';
+    $legend .= '<h4>'. t('Sources') .'</h4>';
     $legend .= theme('table', array(t('Name'), t('Description')), $rows);
   }
 
@@ -819,7 +819,7 @@ function theme_feeds_ui_mapping_form($form) {
       drupal_render($form['legendset']['legend']['targets'][$k]['description']),
     );
   }
-  $legend .= '<h3>'. t('Targets') .'</h3>';
+  $legend .= '<h4>'. t('Targets') .'</h4>';
   $legend .= theme('table', array(t('Name'), t('Description')), $rows);
 
   // Stick tables into collapsible fieldset.
