@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.20 2009/10/28 00:55:34 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.21 2009/10/28 01:02:54 alexb Exp $
 
 /**
  * @file
@@ -505,6 +505,9 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
       $legend['sources'][$k]['description']['#value'] = (is_array($source) && !empty($source['description'])) ? $source['description'] : '';
     }
   }
+  else {
+    $legend['sources']['#value'] = t('This parser supports free source definitions. Enter the name of the source field in lower case into the Source text field above.');
+  }
   $targets = $importer->processor->getMappingTargets();
   $target_options = _feeds_ui_format_options($targets);
   foreach ($targets as $k => $target) {
@@ -795,6 +798,7 @@ function theme_feeds_ui_mapping_form($form) {
   $output .= theme('table', $header, $rows);
 
   // Build the help table that explains available sources.
+  $legend = '';
   $rows = array();
   foreach (element_children($form['legendset']['legend']['sources']) as $k) {
     $rows[] = array(
@@ -802,8 +806,10 @@ function theme_feeds_ui_mapping_form($form) {
       drupal_render($form['legendset']['legend']['sources'][$k]['description']),
     );
   }
-  $legend = '<h3>'. t('Sources') .'</h3>';
-  $legend .= theme('table', array(t('Name'), t('Description')), $rows);
+  if (count($rows)) {
+    $legend .= '<h3>'. t('Sources') .'</h3>';
+    $legend .= theme('table', array(t('Name'), t('Description')), $rows);
+  }
 
   // Build the help table that explains available targets.
   $rows = array();
