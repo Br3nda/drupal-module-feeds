@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_defaults.defaults.inc,v 1.1 2009/10/23 22:37:15 alexb Exp $
+// $Id: feeds_defaults.defaults.inc,v 1.2 2009/10/28 00:17:11 alexb Exp $
 
 /**
  * @file
@@ -165,7 +165,7 @@ function _feeds_defaults_feeds_importer_default() {
   $feeds_importer->id = 'feed';
   $feeds_importer->config = array(
     'name' => 'Feed',
-    'description' => 'Import RSS or Atom feeds.',
+    'description' => 'Import RSS or Atom feeds, create nodes from feed items.',
     'fetcher' => array(
       'plugin_key' => 'FeedsHTTPFetcher',
       'config' => array(
@@ -229,7 +229,7 @@ function _feeds_defaults_feeds_importer_default() {
     $feeds_importer->id = 'feed_fast';
     $feeds_importer->config = array(
       'name' => 'Fast feed',
-      'description' => 'Creates light weight database records from feed items. Faster than aggregating nodes.',
+      'description' => 'Create light weight database records from feed items. Faster than aggregating nodes.',
       'fetcher' => array(
         'plugin_key' => 'FeedsHTTPFetcher',
         'config' => array(
@@ -285,7 +285,7 @@ function _feeds_defaults_feeds_importer_default() {
   $feeds_importer->id = 'node';
   $feeds_importer->config = array(
     'name' => 'Node import',
-    'description' => 'Imports nodes from CSV file.',
+    'description' => 'Import nodes from CSV file.',
     'fetcher' => array(
       'plugin_key' => 'FeedsFileFetcher',
       'config' => array(),
