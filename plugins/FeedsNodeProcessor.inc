@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.8 2009/10/28 00:09:24 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.9 2009/10/28 01:08:30 alexb Exp $
 
 /**
  * @file
@@ -229,23 +229,29 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $targets = array(
       'title' => array(
         'name' => t('Title'),
+        'description' => t('The title of the node'),
        ),
       'status' => array(
         'name' => t('Published status'),
+        'description' => t('Whether a node is published or not. 1 stands for published, 0 for not published.'),
       ),
       'created' => array(
         'name' => t('Published date'),
+        'description' => t('The UNIX time when a node has been published.'),
       ),
       // Using 'teaser' instead of 'body' forces entire content above the break.
       'body' => array(
         'name' => t('Body'),
+        'description' => t('The body of the node. The teaser will be the same as the entire body.'),
       ),
       'url' => array(
         'name' => t('URL'),
+        'description' => t('The external URL of the node. E. g. the feed item URL in the case of a syndication feed. May be unique.'),
         'optional_unique' => TRUE,
       ),
       'guid' => array(
         'name' => t('GUID'),
+        'description' => t('The external GUID of the node. E. g. the feed item GUID in the case of a syndication feed. May be unique.'),
         'optional_unique' => TRUE,
       ),
     );
