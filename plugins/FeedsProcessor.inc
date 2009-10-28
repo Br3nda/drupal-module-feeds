@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.2 2009/10/28 00:02:21 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.3 2009/10/28 00:09:24 alexb Exp $
 
 /**
  * Abstract class, defines interface for processors.
@@ -51,6 +51,12 @@ abstract class FeedsProcessor extends FeedsPlugin {
    * Execute mapping on an item.
    */
   protected function map($source_item, $target_item = NULL) {
+
+    // Static cache $targets as getMappingTargets() may be an expensive method.
+    static $targets;
+    if (empty($targets)) {
+      $targets = $this->getMappingTargets();
+    }
     $parser = feeds_importer($this->id)->parser;
     if (empty($target_item)) {
       $target_item = array();
@@ -65,7 +71,6 @@ abstract class FeedsProcessor extends FeedsPlugin {
     If the mapping specifies a callback method, use the callback instead of
     setTargetElement().
     */
-    $targets = $this->getMappingTargets();
     foreach ($this->config['mappings'] as $mapping) {
       $value = $parser->getSourceElement($source_item, $mapping['source']);
 

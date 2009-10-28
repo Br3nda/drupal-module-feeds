@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.7 2009/10/28 00:02:21 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.8 2009/10/28 00:09:24 alexb Exp $
 
 /**
  * @file
@@ -226,34 +226,33 @@ class FeedsNodeProcessor extends FeedsProcessor {
    * Static cached, may be called multiple times in a page load.
    */
   public function getMappingTargets() {
-    static $targets;
-    if (empty($targets)) {
-      $targets = array(
-        'title' => array(
-          'name' => t('Title'),
-         ),
-        'status' => array(
-          'name' => t('Published status'),
-        ),
-        'created' => array(
-          'name' => t('Published date'),
-        ),
-        // Using 'teaser' instead of 'body' forces entire content above the break.
-        'body' => array(
-          'name' => t('Body'),
-        ),
-        'url' => array(
-          'name' => t('URL'),
-          'optional_unique' => TRUE,
-        ),
-        'guid' => array(
-          'name' => t('GUID'),
-          'optional_unique' => TRUE,
-        ),
-      );
-      self::loadMappers();
-      drupal_alter('feeds_node_processor_targets', $targets, $this->config['content_type']);
-    }
+    $targets = array(
+      'title' => array(
+        'name' => t('Title'),
+       ),
+      'status' => array(
+        'name' => t('Published status'),
+      ),
+      'created' => array(
+        'name' => t('Published date'),
+      ),
+      // Using 'teaser' instead of 'body' forces entire content above the break.
+      'body' => array(
+        'name' => t('Body'),
+      ),
+      'url' => array(
+        'name' => t('URL'),
+        'optional_unique' => TRUE,
+      ),
+      'guid' => array(
+        'name' => t('GUID'),
+        'optional_unique' => TRUE,
+      ),
+    );
+
+    self::loadMappers();
+    drupal_alter('feeds_node_processor_targets', $targets, $this->config['content_type']);
+
     return $targets;
   }
 
