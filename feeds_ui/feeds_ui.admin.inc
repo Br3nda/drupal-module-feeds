@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.19 2009/10/22 02:26:16 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.20 2009/10/28 00:55:34 alexb Exp $
 
 /**
  * @file
@@ -499,9 +499,27 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
   // Some parsers do not define mapping sources but let them define on the fly.
   if ($sources = $importer->parser->getMappingSources()) {
     $source_options = _feeds_ui_format_options($sources);
+    foreach ($sources as $k => $source) {
+      // @todo: make format homogenous.
+      $legend['sources'][$k]['name']['#value'] = is_array($source) ? $source['name'] : $source;
+      $legend['sources'][$k]['description']['#value'] = (is_array($source) && !empty($source['description'])) ? $source['description'] : '';
+    }
   }
   $targets = $importer->processor->getMappingTargets();
   $target_options = _feeds_ui_format_options($targets);
+  foreach ($targets as $k => $target) {
+    $legend['targets'][$k]['name']['#value'] = empty($target['name']) ? $k : $target['name'];
+    $legend['targets'][$k]['description']['#value'] = empty($target['description']) ? '' : $target['description'];
+  }
+
+  $form['legendset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Legend'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#tree' => TRUE,
+  );
+  $form['legendset']['legend'] = $legend;
 
   // Add unique and remove forms to mappings.
   $mappings = $importer->processor->getMappings();
@@ -741,6 +759,7 @@ function theme_feeds_ui_container($container) {
  */
 function theme_feeds_ui_mapping_form($form) {
 
+  // Build the actual mapping table.
   $header = array(
     t('Source'),
     t('Target'),
@@ -774,6 +793,36 @@ function theme_feeds_ui_mapping_form($form) {
   );
   $output = '<div class="help feeds-admin-ui""'. drupal_render($form['help']) .'</div>';
   $output .= theme('table', $header, $rows);
+
+  // Build the help table that explains available sources.
+  $rows = array();
+  foreach (element_children($form['legendset']['legend']['sources']) as $k) {
+    $rows[] = array(
+      drupal_render($form['legendset']['legend']['sources'][$k]['name']),
+      drupal_render($form['legendset']['legend']['sources'][$k]['description']),
+    );
+  }
+  $legend = '<h3>'. t('Sources') .'</h3>';
+  $legend .= theme('table', array(t('Name'), t('Description')), $rows);
+
+  // Build the help table that explains available targets.
+  $rows = array();
+  foreach (element_children($form['legendset']['legend']['targets']) as $k) {
+    $rows[] = array(
+      drupal_render($form['legendset']['legend']['targets'][$k]['name']),
+      drupal_render($form['legendset']['legend']['targets'][$k]['description']),
+    );
+  }
+  $legend .= '<h3>'. t('Targets') .'</h3>';
+  $legend .= theme('table', array(t('Name'), t('Description')), $rows);
+
+  // Stick tables into collapsible fieldset.
+  $form['legendset']['legend'] = array(
+    '#value' => '<div>'. $legend .'</div>',
+  );
+
+  $output .= drupal_render($form['legendset']);
+
   $output .= drupal_render($form);
   return $output;
 }
