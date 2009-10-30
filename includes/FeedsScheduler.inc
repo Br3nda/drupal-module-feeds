@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.3 2009/10/21 15:45:57 alexb Exp $
+// $Id: FeedsScheduler.inc,v 1.4 2009/10/30 23:56:53 alexb Exp $
 
 /**
  * @file
@@ -111,7 +111,11 @@ class FeedsScheduler implements IFeedsScheduler {
     // Get feeds configuration, check whether drupal_queue is present and set
     // parameters accordingly.
     if ($importers = feeds_importer_load_all()) {
-      $use_queue = module_exists('drupal_queue');
+
+      if ($use_queue = module_exists('drupal_queue')) {
+        drupal_queue_include();
+        $queue = drupal_queue_get(FEEDS_SCHEDULER_QUEUE);
+      }
       $num = variable_get('feeds_schedule_num', $use_queue ? 200 : 5);
       $num = $num ? $num : 1;
 
