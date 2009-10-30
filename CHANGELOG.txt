@@ -1,0 +1,16 @@
+// $Id: CHANGELOG.txt,v 1.1 2009/10/30 22:02:42 alexb Exp $
+
+Feeds 6.x 1.0 xxx, 2009-xx-xx
+-----------------------------
+
+- #619110 Fix node_delete() in FeedsNodeProcessor
+
+Feeds 6.x 1.0 Alpha 5, 2009-10-23
+---------------------------------
+
+- #584500 Add Feeds default module
+
+Feeds 6.x 1.0 Alpha 4, 2009-10-21
+---------------------------------
+
+- Initial release
