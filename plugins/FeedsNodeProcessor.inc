@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.11 2009/10/30 16:55:48 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.12 2009/10/30 21:55:06 alexb Exp $
 
 /**
  * @file
@@ -62,8 +62,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
   /**
    * Implementation of FeedsProcessor::clear().
    * @todo: use batch API.
-   * @todo: node_delete() fails when user does not have appropriate permissions.
-   *   http://drupal.org/node/619110
    */
   public function clear(FeedsSource $source) {
     // Count number of deleted nodes.
@@ -71,7 +69,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
     $result = db_query('SELECT nid FROM {feeds_node_item} WHERE feed_nid = %d', $source->feed_nid);
     while ($node = db_fetch_object($result)) {
-      node_delete($node->nid);
+      _feeds_node_delete($node->nid);
       $deleted++;
     }
 
@@ -100,7 +98,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     // processing support for import and expiry.
     $result = db_query('SELECT n.nid FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = "%s" AND n.created < %d', $this->id, FEEDS_REQUEST_TIME - $time, 0, 50);
     while ($node = db_fetch_object($result)) {
-      node_delete($node->nid);
+      _feeds_node_delete($node->nid);
     }
   }
 
@@ -185,7 +183,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $form['content_type'] = array(
       '#type' => 'select',
       '#title' => t('Content type'),
-      '#description' => t('Choose node type to create from this feed. <strong>Note:</strong> Users with "import !feed_id feeds" permissions will be able to <strong>import</strong> nodes of the content type selected here regardless of the node level permissions. However, users with "clear !feed_id permissions" need to have sufficient node level permissions to delete the imported nodes.', array('!feed_id' => $this->id)),
+      '#description' => t('Choose node type to create from this feed. <strong>Note:</strong> Users with "import !feed_id feeds" permissions will be able to <strong>import</strong> nodes of the content type selected here regardless of the node level permissions. Further, users with "clear !feed_id permissions" will be able to <strong>delete</strong> imported nodes regardless of their node level permissions.', array('!feed_id' => $this->id)),
       '#options' => $types,
       '#default_value' => $this->config['content_type'],
     );
@@ -307,4 +305,31 @@ class FeedsNodeProcessor extends FeedsProcessor {
     }
     $loaded = TRUE;
   }
+}
+
+/**
+ * Copy of node_delete() that circumvents node_access().
+ *
+ * Used for batch deletion.
+ */
+function _feeds_node_delete($nid) {
+
+  $node = node_load($nid);
+
+  db_query('DELETE FROM {node} WHERE nid = %d', $node->nid);
+  db_query('DELETE FROM {node_revisions} WHERE nid = %d', $node->nid);
+
+  // Call the node-specific callback (if any):
+  node_invoke($node, 'delete');
+  node_invoke_nodeapi($node, 'delete');
+
+  // Clear the page and block caches.
+  cache_clear_all();
+
+  // Remove this node from the search index if needed.
+  if (function_exists('search_wipe')) {
+    search_wipe($node->nid, 'node');
+  }
+  watchdog('content', '@type: deleted %title.', array('@type' => $node->type, '%title' => $node->title));
+  drupal_set_message(t('@type %title has been deleted.', array('@type' => node_get_types('name', $node), '%title' => $node->title)));
 }
