@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.9 2009/10/23 23:00:55 alexb Exp $
+$Id: README.txt,v 1.10 2009/10/31 15:19:12 alexb Exp $
 
 
 "It feeds"
@@ -42,7 +42,7 @@ Requirements
 Installation
 ============
 
-- Install Feeds, Feeds Admin UI and Feeds defaults. 
+- Install Feeds, Feeds Admin UI and Feeds defaults.
 - Navigate to admin/build/feeds.
 - Enable one or more default configuration or create your own: from scratch or
   by cloning.
@@ -85,7 +85,7 @@ Default:     'FeedsScheduler'
 Description: The class to use for scheduling feed refreshing.
 
 Name:        feeds_worker_time
-Default:     60
+Default:     15
 Description: Execution time for a queue worker, only effective if used with
              drupal_queue.
 

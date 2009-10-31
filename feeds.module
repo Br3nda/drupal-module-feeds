@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.16 2009/10/30 23:56:53 alexb Exp $
+// $Id: feeds.module,v 1.17 2009/10/31 15:19:12 alexb Exp $
 
 /**
  * @file
@@ -42,7 +42,7 @@ function feeds_cron_queue_info() {
   $queues = array();
   $queues[FEEDS_SCHEDULER_QUEUE] = array(
     'worker callback' => 'feeds_scheduler_work',
-    'time' => variable_get('feeds_worker_time', 60),
+    'time' => variable_get('feeds_worker_time', 15),
   );
   return $queues;
 }
