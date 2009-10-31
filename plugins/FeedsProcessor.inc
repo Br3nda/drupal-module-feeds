@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.3 2009/10/28 00:09:24 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.4 2009/10/31 14:30:27 alexb Exp $
 
 /**
  * Abstract class, defines interface for processors.
@@ -74,7 +74,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
     foreach ($this->config['mappings'] as $mapping) {
       $value = $parser->getSourceElement($source_item, $mapping['source']);
 
-      if (isset($targets[$mapping['target']]['callback']) && function_exists($targets[$mapping['target']]['callback'])) {
+      if (is_array($targets[$mapping['target']]) && isset($targets[$mapping['target']]['callback']) && function_exists($targets[$mapping['target']]['callback'])) {
         $callback = $targets[$mapping['target']]['callback'];
         $callback($target_item, $mapping['target'], $value);
       }
