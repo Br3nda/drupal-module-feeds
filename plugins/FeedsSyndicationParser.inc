@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSyndicationParser.inc,v 1.5 2009/10/28 01:12:47 alexb Exp $
+// $Id: FeedsSyndicationParser.inc,v 1.6 2009/11/02 19:48:35 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -39,8 +39,8 @@ class FeedsSyndicationParser extends FeedsParser {
         'name' => t('Description'),
         'description' => t('Description of the feed item.'),
       ),
-      'author' => array(
-        'name' => t('Author'),
+      'author_name' => array(
+        'name' => t('Author name'),
         'description' => t('Author of the feed item (string).'),
       ),
       'timestamp' => array(
