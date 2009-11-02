@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.10 2009/10/31 15:19:12 alexb Exp $
+$Id: README.txt,v 1.11 2009/11/02 20:40:22 alexb Exp $
 
 
 "It feeds"
@@ -91,10 +91,15 @@ Description: Execution time for a queue worker, only effective if used with
 
 Name:        feeds_schedule_num
 Default:     5
-             200 if drupal_queue is enabled
-Description: The number of feeds to refresh on cron time.
-             If drupal_queue is enabled, the maximum number of feeds to move to
-             queue.
+Description: The number of feeds to import on cron time.
+             Only has an effect if Drupal Queue is *not* enabled.
+             http://drupal.org/project/drupal_queue
+
+Name:        feeds_schedule_queue_num
+Default:     200
+             The number of feeds to queue on cron time. Only has an effect if
+             Drupal Queue is enabled.
+             http://drupal.org/project/drupal_queue
 
 Glossary
 ========
