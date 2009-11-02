@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.1 2009/10/20 21:03:08 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.2 2009/11/02 20:48:52 alexb Exp $
 
 /**
  * @file
@@ -154,6 +154,7 @@ class FeedsTermProcessor extends FeedsProcessor {
     $targets = array(
       'name' => array(
         'name' => t('Term name'),
+        'description' => t('Name of the taxonomy term.'),
         'optional_unique' => TRUE,
        ),
     );
