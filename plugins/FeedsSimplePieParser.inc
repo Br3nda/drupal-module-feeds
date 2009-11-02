@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.3 2009/11/02 20:01:25 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.4 2009/11/02 20:05:10 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -44,8 +44,11 @@ class FeedsSimplePieParser extends FeedsParser {
       $item['title'] = ($title = $simplepie_item->get_title()) ? $title : $this->createTitle($simplepie_item->get_content());
       $item['description'] = $simplepie_item->get_content();
       $item['url'] = html_entity_decode($simplepie_item->get_link());
-      // U = std. unix timestamp
+      // Use UNIX time. If no date is defined, fall back to FEEDS_REQUEST_TIME.
       $item['timestamp'] = $simplepie_item->get_date("U");
+      if (empty($item['timestamp'])) {
+        $item['timestamp'] = FEEDS_REQUEST_TIME;
+      }
       $item['guid'] = $simplepie_item->get_id();
       // Use URL as GUID if there is no GUID.
       if (empty($item['guid'])) {
