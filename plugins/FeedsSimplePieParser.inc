@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.2 2009/11/02 19:48:15 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.3 2009/11/02 20:01:25 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -105,20 +105,58 @@ class FeedsSimplePieParser extends FeedsParser {
    */
   public function getMappingSources() {
     return array(
-      'title' => t('Title'),
-      'description' => t('Description'),
-      'author_name' => t('Author name'),
-      'author_link' => t('Author link'),
-      'author_email' => t('Author email'),
-      'timestamp' => t('Published date'),
-      'date_raw' => t('Published date (raw)'),
-      'url' => t('Item URL (link)'),
-      'guid' => t('Item GUID'),
-      'tags' => t('Categories'),
-      'domains' => t('Category domains'),
-      'location_latitude' => t('Latitudes'),
-      'location_longitude' => t('Longitudes'),
-      'enclosures' => t('Enclosures'),
+      'title' => array(
+        'name' => t('Title'),
+        'description' => t('Title of the feed item.'),
+      ),
+      'description' => array(
+        'name' => t('Description'),
+        'description' => t('Description of the feed item.'),
+      ),
+      'author_name' => array(
+        'name' => t('Author name'),
+        'description' => t('Name of the feed item\'s author.'),
+      ),
+      'author_link' => array(
+        'name' => t('Author link'),
+        'description' => t('Link to the feed item\'s author.'),
+      ),
+      'author_email' => array(
+        'name' => t('Author email'),
+        'description' => t('Email address of the feed item\'s author.'),
+      ),
+      'timestamp' => array(
+        'name' => t('Published date'),
+        'description' => t('Published date as UNIX time GMT of the feed item.'),
+      ),
+      'url' => array(
+        'name' => t('Item URL (link)'),
+        'description' => t('URL of the feed item.'),
+      ),
+      'guid' => array(
+        'name' => t('Item GUID'),
+        'description' => t('Global Unique Identifier of the feed item.'),
+      ),
+      'tags' => array(
+        'name' => t('Categories'),
+        'description' => t('An array of categories that have been assigned to the feed item.'),
+      ),
+      'domains' => array(
+        'name' => t('Category domains'),
+        'description' => t('Domains of the categories.'),
+      ),
+      'location_latitude' => array(
+        'name' => t('Latitudes'),
+        'description' => t('An array of latitudes assigned to the feed item.'),
+      ),
+      'location_longitude' => array(
+        'name' => t('Longitudes'),
+        'description' => t('An array of longitudes assigned to the feed item.'),
+      ),
+      'enclosures' => array(
+        'name' => t('Enclosures'),
+        'description' => t('An array of enclosures attached to the feed item.'),
+      ),
      );
   }
 
