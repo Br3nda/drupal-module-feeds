@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.1 2009/10/20 21:03:08 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.2 2009/11/02 19:48:15 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -51,7 +51,10 @@ class FeedsSimplePieParser extends FeedsParser {
       if (empty($item['guid'])) {
         $item['guid'] = $item['url'];
       }
-      $item['author'] = $simplepie_item->get_author();
+      $author = $simplepie_item->get_author();
+      $item['author_name'] = $author->name;
+      $item['author_link'] = $author->link;
+      $item['author_email'] = $author->email;
       // Enclosures
       $enclosures = $simplepie_item->get_enclosures();
       if (is_array($enclosures)) {
@@ -104,7 +107,9 @@ class FeedsSimplePieParser extends FeedsParser {
     return array(
       'title' => t('Title'),
       'description' => t('Description'),
-      'author' => t('Author'),
+      'author_name' => t('Author name'),
+      'author_link' => t('Author link'),
+      'author_email' => t('Author email'),
       'timestamp' => t('Published date'),
       'date_raw' => t('Published date (raw)'),
       'url' => t('Item URL (link)'),
