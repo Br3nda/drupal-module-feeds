@@ -1,9 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.1 2009/10/30 22:02:42 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.2 2009/11/02 20:28:58 alexb Exp $
 
 Feeds 6.x 1.0 xxx, 2009-xx-xx
 -----------------------------
 
 - #619110 Fix node_delete() in FeedsNodeProcessor
+- Add descriptions to all mapping sources and targets
 
 Feeds 6.x 1.0 Alpha 5, 2009-10-23
 ---------------------------------
