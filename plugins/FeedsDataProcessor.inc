@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.3 2009/10/23 20:24:47 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.4 2009/11/02 20:18:35 alexb Exp $
 
 /**
  * @file
@@ -141,8 +141,15 @@ class FeedsDataProcessor extends FeedsProcessor {
       foreach ($schema['fields'] as $field_name => $field) {
         if (!in_array($field_name, array('id', 'feed_nid'))) {
           // Any existing field can be optionally unique.
+          // @todo: push this reverse mapping of spec to short name into data
+          // module.
+          $type = $field['type'];
+          if ($type == 'int' && $field['unsigned']) {
+            $type = 'unsigned int';
+          }
           $existing_fields[$field_name] = array(
             'name' => empty($meta['fields'][$field_name]['label']) ? $field_name : $meta['fields'][$field_name]['label'],
+            'description' => t('Field of type !type.', array('!type' => $type)),
             'optional_unique' => TRUE,
           );
         }
@@ -156,8 +163,13 @@ class FeedsDataProcessor extends FeedsProcessor {
         foreach ($schema['fields'] as $field_name => $field) {
           if (!in_array($field_name, array('id', 'feed_nid'))) {
             // Fields in joined tables can't be unique.
+            $type = $field['type'];
+            if ($type == 'int' && $field['unsigned']) {
+              $type = 'unsigned int';
+            }
             $existing_fields["$table.$field_name"] = array(
               'name' => $table .'.'. (empty($meta['fields'][$field_name]['label']) ? $field_name : $meta['fields'][$field_name]['label']),
+              'description' => t('Joined field of type !type.', array('!type' => $type)),
               'optional_unique' => FALSE,
             );
           }
@@ -168,7 +180,10 @@ class FeedsDataProcessor extends FeedsProcessor {
     // Now add data field types as mapping targets.
     $field_types = drupal_map_assoc(array_keys(data_get_field_definitions()));
     foreach ($field_types as $k => $v) {
-      $new_fields['new:'. $k] = t('[new] !type', array('!type' => $v));
+      $new_fields['new:'. $k] = array(
+        'name' => t('[new] !type', array('!type' => $v)),
+        'description' => t('Creates a new column of type !type.', array('!type' => $v)),
+      );
     }
     return $new_fields + $existing_fields;
   }
