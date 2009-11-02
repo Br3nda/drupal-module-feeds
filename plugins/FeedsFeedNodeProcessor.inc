@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFeedNodeProcessor.inc,v 1.2 2009/10/23 20:24:26 alexb Exp $
+// $Id: FeedsFeedNodeProcessor.inc,v 1.3 2009/11/02 20:25:04 alexb Exp $
 
 /**
  * @file
@@ -174,20 +174,23 @@ class FeedsFeedNodeProcessor extends FeedsProcessor {
   public function getMappingTargets() {
     $targets = array(
       'title' => array(
-        'name' => t('Title'), // @todo: write out.
+        'name' => t('Title'),
+        'description' => t('The title of the feed node.'),
        ),
       'status' => array(
         'name' => t('Published status'),
+        'description' => t('Whether a feed node is published or not. 1 stands for published, 0 for not published.'),
       ),
       'created' => array(
         'name' => t('Published date'),
+        'description' => t('The UNIX time when a node has been published.'),
       ),
       'body' => array(
         'name' => t('Body'),
+        'description' => t('The body of the node. The teaser will be the same as the entire body.'),
       ),
       'source' => array(
         'name' => t('Feed source'),
-        // @todo: support and show descriptions.
         'description' => t('Depending on the selected fetcher, this could be for example a URL or a path to a file.'),
         'optional_unique' => TRUE,
       ),
