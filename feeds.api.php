@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.api.php,v 1.2 2009/10/28 00:02:21 alexb Exp $
+// $Id: feeds.api.php,v 1.3 2009/11/02 21:02:36 alexb Exp $
 
 /**
  * @file
@@ -34,6 +34,7 @@ function hook_feeds_after_import(FeedsImporter $importer, FeedsSource $source) {
 function hook_feeds_node_processor_targets_alter(&$targts, $content_type) {
   $targets['my_node_field'] = array(
     'name' => t('My custom node field'),
+    'description' => t('Description of what my custom node field does.'),
     'callback' => 'my_callback',
   );
 }
@@ -41,6 +42,9 @@ function hook_feeds_node_processor_targets_alter(&$targts, $content_type) {
 /**
  * Alter mapping targets for taxonomy terms. Use this hook to add additional
  * target options to the mapping form of Taxonomy term processor.
+ *
+ * For an example implementation, look at geotaxnomy module.
+ * http://drupal.org/project/geotaxonomy
  *
  * @param &$targets
  *   Array containing the targets to be offered to the user. Add to this array
@@ -51,7 +55,13 @@ function hook_feeds_node_processor_targets_alter(&$targts, $content_type) {
  */
 function hook_feeds_term_processor_targets_alter(&$targets, $vid) {
   if (variable_get('mymodule_vocabulary_'. $vid, 0)) {
-    $targets['lat'] = t('Latitude');
-    $targets['lon'] = t('Longitude');
+    $targets['lat'] = array(
+      'name' => t('Latitude'),
+      'description' => t('Latitude of the term.'),
+    );
+    $targets['lon'] = array(
+      'name' => t('Longitude'),
+      'description' => t('Longitude of the term.'),
+    );
   }
 }
