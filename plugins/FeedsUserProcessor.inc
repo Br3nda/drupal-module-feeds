@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.1 2009/10/20 21:03:08 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.2 2009/11/02 20:26:57 alexb Exp $
 
 /**
  * @file
@@ -153,14 +153,17 @@ class FeedsUserProcessor extends FeedsProcessor {
     $targets = array(
       'name' => array(
         'name' => t('User name'),
+        'description' => t('Name of the user.'),
         'optional_unique' => TRUE,
        ),
       'mail' => array(
-        'name' => t('E-mail address'),
+        'name' => t('Email address'),
+        'description' => t('Email address of the user.'),
         'optional_unique' => TRUE,
        ),
       'created' => array(
         'name' => t('Created date'),
+        'description' => t('The created (e. g. joined) data of the user.'),
        ),
     );
     return $targets;
