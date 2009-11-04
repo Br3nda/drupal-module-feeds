@@ -1,6 +1,6 @@
-; $Id: feeds_defaults.info,v 1.1 2009/10/23 22:37:15 alexb Exp $
+; $Id: feeds_defaults.info,v 1.2 2009/11/04 13:20:53 alexb Exp $
 core = "6.x"
-name = "Feeds defaults"
+name = "Feeds Defaults"
 package = "Feeds"
 description = "Get started: useful default configurations for Feeds: RSS/Atom aggregation, OPML import, node import and user import."
 project = "Feeds"
