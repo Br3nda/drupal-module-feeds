@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.12 2009/11/04 13:21:26 alexb Exp $
+$Id: README.txt,v 1.13 2009/11/04 17:53:24 alexb Exp $
 
 
 "It feeds"
@@ -57,6 +57,17 @@ API Overview
 
 See "The developer's guide to Feeds":
 http://drupal.org/node/622700
+
+Testing
+=======
+
+For all tests to pass, run tests with the latest releases of these modules
+available in the Drupal search path:
+
+- Views
+- Data
+
+This list does not include modules that are required by Feeds anyway.
 
 Performance
 ===========
