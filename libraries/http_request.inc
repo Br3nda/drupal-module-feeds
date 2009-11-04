@@ -1,5 +1,5 @@
 <?php
-// $Id: http_request.inc,v 1.2 2009/11/01 15:10:47 alexb Exp $
+// $Id: http_request.inc,v 1.3 2009/11/04 17:20:36 alexb Exp $
 
 /**
  * @file
@@ -150,41 +150,53 @@ function http_request_get($url, $username = NULL, $password = NULL, $accept_inva
   if ($curl) {
     $headers[] = 'User-Agent: Drupal (+http://drupal.org/)';
     $result = new stdClass();
-    $download = curl_init($url);
-    curl_setopt($download, CURLOPT_FOLLOWLOCATION, TRUE);
-    if (!empty($username)) {
-      curl_setopt($download, CURLOPT_USERPWD, "{$username}:{$password}");
-    }
-    curl_setopt($download, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($download, CURLOPT_HEADER, TRUE);
-    curl_setopt($download, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($download, CURLOPT_ENCODING, '');
-    if ($accept_invalid_cert) {
-      curl_setopt($download, CURLOPT_SSL_VERIFYPEER, 0);
-    }
-    $header = '';
-    $data = curl_exec($download);
-    $header_size = curl_getinfo($download, CURLINFO_HEADER_SIZE);
-    $header = substr($data, 0, $header_size - 1);
-    $result->data = substr($data, $header_size);
-    $header_lines = preg_split("/\r\n|\n|\r/", $header);
 
-    $result->headers = array();
-    array_shift($header_lines); // skip HTTP response status
-    while ($line = trim(array_shift($header_lines))) {
-      list($header, $value) = explode(':', $line, 2);
-      if (isset($result->headers[$header]) && $header == 'Set-Cookie') {
-        // RFC 2109: the Set-Cookie response header comprises the token Set-
-        // Cookie:, followed by a comma-separated list of one or more cookies.
-        $result->headers[$header] .= ','. trim($value);
-      }
-      else {
-        $result->headers[$header] = trim($value);
-      }
+    // Only download via cURL if we can validate the scheme to be either http or
+    // https.
+    // Validate in PHP, CURLOPT_PROTOCOLS is only supported with cURL 7.19.4
+    $uri = parse_url($url);
+    if ($uri['scheme'] != 'http' && $uri['scheme'] != 'https') {
+      $result->error = 'invalid schema '. $uri['scheme'];
+      $result->code = -1003; // This corresponds to drupal_http_request()
     }
-    $result->code = curl_getinfo($download, CURLINFO_HTTP_CODE);
+    else {
 
-    curl_close($download);
+      $download = curl_init($url);
+      curl_setopt($download, CURLOPT_FOLLOWLOCATION, TRUE);
+      if (!empty($username)) {
+        curl_setopt($download, CURLOPT_USERPWD, "{$username}:{$password}");
+      }
+      curl_setopt($download, CURLOPT_HTTPHEADER, $headers);
+      curl_setopt($download, CURLOPT_HEADER, TRUE);
+      curl_setopt($download, CURLOPT_RETURNTRANSFER, TRUE);
+      curl_setopt($download, CURLOPT_ENCODING, '');
+      if ($accept_invalid_cert) {
+        curl_setopt($download, CURLOPT_SSL_VERIFYPEER, 0);
+      }
+      $header = '';
+      $data = curl_exec($download);
+      $header_size = curl_getinfo($download, CURLINFO_HEADER_SIZE);
+      $header = substr($data, 0, $header_size - 1);
+      $result->data = substr($data, $header_size);
+      $header_lines = preg_split("/\r\n|\n|\r/", $header);
+
+      $result->headers = array();
+      array_shift($header_lines); // skip HTTP response status
+      while ($line = trim(array_shift($header_lines))) {
+        list($header, $value) = explode(':', $line, 2);
+        if (isset($result->headers[$header]) && $header == 'Set-Cookie') {
+          // RFC 2109: the Set-Cookie response header comprises the token Set-
+          // Cookie:, followed by a comma-separated list of one or more cookies.
+          $result->headers[$header] .= ','. trim($value);
+        }
+        else {
+          $result->headers[$header] = trim($value);
+        }
+      }
+      $result->code = curl_getinfo($download, CURLINFO_HTTP_CODE);
+
+      curl_close($download);
+    }
   }
   else {
     $result = drupal_http_request($url, $headers);
