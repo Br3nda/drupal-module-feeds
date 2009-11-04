@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.11 2009/11/02 20:40:22 alexb Exp $
+$Id: README.txt,v 1.12 2009/11/04 13:21:26 alexb Exp $
 
 
 "It feeds"
@@ -43,6 +43,7 @@ Installation
 ============
 
 - Install Feeds, Feeds Admin UI and Feeds defaults.
+- Make sure cron is correctly configured http://drupal.org/cron
 - Navigate to admin/build/feeds.
 - Enable one or more default configuration or create your own: from scratch or
   by cloning.
@@ -54,10 +55,8 @@ Installation
 API Overview
 ============
 
-@todo, in the meantime:
-
-Start reading code in feeds.module and the Feed class in includes/Feed.inc,
-take a look at feeds.plugins.inc to see how plugins are registered.
+See "The developer's guide to Feeds":
+http://drupal.org/node/622700
 
 Performance
 ===========
@@ -104,63 +103,5 @@ Default:     200
 Glossary
 ========
 
-This glossary is introductory and therefore not ordered alphabetically.
-
-Plugin       A plugin is a swappable handler. It can be either a fetcher, a
-             parser or a processor.
-
-             See FeedsPlugin class.
-
-Fetcher      A plugin responsible for downloading, loading or receiving data.
-
-             See FeedsFetcher and extending classes.
-
-Parser       A plugin responsible for bringing fetched data into a digestable
-             format for processors.
-
-             See FeedsParser and extending classes.
-
-Processor    A plugin that "does stuff" with data. Usually a processor stores
-             data in one or the other form (a node, a user, a simple DB record).
-
-             See FeedsProcessor and extending classes.
-
-Feed         A body of data. Can contain a title and feed items. A feed can
-             appear in different forms depending on the import stage: before
-             fetching a feed would be the external document to be fetched. After
-             fetching it would be the raw data dump handed to the parser. After
-             parsing it would be the normalized PHP array that is passed to the
-             processor.
-
-             Depending on the import stage, a feed is represented by a
-             FeedsFetcherResult or a FeedsParserResult.
-
-             See FeedsFetcherResult class, FeedsParserResult class.
-
-Feed item    A feed is assumed to have an array of equally formed entities: feed
-             items. The composition of these items depends on the parser.
-
-Feed source  This is the description of the source of a feed. This can be for
-             example a URL. But a feed source can also have other properties
-             describing a source. For instance, which field delimiter is being
-             used in a CSV file.
-
-             See FeedsSource class.
-
-Importer     An importer contains a specific configuration of one fetcher, one
-             parser and one processor. It is used to import a feed. Importers
-             can be used through a standalone import form available on
-             http://www.example.com/import/ or they can be attached to a content
-             type. In the latter case feeds are imported by creating nodes of
-             such a content type.
-
-             Importers are configured on admin/build/feeds. They are sometimes
-             referred to as "Importer configuration or "Configuration".
-
-             See FeedsImporter class.
-
-Import stage The state of the importing process. The import stages are:
-             fetching, parsing and processing.
-
-Feed node    A node that is used for importing feeds. A feed node is of a
-             content type that has an Importer attached.
+See "Feeds glossary":
+http://drupal.org/node/622710
