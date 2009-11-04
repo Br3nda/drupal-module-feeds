@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.12 2009/10/30 21:55:06 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.13 2009/11/04 17:46:05 alexb Exp $
 
 /**
  * @file
@@ -231,6 +231,17 @@ class FeedsNodeProcessor extends FeedsProcessor {
         'name' => t('Title'),
         'description' => t('The title of the node.'),
        ),
+     );
+    // Include body field only if available.
+    $type = node_get_types('type',  $this->config['content_type']);
+    if ($type->has_body) {
+      // Using 'teaser' instead of 'body' forces entire content above the break.
+      $targets['body'] = array(
+        'name' => t('Body'),
+        'description' => t('The body of the node. The teaser will be the same as the entire body.'),
+      );
+    }
+    $targets += array(
       'status' => array(
         'name' => t('Published status'),
         'description' => t('Whether a node is published or not. 1 stands for published, 0 for not published.'),
@@ -238,11 +249,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
       'created' => array(
         'name' => t('Published date'),
         'description' => t('The UNIX time when a node has been published.'),
-      ),
-      // Using 'teaser' instead of 'body' forces entire content above the break.
-      'body' => array(
-        'name' => t('Body'),
-        'description' => t('The body of the node. The teaser will be the same as the entire body.'),
       ),
       'url' => array(
         'name' => t('URL'),
@@ -256,6 +262,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
       ),
     );
 
+    // Let other modules expose mapping targets.
     self::loadMappers();
     drupal_alter('feeds_node_processor_targets', $targets, $this->config['content_type']);
 
