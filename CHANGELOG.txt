@@ -1,4 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.4 2009/11/03 17:40:55 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.5 2009/11/04 17:47:51 alexb Exp $
+
+Feeds 6.x 1.0 xxxxx x, 200x-xx-xx
+---------------------------------
+
+- Allow cURL only to download via http or https.
+- Throw an exception in FeedsHTTPFetcher if result is not 200.
 
 Feeds 6.x 1.0 Alpha 6, 2009-11-03
 ---------------------------------
