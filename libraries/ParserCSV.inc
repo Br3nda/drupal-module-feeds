@@ -1,5 +1,5 @@
 <?php
-// $Id: ParserCSV.inc,v 1.1 2009/10/20 21:01:35 alexb Exp $
+// $Id: ParserCSV.inc,v 1.2 2009/11/05 18:26:27 alexb Exp $
 
 /**
  * Contains CSV Parser.
@@ -76,7 +76,7 @@ class ParserCSV {
    * By default, the comma (',') is used as delimiter.
    */
   public function setDelimiter($delimiter) {
-    $this->delimiter = ',';
+    $this->delimiter = $delimiter;
   }
 
   /**
