@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.13 2009/11/04 17:53:24 alexb Exp $
+$Id: README.txt,v 1.14 2009/11/10 20:54:50 alexb Exp $
 
 
 "It feeds"
@@ -49,8 +49,18 @@ Installation
   by cloning.
 - Go to import/ to import data.
 - To use SimplePie parser, download SimplePie and place simplepie.inc into
-  feeds/libraries
+  feeds/libraries.
   http://simplepie.org/
+
+Libraries support
+=================
+
+If you are using Libraries module, you can place external libraries in the
+Libraries module's search path (for instance sites/all/libraries. The only
+external library used at the moment is SimplePie.
+
+Libraries found in the libraries search path are preferred over libraries in
+feeds/libraries/.
 
 API Overview
 ============
