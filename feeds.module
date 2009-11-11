@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.17 2009/10/31 15:19:12 alexb Exp $
+// $Id: feeds.module,v 1.18 2009/11/11 03:27:54 alexb Exp $
 
 /**
  * @file
@@ -141,7 +141,6 @@ function feeds_menu() {
 
 /**
  * Menu loader callback.
- * @todo: rename to feeds_importer_load().
  */
 function feeds_importer_load($id) {
   return feeds_importer($id);
