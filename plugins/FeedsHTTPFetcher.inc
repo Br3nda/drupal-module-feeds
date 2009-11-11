@@ -1,10 +1,9 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.2 2009/11/04 17:20:36 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.3 2009/11/11 02:44:55 alexb Exp $
 
 /**
  * @file
  * Home of the FeedsHTTPFetcher.
- * @todo: Use all caps for HTTP.
  */
 
 /**
