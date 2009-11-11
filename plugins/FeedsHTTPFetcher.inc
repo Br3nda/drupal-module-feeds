@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.3 2009/11/11 02:44:55 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.4 2009/11/11 02:56:22 alexb Exp $
 
 /**
  * @file
@@ -23,6 +23,7 @@ class FeedsHTTPFetcher extends FeedsFetcher {
   public function fetch(FeedsSource $source) {
     $source_config = $source->getConfigFor($this);
     $url = $source_config['source'];
+
     feeds_include_library('http_request.inc', 'http_request');
     if ($this->config['auto_detect_feeds']) {
       $result = http_request_get_common_syndication($url);
