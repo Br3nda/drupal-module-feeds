@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.3 2009/10/23 22:38:20 alexb Exp $
+// $Id: feeds.test,v 1.4 2009/11/12 23:56:50 alexb Exp $
 
 /**
  * @file
@@ -135,38 +135,9 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->drupalGet('node/'. $nid);
     $this->assertNoRaw('node/'. $nid .'/import');
     $this->assertNoRaw('node/'. $nid .'/delete-items');
-/*
-    @todo:
-    Can't use on-the-fly permissions. Wait for http://drupal.org/node/601820
 
-    // Login with new user with access content and import syndication feeds
-    // permissions.
-    $this->drupalLogout();
-    $this->drupalLogin(
-      $this->drupalCreateUser(array('import syndication feeds'))
-    );
-    // Navigate to feed node, there should be no Feeds tabs visible.
-    // @todo: actually push import.
-    $this->drupalGet('node/'. $nid);
-    $this->assertRaw('node/'. $nid .'/import');
-    $this->assertNoRaw('node/'. $nid .'/delete-items');
-
-    // Login with new user with access content and clear syndication feeds
-    // permissions.
-    $this->drupalLogout();
-    $this->drupalLogin(
-      $this->drupalCreateUser(array('clear syndication feeds'))
-    );
-    // Navigate to feed node, there should be no Feeds tabs visible.
-    $this->drupalGet('node/'. $nid);
-    $this->assertNoRaw('node/'. $nid .'/import');
-    $this->assertRaw('node/'. $nid .'/delete-items');
- */
-
-   /**
-    * Now create a second feed configuration that is not attached to a content
-    * type and run tests on importing/purging.
-    */
+    // Now create a second feed configuration that is not attached to a content
+    // type and run tests on importing/purging.
 
     // Login with sufficient permissions.
     $this->drupalLogin(
