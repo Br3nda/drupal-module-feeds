@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.13 2009/11/04 17:46:05 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.14 2009/11/13 15:41:15 alexb Exp $
 
 /**
  * @file
@@ -119,6 +119,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     // Assign an aggregated node always to anonymous.
     // @todo: change to feed node uid to keep in line with feedapi.
     $target_node->uid = 0;
+    $target_node->log = 'Created/updated by FeedsNodeProcessor';
 
     // Load all mappers. parent::map() might invoke their callbacks.
     self::loadMappers();

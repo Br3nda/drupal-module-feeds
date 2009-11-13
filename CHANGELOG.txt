@@ -1,4 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.7 2009/11/04 19:35:27 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.8 2009/11/13 15:41:15 alexb Exp $
+
+Feeds 6.x 1.x, XXXX-XX-XX
+--------------------------
+
+- #631248 velosol: Set log message when creating a node in FeedsNodeProcessor.
 
 Feeds 6.x 1.0 Alpha 7, 2009-11-04
 ---------------------------------
