@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.19 2009/11/12 23:34:22 alexb Exp $
+// $Id: feeds.module,v 1.20 2009/11/16 14:52:38 alexb Exp $
 
 /**
  * @file
@@ -315,7 +315,7 @@ function feeds_nodeapi(&$node, $op, $form) {
 function _feeds_nodeapi_node_processor($node, $op) {
   switch ($op) {
     case 'load':
-      if ($result = db_fetch_object(db_query('SELECT imported, guid, url FROM {feeds_node_item} WHERE nid = %d', $node->nid))) {
+      if ($result = db_fetch_object(db_query('SELECT imported, guid, url, feed_nid FROM {feeds_node_item} WHERE nid = %d', $node->nid))) {
         $node->feeds_node_item = $result;
       }
       break;
