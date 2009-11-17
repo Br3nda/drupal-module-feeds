@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.4 2009/11/11 02:56:22 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.5 2009/11/17 20:14:30 alexb Exp $
 
 /**
  * @file
@@ -57,6 +57,7 @@ class FeedsHTTPFetcher extends FeedsFetcher {
       '#title' => t('URL'),
       '#description' => t('Enter a feed URL.'),
       '#default_value' => isset($source_config['source']) ? $source_config['source'] : '',
+      '#maxlength' => NULL,
       '#required' => TRUE,
     );
     return $form;
