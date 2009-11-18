@@ -1,7 +1,7 @@
-// $Id: CHANGELOG.txt,v 1.12 2009/11/18 21:40:12 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.13 2009/11/18 22:01:30 alexb Exp $
 
-Feeds 6.x 1.x, XXXX-XX-XX
---------------------------
+Feeds 6.x 1.0 Alpha 8, 2009-11-18
+---------------------------------
 
 - #634886 Kars-T, EugenMayer: Add vid to node process functions.
 - #613494 miasma: Remove length limit from URL.
