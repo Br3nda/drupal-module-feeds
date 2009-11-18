@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_defaults.test,v 1.1 2009/10/23 22:37:15 alexb Exp $
+// $Id: feeds_defaults.test,v 1.2 2009/11/18 21:50:15 alexb Exp $
 
 /**
  * @file
@@ -280,6 +280,8 @@ class FeedsDefaultsNodeTestCase extends FeedsDefaultsTestCase {
     $this->assertText('Lorem ipsum');
     $this->assertText('Ut wisi enim ad minim veniam');
     $this->assertText('1976');
+    // Nam liber tempor has the same GUID as Lorem ipsum.
+    $this->assertNoText('Nam liber tempor');
 
     // Click through to one node.
     $this->clickLink('Lorem ipsum');
