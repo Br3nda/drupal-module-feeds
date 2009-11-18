@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.14 2009/11/13 15:41:15 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.15 2009/11/18 16:53:48 alexb Exp $
 
 /**
  * @file
@@ -31,8 +31,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
         $node->feeds_node_item->id = $this->id;
         $node->feeds_node_item->imported = FEEDS_REQUEST_TIME;
         $node->feeds_node_item->feed_nid = $source->feed_nid;
+
+        // If updating populate nid and vid avoiding an expensive node_load().
         if (!empty($nid)) {
           $node->nid = $nid;
+          $node->vid = db_result(db_query('SELECT vid FROM {node} WHERE nid = %d', $nid));
         }
 
         // Save the node.

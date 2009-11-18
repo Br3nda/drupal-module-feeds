@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.10 2009/11/17 20:16:32 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.11 2009/11/18 16:53:47 alexb Exp $
 
 Feeds 6.x 1.x, XXXX-XX-XX
 --------------------------
 
+- #634886 Kars-T, EugenMayer: Add vid to node proccess functions.
 - #613494 miasma: Remove length limit from URL.
 - #631050 z.stolar: Add feed_nid on node_load of a feed item.
 - #631248 velosol: Set log message when creating a node in FeedsNodeProcessor.
