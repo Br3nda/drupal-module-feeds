@@ -1,4 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.13 2009/11/18 22:01:30 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.14 2009/11/24 23:28:30 alexb Exp $
+
+Feeds 6.x 1.0 xxxx, 200x-xx-xx
+------------------------------
+
+- #623452 mongolito404: Port basic test infrastructure for mappers, test for
+  basic CCK mapper.
 
 Feeds 6.x 1.0 Alpha 8, 2009-11-18
 ---------------------------------
