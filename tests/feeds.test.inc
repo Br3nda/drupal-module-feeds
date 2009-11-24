@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.2 2009/10/23 22:38:20 alexb Exp $
+// $Id: feeds.test.inc,v 1.3 2009/11/24 23:20:26 alexb Exp $
 
 /**
  * @file
@@ -120,6 +120,21 @@ class FeedsWebTestCase extends DrupalWebTestCase {
       $config = unserialize(db_result(db_query('SELECT config FROM {feeds_importer} WHERE id = "%s"', $id)));
       $this->assertEqual($config[$type]['plugin_key'], $plugin_key, 'Verified correct '. $type .' ('. $plugin_key .').');
     }
+  }
+
+  /**
+   * Set importer or plugin settings.
+   *
+   * @param $id
+   *   The importer configuration's id.
+   * @param $plugin
+   *   The plugin (class) name, or NULL to set importer's settings
+   * @param $settings
+   *   The settings to set.
+   */
+  public function setSettings($id, $plugin, $settings) {
+    $this->drupalPost('admin/build/feeds/edit/'. $id .'/settings/'. $plugin, $settings, 'Save');
+    $this->assertText('Your changes have been saved.');
   }
 
   /**

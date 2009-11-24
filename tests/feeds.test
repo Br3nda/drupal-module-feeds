@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.4 2009/11/12 23:56:50 alexb Exp $
+// $Id: feeds.test,v 1.5 2009/11/24 23:20:26 alexb Exp $
 
 /**
  * @file
@@ -48,7 +48,36 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
   public function test() {
 
     // Create a feed.
-    $this->createFeedConfiguration();
+    $this->createFeedConfiguration('Syndication', 'syndication');
+    $this->addMappings('syndication',
+      array(
+        array(
+          'source' => 'title',
+          'target' => 'title',
+          'unique' => FALSE,
+        ),
+        array(
+          'source' => 'description',
+          'target' => 'body',
+          'unique' => FALSE,
+        ),
+        array(
+          'source' => 'timestamp',
+          'target' => 'created',
+          'unique' => FALSE,
+        ),
+        array(
+          'source' => 'url',
+          'target' => 'url',
+          'unique' => TRUE,
+        ),
+        array(
+          'source' => 'guid',
+          'target' => 'guid',
+          'unique' => TRUE,
+        ),
+      )
+    );
 
     $nid = $this->createFeedNode();
     // Assert 10 items aggregated after creation of the node.
@@ -152,6 +181,35 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
       'content_type' => '',
     );
     $this->drupalPost('admin/build/feeds/edit/syndication_standalone/settings', $edit, 'Save');
+    $this->addMappings('syndication_standalone',
+      array(
+        array(
+          'source' => 'title',
+          'target' => 'title',
+          'unique' => FALSE,
+        ),
+        array(
+          'source' => 'description',
+          'target' => 'body',
+          'unique' => FALSE,
+        ),
+        array(
+          'source' => 'timestamp',
+          'target' => 'created',
+          'unique' => FALSE,
+        ),
+        array(
+          'source' => 'url',
+          'target' => 'url',
+          'unique' => TRUE,
+        ),
+        array(
+          'source' => 'guid',
+          'target' => 'guid',
+          'unique' => TRUE,
+        ),
+      )
+    );
 
     // Import, assert 10 items aggregated after creation of the node.
     $this->importURL('syndication_standalone');
@@ -514,8 +572,37 @@ class FeedsSchedulerTestCase extends FeedsWebTestCase {
    * Test scheduling on cron.
    */
   public function testScheduling() {
-    // Create default configuration, turn off refresh on creation.
+    // Create default configuration.
     $this->createFeedConfiguration();
+    $this->addMappings('syndication',
+      array(
+        array(
+          'source' => 'title',
+          'target' => 'title',
+          'unique' => FALSE,
+        ),
+        array(
+          'source' => 'description',
+          'target' => 'body',
+          'unique' => FALSE,
+        ),
+        array(
+          'source' => 'timestamp',
+          'target' => 'created',
+          'unique' => FALSE,
+        ),
+        array(
+          'source' => 'url',
+          'target' => 'url',
+          'unique' => TRUE,
+        ),
+        array(
+          'source' => 'guid',
+          'target' => 'guid',
+          'unique' => TRUE,
+        ),
+      )
+    );
 
     // Create 10 feed nodes. Turn off import on create before doing that.
     $edit = array(
