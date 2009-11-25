@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.6 2009/11/02 20:40:22 alexb Exp $
+// $Id: FeedsScheduler.inc,v 1.7 2009/11/25 20:41:41 alexb Exp $
 
 /**
  * @file
@@ -9,7 +9,7 @@
 /**
  * Describe a scheduler.
  */
-interface IFeedsScheduler {
+interface FeedsSchedulerInterface {
 
   /**
    * Run Drupal cron.
@@ -48,7 +48,7 @@ interface IFeedsScheduler {
 }
 
 /**
- * Implementation of IFeedsScheduler.
+ * Implementation of FeedsSchedulerInterface.
  *
  * This scheduler uses the last_scheduled_time paradigm: By storing the time
  * when a particular feed was scheduled to be refreshed last rather than
@@ -59,7 +59,7 @@ interface IFeedsScheduler {
  * 2) The time between refreshes will always be scheduled based on when it
  *    has been scheduled last. Less drift occurs.
  */
-class FeedsScheduler implements IFeedsScheduler {
+class FeedsScheduler implements FeedsSchedulerInterface {
 
   // Only used for debugging.
   protected $debugTime;
@@ -82,7 +82,7 @@ class FeedsScheduler implements IFeedsScheduler {
   protected function __construct() {}
 
   /**
-   * Implementation of IFeedsScheduler::cron().
+   * Implementation of FeedsSchedulerInterface::cron().
    *
    * Refreshes scheduled feeds.
    *
@@ -158,7 +158,7 @@ class FeedsScheduler implements IFeedsScheduler {
   }
 
   /**
-   * Implementation of IFeedsScheduler::add().
+   * Implementation of FeedsSchedulerInterface::add().
    *
    * Add a feed to the scheduler.
    *
@@ -181,14 +181,14 @@ class FeedsScheduler implements IFeedsScheduler {
   }
 
   /**
-   * Implementation of IFeedsScheduler::remove().
+   * Implementation of FeedsSchedulerInterface::remove().
    */
   public function remove($importer_id, $callback, $feed_nid = 0) {
     db_query('DELETE FROM {feeds_schedule} WHERE id = "%s" AND callback = "%s" AND feed_nid = %d', $importer_id, $callback, $feed_nid);
   }
 
   /**
-   * Implementation of IFeedsScheduler::work().
+   * Implementation of FeedsSchedulerInterface::work().
    *
    * Refresh a feed.
    *
