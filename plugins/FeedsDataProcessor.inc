@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.4 2009/11/02 20:18:35 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.5 2009/12/03 21:27:40 alexb Exp $
 
 /**
  * @file
@@ -269,7 +269,7 @@ class FeedsDataProcessor extends FeedsProcessor {
    * Return the data table name for this feed.
    */
   protected function tableName() {
-    return 'feeds_data_'. $this->id;
+    return variable_get('feeds_data_'. $this->id, 'feeds_data_'. $this->id);
   }
 
   /**
