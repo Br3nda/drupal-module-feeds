@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.16 2009/11/24 23:20:26 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.17 2009/12/03 20:55:05 alexb Exp $
 
 /**
  * @file
@@ -17,36 +17,56 @@ class FeedsNodeProcessor extends FeedsProcessor {
   public function process(FeedsParserResult $parserResult, FeedsSource $source) {
 
     // Count number of created and updated nodes.
-    $created  = $updated = 0;
+    $created = $updated = 0;
 
     foreach ($parserResult->value['items'] as $item) {
-      // If the target item does not exist OR if update_existing is enabled,
-      // map and save.
+
+      // Create/update if item does not exist or update existing is enabled.
       if (!($nid = $this->existingItemId($item, $source)) || $this->config['update_existing']) {
 
-        // Map item to a node.
-        $node = $this->map($item);
+        $node = new stdClass();
+        $hash = $this->hash($item);
 
-        // Add some default information.
-        $node->feeds_node_item->id = $this->id;
-        $node->feeds_node_item->imported = FEEDS_REQUEST_TIME;
-        $node->feeds_node_item->feed_nid = $source->feed_nid;
-
-        // If updating populate nid and vid avoiding an expensive node_load().
         if (!empty($nid)) {
+
+          // If hash of this item is same as existing hash there is no actual
+          // change, skip.
+          if ($hash == $this->getHash($nid)) {
+            continue;
+          }
+
+          // If updating populate nid and vid avoiding an expensive node_load().
           $node->nid = $nid;
           $node->vid = db_result(db_query('SELECT vid FROM {node} WHERE nid = %d', $nid));
-        }
-
-        // Save the node.
-        node_save($node);
-
-        if ($nid) {
           $updated++;
         }
         else {
           $created++;
         }
+
+        // Populate and prepare node object.
+        $node->type = $this->config['content_type'];
+        $node->feeds_node_item = new stdClass();
+        $node->feeds_node_item->hash = $hash;
+        $node->feeds_node_item->id = $this->id;
+        $node->feeds_node_item->imported = FEEDS_REQUEST_TIME;
+        $node->feeds_node_item->feed_nid = $source->feed_nid;
+        static $included;
+        if (!$included) {
+          module_load_include('inc', 'node', 'node.pages');
+          $included = TRUE;
+        }
+        node_object_prepare($node);
+
+        // Populate properties that are set by node_object_prepare().
+        $node->log = 'Created/updated by FeedsNodeProcessor';
+        $node->uid = 0;
+
+        // Execute mappings from $item to $node.
+        $this->map($item, $node);
+
+        // Save the node.
+        node_save($node);
       }
     }
 
@@ -106,28 +126,10 @@ class FeedsNodeProcessor extends FeedsProcessor {
   }
 
   /**
-   * Execute mapping on an item.
+   * Override parent::map() to load all available add-on mappers.
    */
-  protected function map($source_item) {
-    // Prepare node object.
-    static $included;
-    if (!$included) {
-      module_load_include('inc', 'node', 'node.pages');
-      $included = TRUE;
-    }
-    $target_node = new stdClass();
-    $target_node->type = $this->config['content_type'];
-    $target_node->feeds_node_item = new stdClass();
-    node_object_prepare($target_node);
-    // Assign an aggregated node always to anonymous.
-    // @todo: change to feed node uid to keep in line with feedapi.
-    $target_node->uid = 0;
-    $target_node->log = 'Created/updated by FeedsNodeProcessor';
-
-    // Load all mappers. parent::map() might invoke their callbacks.
+  protected function map($source_item, $target_node) {
     self::loadMappers();
-
-    // Have parent class do the iterating.
     return parent::map($source_item, $target_node);
   }
 
@@ -289,6 +291,29 @@ class FeedsNodeProcessor extends FeedsProcessor {
       module_implements('', FALSE, TRUE);
     }
     $loaded = TRUE;
+  }
+
+  /**
+   * Create MD5 hash of $item array.
+   * @return Always returns a hash, even with empty, NULL, FALSE:
+   *  Empty arrays return 40cd750bba9870f18aada2478b24840a
+   *  Empty/NULL/FALSE strings return d41d8cd98f00b204e9800998ecf8427e
+   */
+  protected function hash($item) {
+    return hash('md5', serialize($item));
+  }
+
+  /**
+   * Retrieve MD5 hash of $nid from DB.
+   * @return Empty string if no item is found, hash otherwise.
+   */
+  protected function getHash($nid) {
+    $hash = db_result(db_query('SELECT hash FROM {feeds_node_item} WHERE nid = %d', $nid));
+    if ($hash) {
+      // Return with the hash.
+      return $hash;
+    }
+    return '';
   }
 }
 

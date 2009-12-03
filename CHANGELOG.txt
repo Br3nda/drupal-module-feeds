@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.14 2009/11/24 23:28:30 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.15 2009/12/03 20:55:05 alexb Exp $
 
 Feeds 6.x 1.0 xxxx, 200x-xx-xx
 ------------------------------
 
+- #631962 velosol, alex_b: FeedsNodeProcessor: Update when changed.
 - #623452 mongolito404: Port basic test infrastructure for mappers, test for
   basic CCK mapper.
 
