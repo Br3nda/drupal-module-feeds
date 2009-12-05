@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.16 2009/12/03 21:27:40 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.17 2009/12/05 01:38:27 alexb Exp $
 
 Feeds 6.x 1.0 xxxx, 200x-xx-xx
 ------------------------------
 
+- #623424 Kars-T, Eugen Mayer, alex_b: Mapper for Taxonomy.
 - #649552 rsoden: Provide variable for data table name.
 - #631962 velosol, alex_b: FeedsNodeProcessor: Update when changed.
 - #623452 mongolito404: Port basic test infrastructure for mappers, test for
