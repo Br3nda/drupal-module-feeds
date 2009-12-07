@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.1 2009/10/20 21:01:35 alexb Exp $
+// $Id: FeedsSource.inc,v 1.2 2009/12/07 03:28:03 alexb Exp $
 
 /**
  * @file
@@ -40,15 +40,6 @@ interface FeedsSourceInterface {
    */
   public function sourceFormValidate(&$values);
 }
-
-/**
- * This exception gets thrown when no source is available
- * for a given feed_nid.
- *
- * @todo: don't use internal source loading + exception, but load source
- * object and pass it into FeedsImporter object.
- */
-class FeedsNoSourceException extends Exception {}
 
 /**
  * This class encapsulates a source of a feed. While a FeedsImporter object
