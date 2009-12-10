@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.18 2009/12/07 04:22:47 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.19 2009/12/10 21:58:02 alexb Exp $
 
 Feeds 6.x 1.0 xxxx, 200x-xx-xx
 ------------------------------
 
+- #629096 quickcel: Fix underscores in feed creation link.
 - #652848 BWPanda: Add 'clear-block' to admin-ui to fix float issues.
 - #623424 Kars-T, Eugen Mayer, alex_b: Mapper for Taxonomy.
 - #649552 rsoden: Provide variable for data table name.

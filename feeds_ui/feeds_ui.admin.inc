@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.24 2009/12/07 04:22:47 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.25 2009/12/10 21:58:02 alexb Exp $
 
 /**
  * @file
@@ -70,7 +70,7 @@ function feeds_ui_overview_form(&$form_status) {
     }
     else {
       if (!$importer->disabled) {
-        $importer_form['attached']['#value'] = l(node_get_types('name', $importer->config['content_type']), 'node/add/'. $importer->config['content_type']);
+        $importer_form['attached']['#value'] = l(node_get_types('name', $importer->config['content_type']), 'node/add/'. str_replace('_', '-', $importer->config['content_type']));
       }
       else {
         $importer_form['attached']['#value'] = node_get_types('name', $importer->config['content_type']);
