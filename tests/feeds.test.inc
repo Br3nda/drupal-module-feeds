@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.4 2009/12/03 20:55:05 alexb Exp $
+// $Id: feeds.test.inc,v 1.5 2009/12/11 23:21:11 alexb Exp $
 
 /**
  * @file
@@ -88,7 +88,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
   public function createFeedConfiguration($name = 'Syndication', $id = 'syndication') {
     // Create new feed configuration.
     $this->drupalGet('admin/build/feeds');
-    $this->clickLink('New configuration');
+    $this->clickLink('New importer');
     $edit = array(
       'name' => $name,
       'id' => $id,
