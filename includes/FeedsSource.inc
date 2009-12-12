@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.3 2009/12/12 01:09:44 alexb Exp $
+// $Id: FeedsSource.inc,v 1.4 2009/12/12 01:20:32 alexb Exp $
 
 /**
  * @file
@@ -42,11 +42,14 @@ interface FeedsSourceInterface {
 }
 
 /**
- * This class encapsulates a source of a feed. While a FeedsImporter object
- * contains a feed import configuration, a FeedsSource object is what passes
- * through such an import configuration, holds information about the feed's
- * source (e. g. the URL) and provides all the information for necessary for
- * fetching, parsing and processing of a feed source.
+ * This class encapsulates a source of a feed. It stores where the feed can be
+ * found and how to import it.
+ *
+ * Information on how to import a feed is encapsulated in a FeedsImporter object
+ * which is identified by the common id of the FeedsSource and the
+ * FeedsImporter. More than one FeedsSource can use the same FeedsImporter
+ * therefore a FeedsImporter never holds a pointer to a FeedsSource object, nor
+ * does it hold any other information for a particular FeedsSource object.
  *
  * FeedsPlugins that implement FeedsSourceInterface and return TRUE on
  * hasSourceConfig() can define default values and forms that allow for
@@ -58,8 +61,9 @@ interface FeedsSourceInterface {
  * FeedsPlugin class only exists once per FeedsImporter configuration, while an
  * instance of a FeedsSource class exists once per feed_nid to be imported.
  *
- * As with Feed, the idea with FeedsSource is that it can be used without
- * actually saving the object to the database.
+ * As with FeedsImporter, the idea with FeedsSource is that it can be used
+ * without actually saving the object to the database (@todo: needs to be
+ * tested).
  */
 class FeedsSource extends FeedsConfigurable {
 
@@ -97,11 +101,9 @@ class FeedsSource extends FeedsConfigurable {
   /**
    * Import a feed: execute, fetching, parsing and processing stage.
    *
-   * @throws Exception
-   *   If a problem with fetching, parsing or processing occured.
-   *   @todo: Iron out and document potential Exceptions.
-   *   @todo: Support batching.
-   *   @todo: catch exceptions outside of import(), clear() and expire().
+   * @todo: Iron out and document potential Exceptions.
+   * @todo: Support batching.
+   * @todo: catch exceptions outside of import(), clear() and expire().
    */
   public function import() {
     try {

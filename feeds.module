@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.21 2009/12/12 01:09:44 alexb Exp $
+// $Id: feeds.module,v 1.22 2009/12/12 01:20:32 alexb Exp $
 
 /**
  * @file
@@ -385,7 +385,9 @@ function feeds_scheduler_work($feed_info) {
 /**
  * Load all importers.
  *
- * @
+ * @param $load_disabled
+ *   Pass TRUE to load all importers, enabled or disabled, pass FALSE to only
+ *   retrieve enabled importers.
  *
  * @return
  *   An array of all feed configurations available.
