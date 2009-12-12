@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.4 2009/10/21 22:49:47 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.5 2009/12/12 01:09:44 alexb Exp $
 
 /**
  * @file
@@ -120,41 +120,6 @@ class FeedsImporter extends FeedsConfigurable {
         $plugin->setConfig($this->config[$type]['config']);
       }
       $this->$type = $plugin;
-    }
-  }
-
-  /**
-   * Import a feed: execute, fetching, parsing and processing stage.
-   *
-   * @throws Exception
-   *   If a problem with fetching, parsing or processing occured.
-   *   @todo: Iron out and document potential Exceptions.
-   *   @todo: Support batching.
-   *   @todo: catch exceptions outside of import(), clear() and expire().
-   */
-  public function import(FeedsSource $source) {
-    try {
-      $result = $this->fetcher->fetch($source);
-      $result = $this->parser->parse($result, $source);
-      $this->processor->process($result, $source);
-    }
-    catch (Exception $e) {
-      drupal_set_message($e->getMessage(), 'error');
-    }
-    module_invoke_all('feeds_after_import', $this, $source);
-  }
-
-  /**
-   * Remove all items from a feed.
-   */
-  public function clear(FeedsSource $source) {
-    try {
-      $this->fetcher->clear($source);
-      $this->parser->clear($source);
-      $this->processor->clear($source);
-    }
-    catch (Exception $e) {
-      drupal_set_message($e->getMessage(), 'error');
     }
   }
 

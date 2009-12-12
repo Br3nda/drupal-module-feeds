@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFeedNodeProcessor.inc,v 1.4 2009/11/18 16:53:48 alexb Exp $
+// $Id: FeedsFeedNodeProcessor.inc,v 1.5 2009/12/12 01:09:44 alexb Exp $
 
 /**
  * @file
@@ -217,8 +217,8 @@ class FeedsFeedNodeProcessor extends FeedsProcessor {
    * Helper for retrieving the importer object for the feed nodes to produce.
    */
   protected function feedNodeImporter() {
-   if ($importer = feeds_importer_by_content_type($this->config['content_type'])) {
-      return $importer;
+   if ($id = feeds_get_importer_id($this->config['content_type'])) {
+      return feeds_importer($id);
     }
     else {
       throw new Exception(t('Content type to be created is not a valid Feed content type.'));

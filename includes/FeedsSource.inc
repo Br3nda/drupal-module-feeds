@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.2 2009/12/07 03:28:03 alexb Exp $
+// $Id: FeedsSource.inc,v 1.3 2009/12/12 01:09:44 alexb Exp $
 
 /**
  * @file
@@ -75,30 +75,58 @@ class FeedsSource extends FeedsConfigurable {
    * Instantiate a unique object per class/id/feed_nid. Don't use
    * directly, use feeds_source() instead.
    */
-  public static function instance($importer, $feed_nid = 0) {
-    // This is useful at least as long as we're developing.
-    if (empty($importer)) {
-      throw new Exception(t('Empty FeedsImporter.'));
-    }
-
-    // Let others override which class to instantiate.
+  public static function instance($importer_id, $feed_nid = 0) {
     $class = variable_get('feeds_source_class', 'FeedsSource');
-
     static $instances = array();
-    if (!isset($instances[$class][$importer->id][$feed_nid])) {
-      $instances[$class][$importer->id][$feed_nid] = new $class($importer, $feed_nid);
+    if (!isset($instances[$class][$importer_id][$feed_nid])) {
+      $instances[$class][$importer_id][$feed_nid] = new $class($importer_id, $feed_nid);
     }
-    return $instances[$class][$importer->id][$feed_nid];
+    return $instances[$class][$importer_id][$feed_nid];
   }
 
   /**
    * Constructor.
    */
-  protected function __construct(FeedsImporter $importer, $feed_nid) {
+  protected function __construct($importer_id, $feed_nid) {
     $this->feed_nid = $feed_nid;
-    $this->importer = $importer;
-    parent::__construct($importer->id);
+    $this->importer = feeds_importer($importer_id);
+    parent::__construct($importer_id);
     $this->load();
+  }
+
+  /**
+   * Import a feed: execute, fetching, parsing and processing stage.
+   *
+   * @throws Exception
+   *   If a problem with fetching, parsing or processing occured.
+   *   @todo: Iron out and document potential Exceptions.
+   *   @todo: Support batching.
+   *   @todo: catch exceptions outside of import(), clear() and expire().
+   */
+  public function import() {
+    try {
+      $result = $this->importer->fetcher->fetch($this);
+      $result = $this->importer->parser->parse($result, $this);
+      $this->importer->processor->process($result, $this);
+    }
+    catch (Exception $e) {
+      drupal_set_message($e->getMessage(), 'error');
+    }
+    module_invoke_all('feeds_after_import', $this->importer, $this);
+  }
+
+  /**
+   * Remove all items from a feed.
+   */
+  public function clear() {
+    try {
+      $this->importer->fetcher->clear($this);
+      $this->importer->parser->clear($this);
+      $this->importer->processor->clear($this);
+    }
+    catch (Exception $e) {
+      drupal_set_message($e->getMessage(), 'error');
+    }
   }
 
   /**

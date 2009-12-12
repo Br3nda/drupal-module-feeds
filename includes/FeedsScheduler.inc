@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.7 2009/11/25 20:41:41 alexb Exp $
+// $Id: FeedsScheduler.inc,v 1.8 2009/12/12 01:09:44 alexb Exp $
 
 /**
  * @file
@@ -216,13 +216,13 @@ class FeedsScheduler implements FeedsSchedulerInterface {
       }
       elseif ($feed_info['callback'] == 'import') {
         // Import feed if source is available.
-        $source = feeds_source($importer, $feed_info['feed_nid']);
+        $source = feeds_source($importer->id, $feed_info['feed_nid']);
         if ($source->export_type & FEEDS_EXPORT_NONE) {
           watchdog('FeedsScheduler', 'Expected source information in database for '. $importer->id .'/'. $feed_info['feed_nid'] .'. Could not find any.', array(), WATCHDOG_ERROR);
           return;
         }
         try {
-          $importer->import($source);
+          $source->import();
         }
         catch (Exception $e) {
           watchdog('FeedsScheduler', $e->getMessage(), array(), WATCHDOG_ERROR);
