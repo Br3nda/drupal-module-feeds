@@ -1,8 +1,11 @@
-// $Id: CHANGELOG.txt,v 1.19 2009/12/10 21:58:02 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.20 2009/12/12 13:40:39 alexb Exp $
 
 Feeds 6.x 1.0 xxxx, 200x-xx-xx
 ------------------------------
 
+- API change: feeds_source() takes an FeedsImporter id instead of an importer,
+  the methods import() and clear() moved from FeedsImporter to FeedsSource. 
+  Import from a source with feeds_source($id, $nid)->import();
 - #629096 quickcel: Fix underscores in feed creation link.
 - #652848 BWPanda: Add 'clear-block' to admin-ui to fix float issues.
 - #623424 Kars-T, Eugen Mayer, alex_b: Mapper for Taxonomy.
