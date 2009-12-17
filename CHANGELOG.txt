@@ -1,7 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.22 2009/12/14 22:52:14 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.23 2009/12/17 15:24:15 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXX, 20XX-XX-XX
 ---------------------------------
+
+- #657374 dtomasch: Common Parser does not get RSS Authors correctly.
 
 Feeds 6.x 1.0 Alpha 9, 2009-12-14
 ---------------------------------
