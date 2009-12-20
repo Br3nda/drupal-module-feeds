@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.6 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.7 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * @file
@@ -141,7 +141,7 @@ class FeedsDataProcessor extends FeedsProcessor {
       foreach ($schema['fields'] as $field_name => $field) {
         if (!in_array($field_name, array('id', 'feed_nid'))) {
           // Any existing field can be optionally unique.
-          // @todo: push this reverse mapping of spec to short name into data
+          // @todo Push this reverse mapping of spec to short name into data
           // module.
           $type = $field['type'];
           if ($type == 'int' && $field['unsigned']) {
@@ -278,7 +278,7 @@ class FeedsDataProcessor extends FeedsProcessor {
    * @throws Exception $e
    *   Throws this exception if a table cannot be found and cannot be created.
    *
-   * @todo: Make *Data module* throw exception when table can't be found or
+   * @todo Make *Data module* throw exception when table can't be found or
    *   can't be created.
    */
   protected function table() {

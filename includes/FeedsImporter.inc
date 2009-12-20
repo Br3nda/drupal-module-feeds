@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.7 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.8 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * @file
@@ -134,7 +134,7 @@ class FeedsImporter extends FeedsConfigurable {
    * @param $plugin_key
    *   A fetcher, parser or processor plugin.
    *
-   * @todo: error handling, handle setting to the same plugin.
+   * @todo Error handling, handle setting to the same plugin.
    */
   public function setPlugin($plugin_key) {
     // $plugin_type can be either 'fetcher', 'parser' or 'processor'
@@ -193,7 +193,7 @@ class FeedsImporter extends FeedsConfigurable {
       'processor' => array(
         'plugin_key' => 'FeedsNodeProcessor',
       ),
-      'content_type' => 'page', // @todo: provide default content type feed.
+      'content_type' => 'page',
       'update' => 0,
       'import_period' => 1800, // Refresh every 30 minutes by default.
       'expire_period' => 3600, // Expire every hour by default, this is a hidden setting.

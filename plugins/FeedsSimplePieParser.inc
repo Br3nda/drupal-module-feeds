@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.5 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.6 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -19,7 +19,7 @@ class FeedsSimplePieParser extends FeedsParser {
     $parser->set_raw_data($batch->getRaw());
     $parser->set_stupidly_fast(TRUE);
     $parser->encode_instead_of_strip(FALSE);
-    // @todo: is caching effective when we pass in raw data?
+    // @todo Is caching effective when we pass in raw data?
     $parser->enable_cache(TRUE);
     $parser->set_cache_location($this->cacheDirectory());
     $parser->init();

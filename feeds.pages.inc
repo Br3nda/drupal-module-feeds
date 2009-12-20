@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.6 2009/12/12 01:09:44 alexb Exp $
+// $Id: feeds.pages.inc,v 1.7 2009/12/20 23:48:37 alexb Exp $
 
 /**
  * @file
@@ -9,7 +9,7 @@
 /**
  * Render a page of available feed configuration.
  *
- * @todo: respect permissions.
+ * @todo Respect permissions.
  */
 function feeds_page() {
   $rows = array();
@@ -47,7 +47,7 @@ function feeds_import_form(&$form_state, $importer_id) {
 
   $form = array();
   $form['#importer_id'] = $importer_id;
-  // @todo: Move this into fetcher?
+  // @todo Move this into fetcher?
   $form['#attributes']['enctype'] = 'multipart/form-data';
   $form['feeds'] = array(
     '#type' => 'fieldset',
@@ -67,7 +67,7 @@ function feeds_import_form(&$form_state, $importer_id) {
  * Has to live in feeds.module, needs to be callable from node form.
  */
 function feeds_import_form_validate($form, &$form_state) {
-  // @todo: this may be a problem here, as we don't have a feed_nid at this point.
+  // @todo This may be a problem here, as we don't have a feed_nid at this point.
   feeds_source($form['#importer_id'])->configFormValidate($form_state['values']['feeds']);
 }
 

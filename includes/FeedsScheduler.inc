@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.8 2009/12/12 01:09:44 alexb Exp $
+// $Id: FeedsScheduler.inc,v 1.9 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * @file
@@ -88,11 +88,6 @@ class FeedsScheduler implements FeedsSchedulerInterface {
    *
    * If drupal_queue is present, only pushes refresh tasks to queue and
    * returns. If drupal_queue is not available, works off tasks.
-   *
-   * @todo: Run cleanup task that
-   * 1) Picks up items that are scheduled and not worked off for more than
-   *    e. g. 6 hours.
-   * 2) Logs these items with watchdog.
    */
   public function cron() {
 
@@ -162,9 +157,9 @@ class FeedsScheduler implements FeedsSchedulerInterface {
    *
    * Add a feed to the scheduler.
    *
-   * @todo: Create optional parameter $last_scheduled_time to pass in.
-   *        Set this value if a feed is refreshed on creation.
-   * @todo: Create an abstract interface for items that can be added?
+   * @todo Create optional parameter $last_scheduled_time to pass in. Set this
+   *   value if a feed is refreshed on creation.
+   * @todo Create an abstract interface for items that can be added?
    */
   public function add($importer_id, $callback, $feed_nid = 0) {
     $save = array(

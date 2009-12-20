@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.5 2009/12/11 23:21:11 alexb Exp $
+// $Id: feeds.test.inc,v 1.6 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * @file
@@ -75,7 +75,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
   /**
    * Create an importer configuration.
    *
-   * @todo: rename to createImporterConfig()
+   * @todo Rename to createImporterConfig()
    *
    * @param $name
    *   The natural name of the feed.
@@ -271,8 +271,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    * @deprecated:
    *   Use setPlugin() instead.
    *
-   * @todo:
-   *   Refactor users of assertPlugin() and make them use setPugin() instead.
+   * @todo Refactor users of assertPlugin() and make them use setPugin() instead.
    */
   public function assertPlugins($id, $fetcher, $parser, $processor) {
     // Assert actual configuration.

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFetcher.inc,v 1.2 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsFetcher.inc,v 1.3 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * Abstract class, defines shared functionality between fetchers.
@@ -15,9 +15,6 @@ abstract class FeedsFetcher extends FeedsPlugin {
    *
    * @param $source
    *   Source value as entered by user through sourceForm().
-   *
-   * @todo: Define format of return value?
-   * @todo: Should it be execute()?
    */
   public abstract function fetch(FeedsSource $source);
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.3 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.4 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
@@ -22,7 +22,7 @@ class FeedsCSVParser extends FeedsParser {
     unset($parser);
 
     // Apply titles in lower case.
-    // @todo: push this functionality into ParserCSV.
+    // @todo Push this functionality into ParserCSV.
     $header = array_shift($rows);
     foreach ($header as $i => $title) {
       $header[$i] = strtolower($title); // Use lower case only.

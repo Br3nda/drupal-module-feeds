@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.23 2009/12/20 23:27:28 alexb Exp $
+// $Id: feeds.module,v 1.24 2009/12/20 23:48:37 alexb Exp $
 
 /**
  * @file
@@ -12,8 +12,7 @@ define('FEEDS_REQUEST_TIME', time());
 // Do not schedule a feed for refresh.
 define('FEEDS_SCHEDULE_NEVER', -1);
 // Never expire feed items.
-// @todo:
-// Use FEEDS_NEVER instead of FEEDS_SCHEDULE_NEVER and FEEDS_EXPIRE_NEVER.
+// @todo Use FEEDS_NEVER instead of FEEDS_SCHEDULE_NEVER and FEEDS_EXPIRE_NEVER.
 define('FEEDS_EXPIRE_NEVER', -1);
 // An object is not persistent at all. Compare to EXPORT_IN_DATABASE OR
 // EXPORT_IN_CODE.
@@ -185,7 +184,7 @@ function feeds_access($action, $param) {
 /**
  * Menu access callback.
  *
- * @todo: Create cached function that returns available configurations
+ * @todo Create cached function that returns available configurations
  * and use it for enumerating feed configuration ids.
  */
 function feeds_page_access() {
@@ -221,11 +220,6 @@ function feeds_ctools_plugin_api($owner, $api) {
 
 /**
  * Implementation of hook_feeds_plugins().
- *
- * @todo: Document API. Uses CTools plugin handling, extra keys:
- * 'description', 'hidden'
- *
- * @todo: Also declare and load include/ files with CTools plugins?
  */
 function feeds_feeds_plugins() {
   module_load_include('inc', 'feeds', 'feeds.plugins');
@@ -253,7 +247,7 @@ function feeds_nodeapi(&$node, $op, $form) {
         if (trim($node->title) == '') {
           try {
             $source->addConfig($node->feeds);
-            // @todo: Too many indirections. Clean up.
+            // @todo Too many indirections. Clean up.
             $feed = $source->importer->fetcher->fetch($source);
             $source->importer->parser->parse($feed, $source);
             if (!$feed->getTitle()) {
@@ -440,7 +434,7 @@ function feeds_importer_enabled($id) {
 /**
  * Get a an enabled importer configuration by content type.
  *
- * @todo: speed this up by DB caching the result.
+ * @todo speed this up by DB caching the result.
  *
  * @param $content_type
  *   A node type string.
@@ -537,7 +531,7 @@ function feeds_scheduler() {
  * @defgroup plugins Plugin functions
  * @{
  *
- * @todo: Encapsulate this in a FeedsPluginHandler class, move it to includes/
+ * @todo Encapsulate this in a FeedsPluginHandler class, move it to includes/
  * and only load it if we're manipulating plugins.
  */
 
@@ -612,7 +606,7 @@ function feeds_plugin_instance($plugin, $id) {
   }
 
   // Return FeedsMissingPlugin if no plugin was found.
-  // @todo: better error handling.
+  // @todo Better error handling.
   drupal_set_message(t('Missing Feeds plugin. Check whether all required libraries and modules are installed properly.'), 'error');
   $class = ctools_plugin_load_class('feeds', 'plugins', 'FeedsMissingPlugin', 'handler');
   return FeedsConfigurable::instance($class, $id);
@@ -621,7 +615,7 @@ function feeds_plugin_instance($plugin, $id) {
 /**
  * Determines whether given plugin is derived from given base plugin.
  *
- * @todo: update variable names. Should be $plugin_key if it is a key string.
+ * @todo Update variable names. Should be $plugin_key if it is a key string.
  *
  * @param $plugin
  *   String that identifies a Feeds plugin key.

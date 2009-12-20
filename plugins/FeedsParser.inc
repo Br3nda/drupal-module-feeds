@@ -1,10 +1,8 @@
 <?php
-// $Id: FeedsParser.inc,v 1.2 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsParser.inc,v 1.3 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
- *
- * @todo: make implement FeedsSourceInterface
  */
 abstract class FeedsParser extends FeedsPlugin {
 
@@ -17,11 +15,6 @@ abstract class FeedsParser extends FeedsPlugin {
    *   FeedsImportBatch returned by fetcher.
    * @param FeedsSource $source
    *   Source information.
-   * @return
-   *   A parsed array.
-   *   @todo: define this array (object?).
-   *
-   * @todo: Should it be execute() ?
    */
   public abstract function parse(FeedsImportBatch $batch, FeedsSource $source);
 

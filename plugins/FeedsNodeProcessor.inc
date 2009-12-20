@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.18 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.19 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * @file
@@ -84,7 +84,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
   /**
    * Implementation of FeedsProcessor::clear().
-   * @todo: use batch API.
    */
   public function clear(FeedsSource $source) {
     // Count number of deleted nodes.
@@ -115,7 +114,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     if ($time == FEEDS_EXPIRE_NEVER) {
       return;
     }
-    // @todo: expires 50 at a time at the moment.
+    // @todo Expires 50 at a time at the moment.
     // Create a way of letting the caller know whether all nodes could be
     // deleted. Has to be thought through in a larger context of batch
     // processing support for import and expiry.
@@ -147,7 +146,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $types = node_get_types('names');
     $type = isset($types['story']) ? 'story' : key($types);
     return array(
-      'content_type' => $type, // @todo: provide default content type feed_item.
+      'content_type' => $type,
       'update_existing' => 0,
       'expire' => FEEDS_EXPIRE_NEVER,
       'mappings' => array(),

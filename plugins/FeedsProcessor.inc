@@ -1,10 +1,8 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.5 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.6 2009/12/20 23:48:38 alexb Exp $
 
 /**
  * Abstract class, defines interface for processors.
- *
- * @todo: declare an interface for mapping related functions.
  */
 abstract class FeedsProcessor extends FeedsPlugin {
 
@@ -16,8 +14,6 @@ abstract class FeedsProcessor extends FeedsPlugin {
    *   The current feed import data passed in from the parsing stage.
    * @param FeedsSource $source
    *   Source information about this import.
-   *
-   * @todo: Should it be execute()?
    */
   public abstract function process(FeedsImportBatch $batch, FeedsSource $source);
 
@@ -31,7 +27,6 @@ abstract class FeedsProcessor extends FeedsPlugin {
    *   item pertains to a certain souce is by using $source->feed_nid. It is the
    *   processor's responsibility to store the feed_nid of an imported item in
    *   the processing stage.
-   *   @todo: pass in feed_nid instead of source?
    */
   public abstract function clear(FeedsSource $source);
 
