@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.7 2009/12/20 23:48:38 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.8 2009/12/20 23:54:44 alexb Exp $
 
 /**
  * @file
@@ -12,13 +12,7 @@
 class FeedsHTTPFetcher extends FeedsFetcher {
 
   /**
-   * Fetch a resource via http.
-   *
-   * @param $resource
-   *   A resource description of type FeedsResource.
-   *
-   * @return
-   *   A string from the requested location if successful, or FALSE if not.
+   * Implementation of FeedsFetcher::fetch().
    */
   public function fetch(FeedsSource $source) {
     $source_config = $source->getConfigFor($this);

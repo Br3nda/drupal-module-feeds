@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.3 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.4 2009/12/20 23:54:44 alexb Exp $
 
 /**
  * @file
@@ -12,7 +12,7 @@
 class FeedsFileFetcher extends FeedsFetcher {
 
   /**
-   * Fetch a local resource.
+   * Implementation of FeedsFetcher::fetch().
    */
   public function fetch(FeedsSource $source) {
     $source_config = $source->getConfigFor($this);

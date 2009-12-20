@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.6 2009/12/20 23:48:38 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.7 2009/12/20 23:54:44 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -9,7 +9,7 @@
 class FeedsSimplePieParser extends FeedsParser {
 
   /**
-   * Parses a string in RSS/Atom format.
+   * Implementation of FeedsParser::parse().
    */
   public function parse(FeedsImportBatch $batch, FeedsSource $source) {
     feeds_include_library('simplepie.inc', 'simplepie');

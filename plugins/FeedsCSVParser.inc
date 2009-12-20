@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.4 2009/12/20 23:48:38 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.5 2009/12/20 23:54:44 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
@@ -7,7 +7,7 @@
 class FeedsCSVParser extends FeedsParser {
 
   /**
-   * Parses a file in CSV format.
+   * Implementation of FeedsParser::parse().
    */
   public function parse(FeedsImportBatch $batch, FeedsSource $source) {
 
@@ -42,7 +42,7 @@ class FeedsCSVParser extends FeedsParser {
   }
 
   /**
-   * Override parent::getSourceElement to use only lower keys.
+   * Override parent::getSourceElement() to use only lower keys.
    */
   public function getSourceElement($item, $element_key) {
     $element_key = strtolower($element_key);

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFetcher.inc,v 1.3 2009/12/20 23:48:38 alexb Exp $
+// $Id: FeedsFetcher.inc,v 1.4 2009/12/20 23:54:44 alexb Exp $
 
 /**
  * Abstract class, defines shared functionality between fetchers.
@@ -11,7 +11,7 @@ abstract class FeedsFetcher extends FeedsPlugin {
   /**
    * Fetch content from a source and return it.
    *
-   * Stub method. Every class that extends FeedsFetcher must implement this method.
+   * Every class that extends FeedsFetcher must implement this method.
    *
    * @param $source
    *   Source value as entered by user through sourceForm().

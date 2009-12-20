@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSyndicationParser.inc,v 1.9 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsSyndicationParser.inc,v 1.10 2009/12/20 23:54:44 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -9,7 +9,7 @@
 class FeedsSyndicationParser extends FeedsParser {
 
   /**
-   * Parses a string in RSS/Atom format.
+   * Implementation of FeedsParser::parse().
    */
   public function parse(FeedsImportBatch $batch, FeedsSource $source) {
     feeds_include_library('common_syndication_parser.inc', 'common_syndication_parser');

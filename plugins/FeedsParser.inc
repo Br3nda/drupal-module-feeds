@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.3 2009/12/20 23:48:38 alexb Exp $
+// $Id: FeedsParser.inc,v 1.4 2009/12/20 23:54:44 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -9,7 +9,7 @@ abstract class FeedsParser extends FeedsPlugin {
   /**
    * Parse content fetched by fetcher.
    *
-   * Stub method. Extending classes must implement this method.
+   * Extending classes must implement this method.
    *
    * @param $batch
    *   FeedsImportBatch returned by fetcher.
