@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.4 2009/12/12 01:20:32 alexb Exp $
+// $Id: FeedsSource.inc,v 1.5 2009/12/20 23:27:28 alexb Exp $
 
 /**
  * @file
@@ -107,9 +107,10 @@ class FeedsSource extends FeedsConfigurable {
    */
   public function import() {
     try {
-      $result = $this->importer->fetcher->fetch($this);
-      $result = $this->importer->parser->parse($result, $this);
-      $this->importer->processor->process($result, $this);
+      $feed = $this->importer->fetcher->fetch($this);
+      $this->importer->parser->parse($feed, $this);
+      $this->importer->processor->process($feed, $this);
+      unset($feed);
     }
     catch (Exception $e) {
       drupal_set_message($e->getMessage(), 'error');

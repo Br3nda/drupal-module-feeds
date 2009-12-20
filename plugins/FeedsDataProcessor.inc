@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.5 2009/12/03 21:27:40 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.6 2009/12/20 23:27:28 alexb Exp $
 
 /**
  * @file
@@ -14,12 +14,12 @@ class FeedsDataProcessor extends FeedsProcessor {
   /**
    * Implementation of FeedsProcessor::process().
    */
-  public function process(FeedsParserResult $parserResult, FeedsSource $source) {
+  public function process(FeedsImportBatch $batch, FeedsSource $source) {
 
     // Count number of created and updated nodes.
     $inserted  = $updated = 0;
 
-    foreach ($parserResult->value['items'] as $item) {
+    while ($item = $batch->shiftItem()) {
       if (!($id = $this->existingItemId($item, $source)) || $this->config['update_existing']) {
         // Map item to a data record, feed_nid and timestamp are mandatory.
         $data = array();

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.6 2009/12/12 01:20:32 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.7 2009/12/20 23:27:28 alexb Exp $
 
 /**
  * @file
@@ -9,57 +9,7 @@
 // Including FeedsImporter.inc automatically includes dependencies.
 require_once(dirname(__FILE__) .'/FeedsConfigurable.inc');
 require_once(dirname(__FILE__) .'/FeedsSource.inc');
-
-/**
- * A Feeds result class.
- *
- * @see class FeedsFetcherResult
- * @see class FeedsParserResult
- */
-abstract class FeedsResult {
-
-  // An array of valid values for $type.
-  protected $valid_types = array();
-  // The type of this result.
-  protected $type;
-  // The value of this result.
-  protected $value;
-
-  /**
-   * Constructor: create object, validate class variables.
-   *
-   * @param $value
-   *   The value of this result.
-   * @param $type
-   *   The type of this result. Must be one of $valid_types.
-   */
-  public function __construct($value, $type) {
-    $this->__set('type', $type);
-    $this->__set('value', $value);
-  }
-
-  /**
-   * Control access to class variables.
-   */
-  public function __set($name, $value) {
-    if ($name == 'valid_types') {
-      throw new Exception(t('Cannot write FeedsResult::valid_types.'));
-    }
-    if ($name == 'type') {
-      if (!in_array($value, $this->valid_types)) {
-        throw new Exception(t('Invalid type "!type"', array('!type' => $value)));
-      }
-    }
-    $this->$name = $value;
-  }
-
-  /**
-   * Control access to class variables.
-   */
-  public function __get($name) {
-    return $this->$name;
-  }
-}
+require_once(dirname(__FILE__) .'/FeedsBatch.inc');
 
 /**
  * Class defining an importer object. This is the main hub for Feeds module's

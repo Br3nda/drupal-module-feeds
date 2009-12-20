@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.5 2009/11/17 20:14:30 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.6 2009/12/20 23:27:28 alexb Exp $
 
 /**
  * @file
@@ -22,19 +22,7 @@ class FeedsHTTPFetcher extends FeedsFetcher {
    */
   public function fetch(FeedsSource $source) {
     $source_config = $source->getConfigFor($this);
-    $url = $source_config['source'];
-
-    feeds_include_library('http_request.inc', 'http_request');
-    if ($this->config['auto_detect_feeds']) {
-      $result = http_request_get_common_syndication($url);
-    }
-    else {
-      $result = http_request_get($url);
-    }
-    if ($result->code != 200) {
-      throw new Exception(t('Download of @url failed with code !code.', array('@url' => $url, '!code' => $result->code)));
-    }
-    return new FeedsFetcherResult($result->data, 'text/xml');
+    return new FeedsImportBatch($source_config['source']);
   }
 
   /**
