@@ -1,5 +1,5 @@
 <?php
-// $Id: common_syndication_parser.inc,v 1.3 2009/12/20 23:48:38 alexb Exp $
+// $Id: common_syndication_parser.inc,v 1.4 2009/12/21 00:16:22 alexb Exp $
 
 /**
  * @file
@@ -228,7 +228,7 @@ function _parser_common_syndication_RDF10_parse($feed_XML) {
 
   // Process the <rss:channel> resource containing feed metadata:
   foreach ($feed_XML->children($canonical_namespaces['rss'])->channel as $rss_channel) {
-    $parsed_source = (object)array(
+    $parsed_source = array(
       'title'       => _parser_common_syndication_title((string)$rss_channel->title),
       'description' => (string)$rss_channel->description,
       'options'     => (object)array('link' => (string)$rss_channel->link),
