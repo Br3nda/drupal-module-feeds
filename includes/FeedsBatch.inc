@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsBatch.inc,v 1.1 2009/12/20 23:27:28 alexb Exp $
+// $Id: FeedsBatch.inc,v 1.2 2009/12/21 00:21:00 alexb Exp $
 
 /**
  * A FeedsImportBatch is the actual content retrieved from a FeedsSource. On
@@ -42,7 +42,7 @@ class FeedsImportBatch {
         feeds_include_library('http_request.inc', 'http_request');
         $result = http_request_get($this->url);
         if ($result->code != 200) {
-          throw new Exception(t('Download of @url failed with code !code.', array('@url' => $url, '!code' => $result->code)));
+          throw new Exception(t('Download of @url failed with code !code.', array('@url' => $this->url, '!code' => $result->code)));
         }
         $this->raw = $result->data;
       }
