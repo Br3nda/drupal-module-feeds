@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.24 2009/12/20 23:48:37 alexb Exp $
+// $Id: feeds.module,v 1.25 2009/12/21 00:14:14 alexb Exp $
 
 /**
  * @file
@@ -248,16 +248,16 @@ function feeds_nodeapi(&$node, $op, $form) {
           try {
             $source->addConfig($node->feeds);
             // @todo Too many indirections. Clean up.
-            $feed = $source->importer->fetcher->fetch($source);
-            $source->importer->parser->parse($feed, $source);
-            if (!$feed->getTitle()) {
+            $batch = $source->importer->fetcher->fetch($source);
+            $source->importer->parser->parse($batch, $source);
+            if (!$batch->getTitle()) {
               form_set_error('title', t('Could not retrieve title from feed.'), 'error');
             }
             else {
               // Keep the title in a static cache and populate $node->title on
               // 'presave' as node module looses any changes to $node after
               // 'validate'.
-              $last_title = $feed->getTitle();
+              $last_title = $batch->getTitle();
             }
           }
           catch (Exception $e) {
