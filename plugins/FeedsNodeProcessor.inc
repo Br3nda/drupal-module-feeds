@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.19 2009/12/20 23:48:38 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.20 2009/12/21 01:20:05 alexb Exp $
 
 /**
  * @file
@@ -96,6 +96,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     }
 
     // Set message.
+    drupal_get_messages('status');
     if ($deleted) {
       drupal_set_message(t('Deleted !number nodes.', array('!number' => $deleted)));
     }
