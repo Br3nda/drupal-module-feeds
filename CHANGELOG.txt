@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.26 2009/12/21 00:16:22 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.27 2009/12/21 00:33:40 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXX, 20XX-XX-XX
 ---------------------------------
 
+- #663830 Aron Novak, alex_b: When download of URL failed, node w/ empty title
+  is created.
 - #654728 Aron Novak: Fix parsing + data handling error with RDF 1.0 feeds.
 - #641522 mongolito404, alex_b: Consolidate import stage results.
 - #662104 Aron Novak: Specify PHP requirement in .info file.
