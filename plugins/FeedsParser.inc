@@ -1,5 +1,46 @@
 <?php
-// $Id: FeedsParser.inc,v 1.4 2009/12/20 23:54:44 alexb Exp $
+// $Id: FeedsParser.inc,v 1.5 2010/01/12 16:28:02 alexb Exp $
+
+/**
+ * Defines an element of a parsed result. Such an element can be a simple type,
+ * a complex type (derived from FeedsElement) or an array of either.
+ *
+ * @see FeedsEnclosure
+ */
+class FeedsElement {
+  // The standard value of this element. This value can contain be a simple type,
+  // a FeedsElement or an array of either.
+  protected $value;
+
+  /**
+   * Constructor.
+   */
+  public function __construct($value) {
+    $this->value = $value;
+  }
+
+  /**
+   * @return
+   *   Standard value of this FeedsElement.
+   */
+  public function getValue() {
+    return $this->value;
+  }
+
+  /**
+   * @return
+   *   A string representation of this element.
+   */
+  public function __toString() {
+    if (is_array($this->value)) {
+      return 'Array';
+    }
+    if (is_object($this->value)) {
+      return 'Object';
+    }
+    return (string) $this->value;
+  }
+}
 
 /**
  * Abstract class, defines interface for parsers.

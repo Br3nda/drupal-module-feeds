@@ -1,5 +1,33 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.7 2009/12/20 23:54:44 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.8 2010/01/12 16:28:02 alexb Exp $
+
+/**
+ * Adapter to present SimplePie_Enclosure as FeedsEnclosure object.
+ */
+class FeedsSimplePieEnclosure extends FeedsEnclosure {
+  protected $simplepie_enclosure;
+
+  /**
+   * Constructor requires SimplePie enclosure object.
+   */
+  function __construct(SimplePie_Enclosure $enclosure) {
+    $this->simplepie_enclosure = $enclosure;
+  }
+
+  /**
+   * Override parent::getValue().
+   */
+  public function getValue() {
+    return $this->simplepie_enclosure->get_link();
+  }
+
+  /**
+   * Override parent::getMIMEType().
+   */
+  public function getMIMEType() {
+    return $this->simplepie_enclosure->get_real_type();
+  }
+}
 
 /**
  * Class definition for Common Syndication Parser.
@@ -13,7 +41,7 @@ class FeedsSimplePieParser extends FeedsParser {
    */
   public function parse(FeedsImportBatch $batch, FeedsSource $source) {
     feeds_include_library('simplepie.inc', 'simplepie');
-
+    
     // Initialize SimplePie.
     $parser = new SimplePie();
     $parser->set_raw_data($batch->getRaw());
@@ -54,11 +82,7 @@ class FeedsSimplePieParser extends FeedsParser {
       $enclosures = $simplepie_item->get_enclosures();
       if (is_array($enclosures)) {
         foreach ($enclosures as $enclosure) {
-          $mime = $enclosure->get_real_type();
-          if ($mime != '') {
-            list($type, $subtype) = split('/', $mime);
-            $item['enclosures'][$type][$subtype][] = $enclosure;
-          }
+          $item['enclosures'][] = new FeedsSimplePieEnclosure($enclosure);
         }
       }
       // Location
