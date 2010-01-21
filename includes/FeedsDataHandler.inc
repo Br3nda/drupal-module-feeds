@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataHandler.inc,v 1.3 2010/01/21 20:45:11 alexb Exp $
+// $Id: FeedsDataHandler.inc,v 1.4 2010/01/21 20:51:07 alexb Exp $
 
 /**
  * @file
@@ -194,7 +194,7 @@ class FeedsDataHandler extends DataHandler {
       $query->addSubject($table);
       $query->addJoin($table, "$table.{$this->key} = $this_table.{$this->key}", 'LEFT JOIN');
     }
-    drupal_alter('data_delete_query', $query);
+    drupal_alter('data_delete_query', $query, $this->table);
     if (!empty($query->where)) {
       $query->execute();
     }
