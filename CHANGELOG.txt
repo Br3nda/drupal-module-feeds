@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.32 2010/01/18 19:21:12 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.33 2010/01/21 20:45:10 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXX, 20XX-XX-XX
 ---------------------------------
 
+- alex_b: Add mapping API for FeedsDataProcessor.
 - alex_b: Decode HTML entities for title and author name in
   FeedsSimplePieParser.
 - #623448 David Goode, alex_b, et al.: Date mapper.

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.api.php,v 1.3 2009/11/02 21:02:36 alexb Exp $
+// $Id: feeds.api.php,v 1.4 2010/01/21 20:45:10 alexb Exp $
 
 /**
  * @file
@@ -62,6 +62,19 @@ function hook_feeds_term_processor_targets_alter(&$targets, $vid) {
     $targets['lon'] = array(
       'name' => t('Longitude'),
       'description' => t('Longitude of the term.'),
+    );
+  }
+}
+
+/**
+ * Alter mapping targets for Data table entries. Use this hook to add additional
+ * target options to the mapping form of Data processor.
+ */
+function hook_feeds_data_processor_targets(&$fields, $data_table) {
+  if ($data_table == mymodule_base_table()) {
+    $fields['mytable:category'] = array(
+      'name' => t('Category'),
+      'description' => t('One or more category terms.'),
     );
   }
 }
