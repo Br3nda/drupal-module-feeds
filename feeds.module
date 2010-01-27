@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.27 2010/01/25 15:18:28 alexb Exp $
+// $Id: feeds.module,v 1.28 2010/01/27 15:26:32 alexb Exp $
 
 /**
  * @file
@@ -392,7 +392,7 @@ function feeds_importer_load_all($load_disabled = FALSE) {
     ctools_include('export');
     $configs = ctools_export_load_object('feeds_importer', 'all');
     foreach ($configs as $config) {
-      if (!empty($config->id) && ($load_disabled || !$config->disabled)) {
+      if (!empty($config->id) && ($load_disabled || empty($config->disabled))) {
         $feeds[$config->id] = feeds_importer($config->id);
       }
     }
