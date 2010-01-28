@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.11 2010/01/28 20:12:01 alexb Exp $
+// $Id: FeedsScheduler.inc,v 1.12 2010/01/28 21:00:45 alexb Exp $
 
 /**
  * @file
@@ -85,8 +85,6 @@ class FeedsScheduler implements FeedsSchedulerInterface {
    *
    * If drupal_queue is present, only pushes refresh tasks to queue and
    * returns. If drupal_queue is not available, works off tasks.
-   *
-   * @todo: Make import/expire agnostic, define general job callback interface.
    */
   public function cron() {
 
@@ -113,7 +111,7 @@ class FeedsScheduler implements FeedsSchedulerInterface {
       // Iterate over feed configurations, pick $num feeds for each
       // configuration, push to queue or refresh feeds.
       foreach ($importers as $importer) {
-        foreach (array('import', 'expire') as $callback) {
+        foreach ($importer->getScheduleCallbacks() as $callback) {
 
           // Check whether jobs are scheduled.
           $period = $importer->getSchedulePeriod($callback);
@@ -188,42 +186,16 @@ class FeedsScheduler implements FeedsSchedulerInterface {
    *
    * Used as worker callback invoked from feeds_scheduler_refresh() or
    * if drupal_queue is not enabled, directly from $this->cron().
-   *
-   * @todo: Make import/expire agnostic, define general job callback interface.
    */
   public function work($feed_info) {
     $importer = feeds_importer($feed_info['importer_id']);
-
-    // Only refresh if feed is actually in DB or in default configuration.
-    if ($importer->export_type != FEEDS_EXPORT_NONE) {
-
-      // Remove scheduled flag, if we fail after this we'd like to try again
-      // next time around.
-      $this->unflag($feed_info['importer_id'], $feed_info['callback'], $feed_info['feed_nid']);
-
-      // There are 2 possible callbacks: expire or 'import'.
-      if ($feed_info['callback'] == 'expire') {
-        try {
-          $importer->expire();
-        }
-        catch (Exception $e) {
-          watchdog('FeedsScheduler', $e->getMessage(), array(), WATCHDOG_ERROR);
-        }
-      }
-      elseif ($feed_info['callback'] == 'import') {
-        // Import feed if source is available.
-        $source = feeds_source($importer->id, $feed_info['feed_nid']);
-        if ($source->export_type & FEEDS_EXPORT_NONE) {
-          watchdog('FeedsScheduler', 'Expected source information in database for '. $importer->id .'/'. $feed_info['feed_nid'] .'. Could not find any.', array(), WATCHDOG_ERROR);
-          return;
-        }
-        try {
-          $source->import();
-        }
-        catch (Exception $e) {
-          watchdog('FeedsScheduler', $e->getMessage(), array(), WATCHDOG_ERROR);
-        }
-      }
+    // Remove scheduled flag, if we fail after this we'd like to try again asap.
+    $this->unflag($feed_info['importer_id'], $feed_info['callback'], $feed_info['feed_nid']);
+    try {
+      $importer->work($feed_info);
+    }
+    catch (Exception $e) {
+      watchdog('FeedsScheduler', $e->getMessage(), array(), WATCHDOG_ERROR);
     }
   }
 
