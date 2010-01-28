@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.api.php,v 1.5 2010/01/21 21:43:27 alexb Exp $
+// $Id: feeds.api.php,v 1.6 2010/01/28 14:56:50 alexb Exp $
 
 /**
  * @file
@@ -31,7 +31,7 @@ function hook_feeds_after_import(FeedsImporter $importer, FeedsSource $source) {
  * @param $content_type
  *   The content type of the target node.
  */
-function hook_feeds_node_processor_targets_alter(&$targts, $content_type) {
+function hook_feeds_node_processor_targets_alter(&$targets, $content_type) {
   $targets['my_node_field'] = array(
     'name' => t('My custom node field'),
     'description' => t('Description of what my custom node field does.'),
