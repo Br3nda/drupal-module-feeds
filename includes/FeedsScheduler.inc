@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.10 2010/01/28 19:23:52 alexb Exp $
+// $Id: FeedsScheduler.inc,v 1.11 2010/01/28 20:12:01 alexb Exp $
 
 /**
  * @file
@@ -61,9 +61,6 @@ interface FeedsSchedulerInterface {
  */
 class FeedsScheduler implements FeedsSchedulerInterface {
 
-  // Only used for debugging.
-  protected $debugTime;
-
   /**
    * Create a single instance of FeedsScheduler.
    */
@@ -124,7 +121,7 @@ class FeedsScheduler implements FeedsSchedulerInterface {
 
             // Refresh feeds that have a refresh time older than now minus
             // refresh period.
-            $time = $this->time() - $period;
+            $time = FEEDS_REQUEST_TIME - $period;
 
             $result = db_query_range('SELECT feed_nid, id AS importer_id, callback, last_scheduled_time FROM {feeds_schedule} WHERE id = "%s" AND callback = "%s" AND scheduled = 0 AND (last_scheduled_time < %d OR last_scheduled_time = 0) ORDER BY last_scheduled_time ASC', $importer->id, $callback, $time, 0, $num);
             while ($feed_info = db_fetch_array($result)) {
@@ -231,36 +228,10 @@ class FeedsScheduler implements FeedsSchedulerInterface {
   }
 
   /**
-   * Set the internal time of FeedsScheduler.
-   * Use for debugging.
-   *
-   * @param $time
-   *   UNIX time that the scheduler should use for comparing the schedule. Set
-   *   this time to test the behavior of the scheduler in the future or past.
-   *   If set to 0, FeedsScheduler will use the current time.
-   */
-  public function debugSetTime($time) {
-    $this->debugTime = $time;
-  }
-
-  /**
-   * Returns the internal time that the scheduler is operating on.
-   *
-   * Usually returns FEEDS_REQUEST_TIME, unless a debug time has been set
-   * with debugSetTime();
-   *
-   * @return
-   *   An integer that is a UNIX time.
-   */
-  public function time() {
-    return empty($this->debugTime) ? FEEDS_REQUEST_TIME : $this->debugTime;
-  }
-
-  /**
    * Helper function to flag a feed scheduled.
    *
    * This function sets the feed's scheduled bit to 1 and updates
-   * last_scheduled_time to $this->time().
+   * last_scheduled_time to FEEDS_REQUEST_TIME.
    *
    * @param $id
    *   Id of the importer configuration.
@@ -274,7 +245,7 @@ class FeedsScheduler implements FeedsSchedulerInterface {
       'id' => $id,
       'callback' => $callback,
       'feed_nid' => $feed_nid,
-      'last_scheduled_time' => $this->time(),
+      'last_scheduled_time' => FEEDS_REQUEST_TIME,
       'scheduled' => 1,
     );
     drupal_write_record('feeds_schedule', $save, array('id', 'callback', 'feed_nid'));
