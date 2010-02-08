@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsBatch.inc,v 1.2 2009/12/21 00:21:00 alexb Exp $
+// $Id: FeedsBatch.inc,v 1.3 2010/02/08 19:48:15 alexb Exp $
 
 /**
  * A FeedsImportBatch is the actual content retrieved from a FeedsSource. On
@@ -133,6 +133,9 @@ class FeedsImportBatch {
 
   /**
    * Set items.
+   * 
+   * @param $items
+   *   An array of the items in the feed. Cannot be NULL.
    */
   public function setItems($items) {
     $this->items = $items;
