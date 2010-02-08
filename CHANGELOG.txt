@@ -1,8 +1,11 @@
-// $Id: CHANGELOG.txt,v 1.36 2010/01/28 21:00:45 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.37 2010/02/08 19:51:54 alexb Exp $
 
 Feeds 6.x 1.0 xxxxx xx, xxxx-xx-xx
 ----------------------------------
 
+- #701432 pounard, Will White: Fix array_shift() expects parameter 1 is Array
+  error. Note: Parsers are responsible to ensure that the parameter passed to
+  FeedsImportBatch::setItems() is an Array.
 - #698356 alex_b: Refactor and clean up FeedsScheduler::work() to allow more
   scheduled tasks than 'import' and 'expire'.
 
