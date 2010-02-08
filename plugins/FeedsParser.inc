@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.8 2010/01/28 20:08:00 alexb Exp $
+// $Id: FeedsParser.inc,v 1.9 2010/02/08 16:02:37 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -264,7 +264,7 @@ class FeedsDateTimeElement extends FeedsElement {
 
     // Set timezone if not already in the FeedsDateTime object
     $to_tz = date_get_timezone($field['tz_handling'], date_default_timezone_name());
-    $temp = new FeedsDateTime($to_tz, NULL);
+    $temp = new FeedsDateTime(NULL, new DateTimeZone($to_tz));
 
     $db_tz = '';
     if ($use_start) {
