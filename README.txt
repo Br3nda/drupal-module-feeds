@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.17 2010/02/08 15:30:30 alexb Exp $
+$Id: README.txt,v 1.18 2010/02/10 23:49:35 alexb Exp $
 
 
 "It feeds"
@@ -124,6 +124,11 @@ Description: The table used by FeedsDataProcessor to store feed items. Usually a
              FeedsDataProcessor builds a table name from a prefix (feeds_data_)
              and the importer's id ($importer_id). This default table name can
              be overridden by defining a variable with the same name.
+
+Name:        feeds_node_batch_size
+Default:     50
+             The number of nodes feed node processor creates or deletes in one
+             page load.
 
 Glossary
 ========

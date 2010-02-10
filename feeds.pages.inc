@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.8 2009/12/21 01:05:31 alexb Exp $
+// $Id: feeds.pages.inc,v 1.9 2010/02/10 23:49:35 alexb Exp $
 
 /**
  * @file
@@ -83,7 +83,7 @@ function feeds_import_form_submit($form, &$form_state) {
 
   // Refresh feed if import on create is selected.
   if ($source->importer->config['import_on_create']) {
-    $source->import();
+    feeds_batch_set(t('Importing'), 'import', $form['#importer_id']);
   }
 
   // Add importer to schedule.
@@ -107,8 +107,9 @@ function feeds_import_tab_form(&$form_state, $node) {
 /**
  * Submit handler for feeds_import_tab_form().
  */
-function feeds_import_tab_form_submit($form, $form_state) {
-  feeds_source($form['#importer_id'], $form['#feed_nid'])->import();
+function feeds_import_tab_form_submit($form, &$form_state) {
+  $form_state['redirect'] = $form['#redirect'];
+  feeds_batch_set(t('Importing'), 'import', $form['#importer_id'], $form['#feed_nid']);
 }
 
 /**
@@ -135,5 +136,6 @@ function feeds_delete_tab_form(&$form_state, $importer_id, $node = NULL) {
  * Submit handler for feeds_delete_tab_form().
  */
 function feeds_delete_tab_form_submit($form, &$form_state) {
-  feeds_source($form['#importer_id'], empty($form['#feed_nid']) ? 0 : $form['#feed_nid'])->clear();
+  $form_state['redirect'] = $form['#redirect'];
+  feeds_batch_set(t('Deleting'), 'clear', $form['#importer_id'], empty($form['#feed_nid']) ? 0 : $form['#feed_nid']);
 }

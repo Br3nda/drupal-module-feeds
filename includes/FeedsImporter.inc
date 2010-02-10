@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.10 2010/01/28 21:00:45 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.11 2010/02/10 23:49:35 alexb Exp $
 
 /**
  * @file
@@ -10,6 +10,10 @@
 require_once(dirname(__FILE__) .'/FeedsConfigurable.inc');
 require_once(dirname(__FILE__) .'/FeedsSource.inc');
 require_once(dirname(__FILE__) .'/FeedsBatch.inc');
+
+// Status of batched operations.
+define('FEEDS_BATCH_COMPLETE', 1);
+define('FEEDS_BATCH_ACTIVE', 0);
 
 /**
  * Class defining an importer object. This is the main hub for Feeds module's
@@ -60,15 +64,23 @@ class FeedsImporter extends FeedsConfigurable {
   }
 
   /**
-   * Remove items older than $time. If $time is not given, processor settings
-   * will be used.
+   * Remove items older than $time.
+   *
+   * @param $time
+   *   All items older than FEEDS_REQUEST_TIME - $time will be deleted. If not
+   *   given, internal processor settings will be used.
+   *
+   * @return
+   *   FEEDS_BATCH_COMPLETE if complete, a float between 0 and 1 indicating
+   *   progress otherwise.
    */
   public function expire($time = NULL) {
     try {
-      $this->processor->expire($time);
+      return $this->processor->expire($time);
     }
     catch (Exception $e) {
       drupal_set_message($e->getMessage(), 'error');
+      return FEEDS_BATCH_COMPLETE;
     }
   }
 
@@ -76,22 +88,25 @@ class FeedsImporter extends FeedsConfigurable {
    * Callback for scheduler to invoke task. Do not execute if this importer is
    * not persistent at all.
    *
-   * @param $feed_info
-   *   FeedsScheduler feed infor array.
-   *
    * @see FeedsScheduler::work().
+   *
+   * @param $job
+   *   Array that is a FeedsScheduler job definition.
+   *
+   * @return
+   *   FEEDS_BATCH_COMPLETE if complete, a float between 0 and 1 indicating
+   *   progress otherwise.
    */
-  public function work($feed_info) {
+  public function work($job) {
     if ($this->export_type == FEEDS_EXPORT_NONE) {
       return;
     }
-    switch ($feed_info['callback']) {
+    switch ($job['callback']) {
       case 'import':
-        feeds_source($feed_info['importer_id'], $feed_info['feed_nid'])->import();
+        return feeds_source($job['id'], $job['feed_nid'])->import();
         break;
       case 'expire':
-        $this->expire();
-        break;
+        return $this->expire();
     }
   }
 
