@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.11 2010/02/10 23:49:35 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.12 2010/02/11 00:26:49 alexb Exp $
 
 /**
  * @file
@@ -73,15 +73,12 @@ class FeedsImporter extends FeedsConfigurable {
    * @return
    *   FEEDS_BATCH_COMPLETE if complete, a float between 0 and 1 indicating
    *   progress otherwise.
+   *
+   * @throws
+   *   Throws Exception if an error occurs when expiring items.
    */
   public function expire($time = NULL) {
-    try {
-      return $this->processor->expire($time);
-    }
-    catch (Exception $e) {
-      drupal_set_message($e->getMessage(), 'error');
-      return FEEDS_BATCH_COMPLETE;
-    }
+    return $this->processor->expire($time);
   }
 
   /**
@@ -96,6 +93,9 @@ class FeedsImporter extends FeedsConfigurable {
    * @return
    *   FEEDS_BATCH_COMPLETE if complete, a float between 0 and 1 indicating
    *   progress otherwise.
+   *
+   * @throws
+   *   Throws Exception if an error occurs working off the job.
    */
   public function work($job) {
     if ($this->export_type == FEEDS_EXPORT_NONE) {

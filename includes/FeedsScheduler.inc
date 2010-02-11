@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.13 2010/02/10 23:49:35 alexb Exp $
+// $Id: FeedsScheduler.inc,v 1.14 2010/02/11 00:26:49 alexb Exp $
 
 /**
  * @file
@@ -165,6 +165,7 @@ class FeedsScheduler implements FeedsSchedulerInterface {
     }
     catch (Exception $e) {
       watchdog('FeedsScheduler', $e->getMessage(), array(), WATCHDOG_ERROR);
+      $this->finished($job);
     }
     // Make sure that job is not scheduled after this method has executed.
     $this->unschedule($job);

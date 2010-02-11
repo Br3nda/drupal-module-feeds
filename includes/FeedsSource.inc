@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.7 2010/02/10 23:49:35 alexb Exp $
+// $Id: FeedsSource.inc,v 1.8 2010/02/11 00:26:49 alexb Exp $
 
 /**
  * @file
@@ -108,8 +108,8 @@ class FeedsSource extends FeedsConfigurable {
    * Lock a source before importing by using FeedsSource::lock(), after
    * importing, release with FeedsSource::release().
    *
-   * @todo Iron out and document potential Exceptions.
-   * @todo catch exceptions outside of import(), clear() and expire().
+   * @throws
+   *   Throws Exception if an error occurs when importing.
    */
   public function import() {
     try {
@@ -125,8 +125,8 @@ class FeedsSource extends FeedsConfigurable {
     }
     catch (Exception $e) {
       unset($this->batch);
-      $result = FEEDS_BATCH_ACTIVE;
-      drupal_set_message($e->getMessage(), 'error');
+      $this->save();
+      throw $e;
     }
     $this->save();
     return $result;
@@ -134,6 +134,9 @@ class FeedsSource extends FeedsConfigurable {
 
   /**
    * Remove all items from a feed.
+   *
+   * @throws
+   *   Throws Exception if an error occurs when clearing.
    */
   public function clear() {
     try {
@@ -149,8 +152,8 @@ class FeedsSource extends FeedsConfigurable {
     }
     catch (Exception $e) {
       unset($this->batch);
-      $result = FEEDS_BATCH_COMPLETE;
-      drupal_set_message($e->getMessage(), 'error');
+      $this->save();
+      throw $e;
     }
     $this->save();
     return $result;
