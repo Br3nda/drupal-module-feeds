@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.18 2010/02/10 23:49:35 alexb Exp $
+$Id: README.txt,v 1.19 2010/02/11 15:57:38 alexb Exp $
 
 
 "It feeds"
@@ -79,8 +79,10 @@ http://drupal.org/node/622700
 Performance
 ===========
 
-Untested. There is support for drupal_queue module in the works.
-http://drupal.org/node/599180
+Use Drupal Queue to improve Feeds' performance when scheduling many very active
+feeds. An example for "many very active feeds" would be 300 news feeds with an
+average of four items a day.
+http://drupal.org/project/drupal_queue
 
 Hidden settings
 ===============
