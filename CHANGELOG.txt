@@ -1,11 +1,14 @@
-// $Id: CHANGELOG.txt,v 1.40 2010/02/10 23:49:35 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.41 2010/02/11 00:23:16 alexb Exp $
 
 Feeds 6.x 1.0 xxxxx xx, xxxx-xx-xx
 ----------------------------------
 
 - #600584 alexb: Use Batch API. NOTE: third party plugins/extensions
   implementing FeedsProcessor::process(), FeedsProcessor::clear() or
-  FeedsImporter::expire() need to adjust their implementations.
+  FeedsImporter::expire() need to adjust their implementations. Modules that
+  directly use Feeds' API for importing or clearing sources need may want to
+  use feeds_batch_set() instead of feeds_source()->import() or
+  feeds_source()->clear().
 
 Feeds 6.x 1.0 Alpha 11, 2010-02-10
 ----------------------------------
