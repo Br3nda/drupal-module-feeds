@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsConfigurable.inc,v 1.6 2010/02/18 16:43:40 alexb Exp $
+// $Id: FeedsConfigurable.inc,v 1.7 2010/02/18 17:04:17 alexb Exp $
 
 /**
  * @file
@@ -149,8 +149,11 @@ abstract class FeedsConfigurable {
     $form_state = array();
     $form = $this->configForm($form_state);
     // Mimic Form API behavior.
+    drupal_prepare_form('form_'. get_class($this) .'_feeds_config_form', $form, $form_state);
     drupal_alter('form_'. get_class($this) .'_feeds_config_form', $form, $form_state);
     drupal_alter('form', $form, $form_state, get_class($this) .'_feeds_config_form');
+    unset($form['form_token']);
+    unset($form['form_id']);
     $defaults = array();
     foreach (element_children($form) as $e) {
       if (isset($form[$e]['#default_value'])) {
