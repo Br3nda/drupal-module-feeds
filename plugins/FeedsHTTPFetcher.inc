@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.11 2010/02/18 19:40:36 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.12 2010/02/18 20:12:40 alexb Exp $
 
 /**
  * @file
@@ -131,7 +131,7 @@ class FeedsHTTPFetcher extends FeedsFetcher {
         FEEDS_HTTP_BASIC_AUTH_PER_SOURCE => t('Specify credentials when creating a feed.'),
         FEEDS_HTTP_BASIC_AUTH_PER_IMPORTER => t('One set of credentials for all feeds.'),
       ),
-      '#default_value' => $this->config['basic_auth'],
+      '#default_value' => isset($this->config['basic_auth']) ? $this->config['basic_auth'] : FEEDS_HTTP_NO_BASIC_AUTH,
     );
     $form['basic_auth'] += $this->basicAuthForm($this->config);
     return $form;
