@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.47 2010/02/18 16:27:25 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.48 2010/02/18 16:52:22 alexb Exp $
 
 Feeds 6.x 1.0 xxxxx xx, xxxx-xx-xx
 ----------------------------------
 
+- alex_b: Add sourceSave() and sourceDelete() methods notifying plugin
+  implementers of a source being saved or deleted.
 - #717168 nicholasThompson: Fix feeds UI JS doesn't select labels correctly.
 - #708228 Scott Reynolds, alex_b: Break FeedsImportBatch into separate classes.
   NOTE: FeedsFetcher implementations cannot use FeedsImportBatch directly

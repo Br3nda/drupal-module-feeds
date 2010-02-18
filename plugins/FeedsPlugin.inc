@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsPlugin.inc,v 1.1 2009/10/20 21:03:08 alexb Exp $
+// $Id: FeedsPlugin.inc,v 1.2 2010/02/18 16:52:22 alexb Exp $
 
 /**
  * @file
@@ -67,7 +67,17 @@ abstract class FeedsPlugin extends FeedsConfigurable implements FeedsSourceInter
   /**
    * Validation handler for sourceForm.
    */
-  public function sourceFormValidate(&$values) {}
+  public function sourceFormValidate(&$source_config) {}
+
+  /**
+   * A source is being saved.
+   */
+  public function sourceSave(FeedsSource $source) {}
+
+  /**
+   * A source is being deleted.
+   */
+  public function sourceDelete(FeedsSource $source) {}
 }
 
 /**

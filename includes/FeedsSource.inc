@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.8 2010/02/11 00:26:49 alexb Exp $
+// $Id: FeedsSource.inc,v 1.9 2010/02/18 16:52:22 alexb Exp $
 
 /**
  * @file
@@ -38,7 +38,17 @@ interface FeedsSourceInterface {
   /**
    * Validate user entered values submitted by sourceForm().
    */
-  public function sourceFormValidate(&$values);
+  public function sourceFormValidate(&$source_config);
+
+  /**
+   * A source is being deleted.
+   */
+  public function sourceSave(FeedsSource $source);
+
+  /**
+   * A source is being saved.
+   */
+  public function sourceDelete(FeedsSource $source);
 }
 
 /**
@@ -164,6 +174,10 @@ class FeedsSource extends FeedsConfigurable {
    */
   public function save() {
     $config = $this->getConfig();
+    // Alert implementers of FeedsSourceInterface to the fact that we're saving.
+    foreach ($this->importer->plugin_types as $type) {
+      $this->importer->$type->sourceSave($this);
+    }
     // Store the source property of the fetcher in a separate column so that we
     // can do fast lookups on it.
     $source = '';
@@ -206,6 +220,11 @@ class FeedsSource extends FeedsConfigurable {
    * from database, does not delete configuration itself.
    */
   public function delete() {
+    // Alert implementers of FeedsSourceInterface to the fact that we're
+    // deleting.
+    foreach ($this->importer->plugin_types as $type) {
+      $this->importer->$type->sourceDelete($this);
+    }
     db_query('DELETE FROM {feeds_source} WHERE id = "%s" AND feed_nid = %d', $this->id, $this->feed_nid);
   }
 
