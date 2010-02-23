@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.30 2010/02/23 04:59:06 alexb Exp $
+// $Id: feeds.module,v 1.31 2010/02/23 23:43:19 alexb Exp $
 
 /**
  * @file
@@ -22,7 +22,7 @@ define('FEEDS_SCHEDULER_QUEUE', 'feeds_queue');
 
 
 /**
- * @defgroup hooks Hooks and callbacks
+ * @defgroup hooks Hook and callback implementations
  * @{
  */
 
@@ -371,7 +371,7 @@ function feeds_scheduler_work($feed_info) {
  */
 
 /**
- * @defgroup batch Batch functions.
+ * @defgroup batch Batch functions
  */
 
 /**
