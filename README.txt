@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.24 2010/02/23 15:15:58 alexb Exp $
+$Id: README.txt,v 1.25 2010/02/23 15:16:48 alexb Exp $
 
 
 "It feeds"
@@ -15,7 +15,7 @@ Features
 
 - Pluggable import configurations consisting of fetchers (get data) parsers
   (read and transform data) and processors (create content on Drupal).
--- HTTP upload.
+-- HTTP upload (with optional PubSubHubbub support).
 -- File upload.
 -- CSV, RSS, Atom parsing.
 -- Creates nodes or terms.
