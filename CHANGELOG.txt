@@ -1,9 +1,11 @@
-// $Id: CHANGELOG.txt,v 1.53 2010/02/23 22:18:09 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.54 2010/02/23 22:24:50 alexb Exp $
 
 
 Feeds 6.x 1.0 xxxxx xx, 2010-xx-xx
 ----------------------------------
 
+- #718460 jerdavis: In FeedsNodeProcessor, clear items only for the current
+  importer id.
 - #718474 jerdavis: In FeedsNodeProcessor, check for duplicate items within
   same importer id.
 
