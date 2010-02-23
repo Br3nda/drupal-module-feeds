@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.22 2010/02/10 23:49:35 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.23 2010/02/23 22:18:09 alexb Exp $
 
 /**
  * @file
@@ -274,10 +274,10 @@ class FeedsNodeProcessor extends FeedsProcessor {
     foreach ($this->uniqueTargets($source_item) as $target => $value) {
       switch ($target) {
         case 'url':
-          $nid = db_result(db_query('SELECT nid FROM {feeds_node_item} WHERE feed_nid = %d AND url = "%s"', $source->feed_nid, $value));
+          $nid = db_result(db_query('SELECT nid FROM {feeds_node_item} WHERE feed_nid = %d AND id = "%s" AND url = "%s"', $source->feed_nid, $source->id, $value));
           break;
         case 'guid':
-          $nid = db_result(db_query('SELECT nid FROM {feeds_node_item} WHERE feed_nid = %d AND guid = "%s"', $source->feed_nid, $value));
+          $nid = db_result(db_query('SELECT nid FROM {feeds_node_item} WHERE feed_nid = %d AND id = "%s" AND guid = "%s"', $source->feed_nid, $source->id, $value));
           break;
       }
       if ($nid) {
