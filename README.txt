@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.23 2010/02/23 15:15:18 alexb Exp $
+$Id: README.txt,v 1.24 2010/02/23 15:15:58 alexb Exp $
 
 
 "It feeds"
@@ -61,7 +61,7 @@ to set it up for your site.
 http://code.google.com/p/pubsubhubbub/
 
 - Go to admin/build/feeds and edit (override) the importer configuration you
-  would like to use for PSHB.
+  would like to use for PubSubHubbub.
 - Choose the HTTP Fetcher if it is not already selected.
 - On the HTTP Fetcher, click on 'settings' and check "Use PubSubHubbub".
 - Optionally you can use a designated hub such as http://superfeedr.com/ or your
