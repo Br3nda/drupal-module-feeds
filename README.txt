@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.22 2010/02/23 04:59:06 alexb Exp $
+$Id: README.txt,v 1.23 2010/02/23 15:15:18 alexb Exp $
 
 
 "It feeds"
@@ -53,6 +53,22 @@ Installation
   feeds/libraries.
   http://simplepie.org/
 
+PubSubHubbub support
+====================
+
+Feeds supports the PubSubHubbub publish/subscribe protocol. Follow these steps
+to set it up for your site.
+http://code.google.com/p/pubsubhubbub/
+
+- Go to admin/build/feeds and edit (override) the importer configuration you
+  would like to use for PSHB.
+- Choose the HTTP Fetcher if it is not already selected.
+- On the HTTP Fetcher, click on 'settings' and check "Use PubSubHubbub".
+- Optionally you can use a designated hub such as http://superfeedr.com/ or your
+  own. If a designated hub is specified, every feed on this importer
+  configuration will be subscribed to this hub, no matter what the feed itself
+  specifies.
+
 Libraries support
 =================
 
@@ -74,6 +90,15 @@ Testing
 
 See "The developer's guide to Feeds":
 http://drupal.org/node/622700
+
+Debugging
+=========
+
+Set the Drupal variable 'feeds_debug' to TRUE (i. e. using drush). This will
+create a file /tmp/feeds_[my_site_location].log. Use "tail -f" on the command
+line to get a live view of debug output.
+
+Note: at the moment, only PubSubHubbub related actions are logged.
 
 Performance
 ===========
