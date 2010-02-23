@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.29 2010/02/10 23:49:35 alexb Exp $
+// $Id: feeds.module,v 1.30 2010/02/23 04:59:06 alexb Exp $
 
 /**
  * @file
@@ -126,6 +126,7 @@ function feeds_menu() {
         'weight' => 11,
       );
     }
+    $items += $importer->fetcher->menuItem();
   }
   if (count($items)) {
     $items['import'] = array(
@@ -525,6 +526,21 @@ function feeds_export($importer_id, $indent = '') {
   $result = ctools_export_load_object('feeds_importer', 'names', array('id' => $importer_id));
   if (isset($result[$importer_id])) {
     return ctools_export_object('feeds_importer', $result[$importer_id], $indent);
+  }
+}
+
+/**
+ * Log to a file like /mytmp/feeds_my_domain_org.log in temporary directory.
+ */
+function feeds_dbg($msg) {
+  if (variable_get('feeds_debug', false)) {
+    if (!is_string($msg)) {
+      $msg = var_export($msg, true);
+    }
+    $filename = trim(str_replace('/', '_', $_SERVER['HTTP_HOST'] . base_path()), '_');
+    $handle = fopen(file_directory_temp() ."/feeds_$filename.log", 'a');
+    fwrite($handle, date('c') ."\t$msg\n");
+    fclose($handle);
   }
 }
 

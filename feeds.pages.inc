@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.9 2010/02/10 23:49:35 alexb Exp $
+// $Id: feeds.pages.inc,v 1.10 2010/02/23 04:59:06 alexb Exp $
 
 /**
  * @file
@@ -138,4 +138,14 @@ function feeds_delete_tab_form(&$form_state, $importer_id, $node = NULL) {
 function feeds_delete_tab_form_submit($form, &$form_state) {
   $form_state['redirect'] = $form['#redirect'];
   feeds_batch_set(t('Deleting'), 'clear', $form['#importer_id'], empty($form['#feed_nid']) ? 0 : $form['#feed_nid']);
+}
+
+/**
+ * Handle a fetcher callback.
+ */
+function feeds_fetcher_callback($importer, $feed_nid = 0) {
+  if ($importer instanceof FeedsImporter) {
+    return $importer->fetcher->request($feed_nid);
+  }
+  drupal_access_denied();
 }

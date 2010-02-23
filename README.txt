@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.21 2010/02/22 13:36:44 alexb Exp $
+$Id: README.txt,v 1.22 2010/02/23 04:59:06 alexb Exp $
 
 
 "It feeds"
@@ -89,6 +89,10 @@ Hidden settings
 Hidden settings are variables that you can define by adding them to the $conf
 array in your settings.php file.
 
+Name:        feeds_debug
+Default:     FALSE
+Description: Set to TRUE for enabling debug output to
+             /DRUPALTMPDIR/feeds_[sitename].log
 
 Name:        feeds_importer_class
 Default:     'FeedsImporter'

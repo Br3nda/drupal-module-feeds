@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsPlugin.inc,v 1.2 2010/02/18 16:52:22 alexb Exp $
+// $Id: FeedsPlugin.inc,v 1.3 2010/02/23 04:59:07 alexb Exp $
 
 /**
  * @file
@@ -84,4 +84,7 @@ abstract class FeedsPlugin extends FeedsConfigurable implements FeedsSourceInter
  * Used when a plugin is missing.
  */
 class FeedsMissingPlugin extends FeedsPlugin {
+  public function menuItem() {
+    return array();
+  }
 }
