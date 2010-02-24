@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.12 2010/02/24 00:07:50 alexb Exp $
+// $Id: feeds.pages.inc,v 1.13 2010/02/24 00:08:47 alexb Exp $
 
 /**
  * @file
@@ -7,7 +7,7 @@
  */
 
 /**
- * Render a page of available feed configuration.
+ * Render a page of available importers.
  */
 function feeds_page() {
   $rows = array();
