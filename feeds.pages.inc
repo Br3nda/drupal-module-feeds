@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.11 2010/02/23 23:36:04 alexb Exp $
+// $Id: feeds.pages.inc,v 1.12 2010/02/24 00:07:50 alexb Exp $
 
 /**
  * @file
@@ -16,7 +16,7 @@ function feeds_page() {
       if ($importer->disabled) {
         continue;
       }
-      if (!user_access('import '. $importer->id .' feeds')) {
+      if (!(user_access('import '. $importer->id .' feeds') || user_access('administer feeds'))) {
         continue;
       }
       if (empty($importer->config['content_type'])) {
