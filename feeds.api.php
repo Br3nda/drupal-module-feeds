@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.api.php,v 1.7 2010/02/23 23:26:50 alexb Exp $
+// $Id: feeds.api.php,v 1.8 2010/02/24 00:21:14 alexb Exp $
 
 /**
  * @file
@@ -68,7 +68,7 @@ function hook_feeds_plugins() {
 }
 
 /**
- * @} End of "defgroup pluginapi".
+ * @}
  */
 
 /**
@@ -89,7 +89,7 @@ function hook_feeds_after_import(FeedsImporter $importer, FeedsSource $source) {
 }
 
 /**
- * @} End of "defgroup import".
+ * @}
  */
 
 /**
@@ -159,5 +159,5 @@ function hook_feeds_data_processor_targets_alter(&$fields, $data_table) {
 }
 
 /**
- * @} End of "defgroup mappingapi".
+ * @}
  */

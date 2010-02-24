@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.31 2010/02/23 23:43:19 alexb Exp $
+// $Id: feeds.module,v 1.32 2010/02/24 00:21:14 alexb Exp $
 
 /**
  * @file
@@ -367,7 +367,7 @@ function feeds_scheduler_work($feed_info) {
 }
 
 /**
- * @} End of "defgroup hooks".
+ * @}
  */
 
 /**
@@ -429,7 +429,7 @@ function feeds_batch($method, $importer_id, $feed_nid = 0, &$context) {
 }
 
 /**
- * @} End of "defgroup batch".
+ * @}
  */
 
 /**
@@ -545,7 +545,7 @@ function feeds_dbg($msg) {
 }
 
 /**
- * @} End of "defgroup utility".
+ * @}
  */
 
 /**
@@ -600,7 +600,7 @@ function feeds_scheduler() {
 }
 
 /**
- * @} End of "defgroup instantiators".
+ * @}
  */
 
 /**
@@ -745,7 +745,7 @@ function feeds_plugin_type($plugin_key) {
 }
 
 /**
- * @} End of "defgroup plugins".
+ * @}
  */
 
 /**
@@ -816,5 +816,5 @@ function feeds_library_exists($file, $library) {
 }
 
 /**
- * @} End of "defgroup include".
+ * @}
  */
