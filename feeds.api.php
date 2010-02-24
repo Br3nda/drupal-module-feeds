@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.api.php,v 1.8 2010/02/24 00:21:14 alexb Exp $
+// $Id: feeds.api.php,v 1.9 2010/02/24 00:24:13 alexb Exp $
 
 /**
  * @file
@@ -7,6 +7,14 @@
  */
 
 /**
+ * Feeds offers a CTools based plugin API. Fetchers, parsers and processors are
+ * declared to Feeds as plugins.
+ *
+ * @see feeds_feeds_plugins()
+ * @see FeedsFetcher
+ * @see FeedsParser
+ * @see FeedsProcessor
+ *
  * @defgroup pluginapi Plugin API hooks
  * @{
  */
@@ -25,7 +33,8 @@ function hook_ctools_plugin_api($owner, $api) {
 
 /**
  * A hook_feeds_plugins() declares available Fetcher, Parser or Processor
- * plugins to Feeds. For an example look at feeds_feeds_plugin().
+ * plugins to Feeds. For an example look at feeds_feeds_plugin(). For exposing
+ * this hook hook_ctools_plugin_api() MUST be implemented, too.
  *
  * @see feeds_feeds_plugin()
  */
