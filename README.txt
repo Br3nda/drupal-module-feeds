@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.25 2010/02/23 15:16:48 alexb Exp $
+$Id: README.txt,v 1.26 2010/02/26 14:50:03 alexb Exp $
 
 
 "It feeds"
@@ -50,7 +50,7 @@ Installation
   clicking on 'clone'.
 - Go to import/ to import data.
 - To use SimplePie parser, download SimplePie and place simplepie.inc into
-  feeds/libraries.
+  feeds/libraries. Recommended version: 1.2.
   http://simplepie.org/
 
 PubSubHubbub support
