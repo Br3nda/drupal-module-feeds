@@ -1,21 +1,18 @@
 <?php
-// $Id: feeds.module,v 1.36 2010/02/27 04:59:17 alexb Exp $
+// $Id: feeds.module,v 1.37 2010/02/27 05:01:39 alexb Exp $
 
 /**
  * @file
  * Feeds - basic API functions and hook implementations.
  */
 
-// Vague request time. Use as common point of reference and to avoid costly
-// calls to time().
+// Common request time, use as point of reference and to avoid calls to time().
 define('FEEDS_REQUEST_TIME', time());
 // Do not schedule a feed for refresh.
 define('FEEDS_SCHEDULE_NEVER', -1);
 // Never expire feed items.
-// @todo Use FEEDS_NEVER instead of FEEDS_SCHEDULE_NEVER and FEEDS_EXPIRE_NEVER.
 define('FEEDS_EXPIRE_NEVER', -1);
-// An object is not persistent at all. Compare to EXPORT_IN_DATABASE OR
-// EXPORT_IN_CODE.
+// An object that is not persistent. Compare EXPORT_IN_DATABASE, EXPORT_IN_CODE.
 define('FEEDS_EXPORT_NONE', 0x0);
 // The Drupal Queue FeedsScheduler may use for scheduling importing or expiry.
 define('FEEDS_SCHEDULER_QUEUE', 'feeds_queue');
