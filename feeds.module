@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.37 2010/02/27 05:01:39 alexb Exp $
+// $Id: feeds.module,v 1.38 2010/02/27 05:03:59 alexb Exp $
 
 /**
  * @file
@@ -692,9 +692,7 @@ function feeds_plugin_instance($plugin, $id) {
 /**
  * Determines whether given plugin is derived from given base plugin.
  *
- * @todo Update variable names. Should be $plugin_key if it is a key string.
- *
- * @param $plugin
+ * @param $plugin_key
  *   String that identifies a Feeds plugin key.
  * @param $parent_plugin
  *   String that identifies a Feeds plugin key to be tested against.
@@ -703,10 +701,10 @@ function feeds_plugin_instance($plugin, $id) {
  *   TRUE if $parent_plugin is directly *or indirectly* a parent of $plugin,
  *   FALSE otherwise.
  */
-function feeds_plugin_child($plugin, $parent_plugin) {
+function feeds_plugin_child($plugin_key, $parent_plugin) {
   ctools_include('plugins');
   $plugins = ctools_get_plugins('feeds', 'plugins');
-  $info = $plugins[$plugin];
+  $info = $plugins[$plugin_key];
 
   if (empty($info['handler']['parent'])) {
     return FALSE;
@@ -723,7 +721,7 @@ function feeds_plugin_child($plugin, $parent_plugin) {
  * Determine the type of a plugin.
  *
  * @param $plugin_key
- *   String that is a Feeds plugin key.
+ *   String that identifies a Feeds plugin key.
  *
  * @return
  *   One of the following values:
