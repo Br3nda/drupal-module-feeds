@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.33 2010/02/27 01:26:55 alexb Exp $
+// $Id: feeds.module,v 1.34 2010/02/27 02:03:34 alexb Exp $
 
 /**
  * @file
@@ -426,14 +426,7 @@ function feeds_batch_set($title, $method, $importer_id, $feed_nid = 0) {
 function feeds_batch($method, $importer_id, $feed_nid = 0, &$context) {
   $context['finished'] = 1;
   try {
-    switch ($method) {
-      case 'import':
-        $context['finished'] = feeds_source($importer_id, $feed_nid)->import();
-        break;
-      case 'clear':
-        $context['finished'] = feeds_source($importer_id, $feed_nid)->clear();
-        break;
-    }
+    $context['finished'] = feeds_source($importer_id, $feed_nid)->$method();
   }
   catch (Exception $e) {
     drupal_set_message($e->getMessage(), 'error');
