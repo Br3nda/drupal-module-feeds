@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.35 2010/02/27 02:22:07 alexb Exp $
+// $Id: feeds.module,v 1.36 2010/02/27 04:59:17 alexb Exp $
 
 /**
  * @file
@@ -687,9 +687,6 @@ function feeds_plugin_instance($plugin, $id) {
   if ($class = ctools_plugin_load_class('feeds', 'plugins', $plugin, 'handler')) {
     return FeedsConfigurable::instance($class, $id);
   }
-
-  // Return FeedsMissingPlugin if no plugin was found.
-  // @todo Better error handling.
   drupal_set_message(t('Missing Feeds plugin. Check whether all required libraries and modules are installed properly.'), 'warning');
   $class = ctools_plugin_load_class('feeds', 'plugins', 'FeedsMissingPlugin', 'handler');
   return FeedsConfigurable::instance($class, $id);
