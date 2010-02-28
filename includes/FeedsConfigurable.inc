@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsConfigurable.inc,v 1.11 2010/02/23 23:54:24 alexb Exp $
+// $Id: FeedsConfigurable.inc,v 1.12 2010/02/28 17:16:25 alexb Exp $
 
 /**
  * @file
@@ -238,4 +238,5 @@ function feeds_config_form_submit($form, &$form_state) {
   $form['#configurable']->addConfig($form_state['values']);
   $form['#configurable']->save();
   drupal_set_message(t('Your changes have been saved.'));
+  feeds_cache_clear(FALSE);
 }

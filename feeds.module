@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.39 2010/02/27 05:05:26 alexb Exp $
+// $Id: feeds.module,v 1.40 2010/02/28 17:16:25 alexb Exp $
 
 /**
  * @file
@@ -183,16 +183,13 @@ function feeds_access($action, $param) {
 
 /**
  * Menu access callback.
- *
- * @todo Create cached function that returns available configurations
- * and use it for enumerating feed configuration ids.
  */
 function feeds_page_access() {
   if (user_access('administer feeds')) {
     return TRUE;
   }
-  foreach (feeds_importer_load_all() as $importer) {
-    if (user_access('import '. $importer->id .' feed')) {
+  foreach (feeds_enabled_importers() as $id) {
+    if (user_access("import $id feed")) {
       return TRUE;
     }
   }
@@ -468,38 +465,17 @@ function feeds_importer_load_all($load_disabled = FALSE) {
 }
 
 /**
- * Return whether a importer is enabled or not.
- *
- * Use only for importer configurations that ship with feeds. This function
- * assumes that importers are initially off and then enabled manually on
- * admin/build/feeds.
+ * Get an array of enabled importer ids.
  *
  * @return
- *   TRUE if the importer is enabled, FALSE if not.
+ *   An array where the values contain ids of enabled importers.
  */
-function feeds_importer_enabled($id) {
-  // 'default_feeds_importer' variable is used internally by CTools to determine
-  // the enabled/disabled state of a configuration. This variable may not be
-  // completely populated.
-  $disabled = variable_get('default_feeds_importer', FALSE);
-  if ($disabled === FALSE) {
-    $disabled = array();
-    foreach (feeds_importer_load_all() as $importer) {
-      $disabled[$importer->id] = $disabled->disabled;
-    }
-    variable_set('default_feeds_importer', $disabled);
-  }
-  // If disabled is not present, assume that importer configuration is disabled.
-  if (!isset($disabled[$id])) {
-    return FALSE;
-  }
-  return !$disabled[$id];
+function feeds_enabled_importers() {
+  return array_keys(_feeds_importer_digest());
 }
 
 /**
  * Get a an enabled importer configuration by content type.
- *
- * @todo speed this up by DB caching the result.
  *
  * @param $content_type
  *   A node type string.
@@ -509,17 +485,42 @@ function feeds_importer_enabled($id) {
  *   FALSE otherwise.
  */
 function feeds_get_importer_id($content_type) {
-  static $ids = array();
-  if (!isset($ids[$content_type])) {
-    $ids[$content_type] = FALSE;
-    foreach (feeds_importer_load_all() as $importer) {
-      if ((!$importer->disabled) && $importer->config['content_type'] == $content_type) {
-        $ids[$content_type] = $importer->id;
-        break;
+  $importers = array_flip(_feeds_importer_digest());
+  return isset($importers[$content_type]) ? $importers[$content_type] : FALSE;
+}
+
+/**
+ * Helper function for feeds_get_importer_id() and feeds_enabled_importers().
+ */
+function _feeds_importer_digest() {
+  $importers = &ctools_static(__FUNCTION__);
+  if ($importers === NULL) {
+    if ($cache = cache_get(__FUNCTION__)) {
+      $importers = $cache->data;
+    }
+    else {
+      $importers = array();
+      foreach (feeds_importer_load_all() as $importer) {
+        $importers[$importer->id] = $importer->config['content_type'];
       }
+      cache_set(__FUNCTION__, $importers);
     }
   }
-  return $ids[$content_type];
+  return $importers;
+}
+
+/**
+ * Reset importer caches. Call when enabling/disabling importers.
+ */
+function feeds_cache_clear($rebuild_menu = TRUE) {
+  cache_clear_all('_feeds_importer_digest', 'cache');
+  ctools_static_reset('_feeds_importer_digest');
+  ctools_include('export');
+  ctools_export_load_object_reset('feeds_importer');
+  node_get_types('types', NULL, TRUE);
+  if ($rebuild_menu) {
+    menu_rebuild();
+  }
 }
 
 /**
