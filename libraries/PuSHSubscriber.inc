@@ -68,7 +68,6 @@ class PuSHSubscriber {
    *   at $url.
    */
   public function subscribe($url, $callback_url, $hub = '') {
-    feeds_dbg(func_get_args());
     // Fetch document, find rel=hub and rel=self.
     // If present, issue subscription request.
     $request = curl_init($url);
