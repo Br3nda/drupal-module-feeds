@@ -1,9 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.63 2010/03/02 14:41:22 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.64 2010/03/02 14:54:35 alexb Exp $
 
 
 Feeds 6.x 1.0 xxxxx xx, 2010-xx-xx
 ----------------------------------
 
+- #724184 ekes: catch failures when parsing for PubSubHubbub hub and self.
 - #706984 lyricnz: Add FeedsSimplePie::parseExtensions() to allow parsing to be
   customized.
 - #728854 Scott Reynolds: Fix $queue->createItem() fails.
