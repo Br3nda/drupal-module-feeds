@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.40 2010/02/28 17:16:25 alexb Exp $
+// $Id: feeds.module,v 1.41 2010/03/06 00:37:10 alexb Exp $
 
 /**
  * @file
@@ -362,16 +362,16 @@ function feeds_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
- * Refreshes a feed identified by $feed_info.
+ * Refreshes a feed identified by $job.
  *
  * Used as a worker callback for drupal_queue.
  *
- * @param $feed_info
+ * @param $job
  *   Array where the key 'id' is the id of a FeedsImporter object and the key
  *   'feed_nid' is the node id of feed node.
  */
-function feeds_scheduler_work($feed_info) {
-  feeds_scheduler()->work($feed_info);
+function feeds_scheduler_work($job) {
+  feeds_scheduler()->work($job);
 }
 
 /**
