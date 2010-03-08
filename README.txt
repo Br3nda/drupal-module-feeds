@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.26 2010/02/26 14:50:03 alexb Exp $
+$Id: README.txt,v 1.27 2010/03/08 03:45:51 alexb Exp $
 
 
 "It feeds"
@@ -37,6 +37,8 @@ Requirements
   http://drupal.org/project/ctools
 - Drupal 6.x
   http://drupal.org/project/drupal
+- PHP safe mode is not supported, depending on your Feeds Importer configuration
+  safe mode may cause no problems though.
 - PHP 5.2.x recommended
 
 Installation
