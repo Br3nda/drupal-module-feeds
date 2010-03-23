@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.8 2010/02/24 01:19:33 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.9 2010/03/23 13:22:03 alexb Exp $
 
 /**
  * Abstract class, defines interface for processors.
@@ -84,8 +84,8 @@ abstract class FeedsProcessor extends FeedsPlugin {
 
     // Static cache $targets as getMappingTargets() may be an expensive method.
     static $targets;
-    if (empty($targets)) {
-      $targets = $this->getMappingTargets();
+    if (!isset($targets[$this->id])) {
+      $targets[$this->id] = $this->getMappingTargets();
     }
     $parser = feeds_importer($this->id)->parser;
     if (empty($target_item)) {
@@ -104,8 +104,8 @@ abstract class FeedsProcessor extends FeedsPlugin {
     foreach ($this->config['mappings'] as $mapping) {
       $value = $parser->getSourceElement($source_item, $mapping['source']);
 
-      if (is_array($targets[$mapping['target']]) && isset($targets[$mapping['target']]['callback']) && function_exists($targets[$mapping['target']]['callback'])) {
-        $callback = $targets[$mapping['target']]['callback'];
+      if (is_array($targets[$this->id][$mapping['target']]) && isset($targets[$this->id][$mapping['target']]['callback']) && function_exists($targets[$this->id][$mapping['target']]['callback'])) {
+        $callback = $targets[$this->id][$mapping['target']]['callback'];
         $callback($target_item, $mapping['target'], $value);
       }
       else {
