@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.11 2010/02/24 01:19:33 alexb Exp $
+// $Id: FeedsParser.inc,v 1.12 2010/03/29 02:21:37 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -346,6 +346,28 @@ class FeedsDateTimeElement extends FeedsElement {
 class FeedsDateTime extends DateTime {
   public $granularity = array();
   protected static $allgranularity = array('year', 'month', 'day', 'hour', 'minute', 'second', 'zone');
+  private $_serialized_time;
+  private $_serialized_timezone;
+
+  /**
+   * Helper function to prepare the object during serialization.
+   *
+   * We are extending a core class and core classes cannot be serialized.
+   *
+   * Ref: http://bugs.php.net/41334, http://bugs.php.net/39821
+   */
+  public function __sleep(){
+    $this->_serialized_time = $this->format('c');
+    $this->_serialized_timezone = $this->getTimezone()->getName();
+    return array('_serialized_time', '_serialized_timezone');
+  }
+
+  /**
+   * Upon unserializing, we must re-build ourselves using local variables.
+   */
+  public function __wakeup() {
+    $this->__construct($this->_serialized_time, new DateTimeZone($this->_serialized_timezone));
+  }
 
   /**
    * Overridden constructor.

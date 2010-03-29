@@ -1,9 +1,11 @@
-// $Id: CHANGELOG.txt,v 1.70 2010/03/29 00:35:00 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.71 2010/03/29 02:21:37 alexb Exp $
 
 
 Feeds 6.x 1.0 xxxxx xx, 2010-xx-xx
 ----------------------------------
 
+- #736684 Souvent22, Mixologic: FeedsDateTime & Batch DateTime causes core
+  dumps.
 - #750168 jtr: _parser_common_syndication_title does not strip html tags before
   constructing a title.
 - #648080 pvhee: FeedsNodeProcessor - static caching of mapping targets makes
