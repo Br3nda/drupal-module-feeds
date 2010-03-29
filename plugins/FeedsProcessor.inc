@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.9 2010/03/23 13:22:03 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.10 2010/03/29 02:55:50 alexb Exp $
 
 /**
  * Abstract class, defines interface for processors.

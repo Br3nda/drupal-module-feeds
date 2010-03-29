@@ -1,4 +1,4 @@
-; $Id: feeds_defaults.info,v 1.2 2009/11/04 13:20:53 alexb Exp $
+; $Id: feeds_defaults.info,v 1.3 2010/03/29 02:55:50 alexb Exp $
 core = "6.x"
 name = "Feeds Defaults"
 package = "Feeds"

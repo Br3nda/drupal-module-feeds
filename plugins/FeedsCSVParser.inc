@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.6 2010/01/27 15:26:32 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.7 2010/03/29 02:55:50 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
