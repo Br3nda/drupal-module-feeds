@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.41 2010/03/06 00:37:10 alexb Exp $
+// $Id: feeds.module,v 1.42 2010/03/29 14:04:46 alexb Exp $
 
 /**
  * @file
@@ -34,6 +34,7 @@ function feeds_cron() {
 
 /**
  * Implementation of hook_cron_queue_info().
+ *
  * Invoked by drupal_queue module if present.
  */
 function feeds_cron_queue_info() {
@@ -310,7 +311,7 @@ function feeds_nodeapi(&$node, $op, $form) {
 }
 
 /**
- * Break out FeedsNodeProcessor specific nodeapi operations.
+ * Handles FeedsNodeProcessor specific nodeapi operations.
  */
 function _feeds_nodeapi_node_processor($node, $op) {
   switch ($op) {
@@ -439,7 +440,7 @@ function feeds_batch($method, $importer_id, $feed_nid = 0, &$context) {
  */
 
 /**
- * Load all importers.
+ * Loads all importers.
  *
  * @param $load_disabled
  *   Pass TRUE to load all importers, enabled or disabled, pass FALSE to only
@@ -465,7 +466,7 @@ function feeds_importer_load_all($load_disabled = FALSE) {
 }
 
 /**
- * Get an array of enabled importer ids.
+ * Gets an array of enabled importer ids.
  *
  * @return
  *   An array where the values contain ids of enabled importers.
@@ -475,7 +476,7 @@ function feeds_enabled_importers() {
 }
 
 /**
- * Get a an enabled importer configuration by content type.
+ * Gets an enabled importer configuration by content type.
  *
  * @param $content_type
  *   A node type string.
@@ -510,7 +511,7 @@ function _feeds_importer_digest() {
 }
 
 /**
- * Reset importer caches. Call when enabling/disabling importers.
+ * Resets importer caches. Call when enabling/disabling importers.
  */
 function feeds_cache_clear($rebuild_menu = TRUE) {
   cache_clear_all('_feeds_importer_digest', 'cache');
@@ -524,7 +525,7 @@ function feeds_cache_clear($rebuild_menu = TRUE) {
 }
 
 /**
- * Export a FeedsImporter configuration to code.
+ * Exports a FeedsImporter configuration to code.
  */
 function feeds_export($importer_id, $indent = '') {
   ctools_include('export');
@@ -535,7 +536,7 @@ function feeds_export($importer_id, $indent = '') {
 }
 
 /**
- * Log to a file like /mytmp/feeds_my_domain_org.log in temporary directory.
+ * Logs to a file like /mytmp/feeds_my_domain_org.log in temporary directory.
  */
 function feeds_dbg($msg) {
   if (variable_get('feeds_debug', false)) {
@@ -559,7 +560,7 @@ function feeds_dbg($msg) {
  */
 
 /**
- * Get an importer instance.
+ * Gets an importer instance.
  *
  * @param $id
  *   The unique id of the importer object.
@@ -575,7 +576,7 @@ function feeds_importer($id) {
 }
 
 /**
- * Get an instance of a source object.
+ * Gets an instance of a source object.
  *
  * @param $importer_id
  *   A FeedsImporter id.
@@ -592,7 +593,7 @@ function feeds_source($importer_id, $feed_nid = 0) {
 }
 
 /**
- * Get a scheduler instance.
+ * Gets a scheduler instance.
  *
  * @return
  *   A FeedsScheduler object or an object of a class defined by the Drupal
@@ -617,7 +618,7 @@ function feeds_scheduler() {
  */
 
 /**
- * Get all available plugins. Does not list hidden plugins.
+ * Gets all available plugins. Does not list hidden plugins.
  *
  * @return
  *   An array where the keys are the plugin keys and the values
@@ -648,7 +649,7 @@ function feeds_plugin_compare($a, $b) {
 }
 
 /**
- * Get all available plugins of a particular type.
+ * Gets all available plugins of a particular type.
  *
  * @param $type
  *   'fetcher', 'parser' or 'processor'
@@ -666,7 +667,7 @@ function feeds_get_plugins_by_type($type) {
 }
 
 /**
- * Get an instance of a class for a given plugin and id.
+ * Gets an instance of a class for a given plugin and id.
  *
  * @param $plugin
  *   A string that is the key of the plugin to load.
@@ -719,7 +720,7 @@ function feeds_plugin_child($plugin_key, $parent_plugin) {
 }
 
 /**
- * Determine the type of a plugin.
+ * Determines the type of a plugin.
  *
  * @param $plugin_key
  *   String that identifies a Feeds plugin key.
@@ -771,7 +772,7 @@ function feeds_include($file, $directory = 'includes') {
 }
 
 /**
- * Include a library file.
+ * Includes a library file.
  *
  * @param $file
  *   The filename to load from.
