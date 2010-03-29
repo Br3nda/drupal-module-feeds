@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.13 2010/02/24 00:08:47 alexb Exp $
+// $Id: feeds.pages.inc,v 1.14 2010/03/29 00:42:37 alexb Exp $
 
 /**
  * @file
@@ -64,8 +64,6 @@ function feeds_import_form(&$form_state, $importer_id) {
 
 /**
  * Validation handler for node forms and feeds_import_form().
- *
- * Has to live in feeds.module, needs to be callable from node form.
  */
 function feeds_import_form_validate($form, &$form_state) {
   // @todo This may be a problem here, as we don't have a feed_nid at this point.
