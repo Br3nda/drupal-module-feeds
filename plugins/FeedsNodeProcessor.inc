@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.24 2010/02/23 22:24:50 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.25 2010/03/30 20:06:36 diggersf Exp $
 
 /**
  * @file
@@ -40,7 +40,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
           // If updating populate nid and vid avoiding an expensive node_load().
           $node->nid = $nid;
-          $node->vid = db_result(db_query('SELECT vid FROM {node} WHERE nid = %d', $nid));
+          $node->vid = db_result(db_query("SELECT vid FROM {node} WHERE nid = %d", $nid));
           $batch->updated++;
         }
         else {
@@ -98,7 +98,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
    */
   public function clear(FeedsBatch $batch, FeedsSource $source) {
     if (empty($batch->total)) {
-      $batch->total = db_result(db_query('SELECT COUNT(nid) FROM {feeds_node_item} WHERE id = "%s" AND feed_nid = %d', $source->id, $source->feed_nid));
+      $batch->total = db_result(db_query("SELECT COUNT(nid) FROM {feeds_node_item} WHERE id = '%s' AND feed_nid = %d", $source->id, $source->feed_nid));
     }
     $result = db_query_range('SELECT nid FROM {feeds_node_item} WHERE id = "%s" AND feed_nid = %d ', $source->id, $source->feed_nid, 0, variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE));
     while ($node = db_fetch_object($result)) {
@@ -274,10 +274,10 @@ class FeedsNodeProcessor extends FeedsProcessor {
     foreach ($this->uniqueTargets($source_item) as $target => $value) {
       switch ($target) {
         case 'url':
-          $nid = db_result(db_query('SELECT nid FROM {feeds_node_item} WHERE feed_nid = %d AND id = "%s" AND url = "%s"', $source->feed_nid, $source->id, $value));
+          $nid = db_result(db_query("SELECT nid FROM {feeds_node_item} WHERE feed_nid = %d AND id = '%s' AND url = '%s'", $source->feed_nid, $source->id, $value));
           break;
         case 'guid':
-          $nid = db_result(db_query('SELECT nid FROM {feeds_node_item} WHERE feed_nid = %d AND id = "%s" AND guid = "%s"', $source->feed_nid, $source->id, $value));
+          $nid = db_result(db_query("SELECT nid FROM {feeds_node_item} WHERE feed_nid = %d AND id = '%s' AND guid = '%s'", $source->feed_nid, $source->id, $value));
           break;
       }
       if ($nid) {
@@ -323,7 +323,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
    * @return Empty string if no item is found, hash otherwise.
    */
   protected function getHash($nid) {
-    $hash = db_result(db_query('SELECT hash FROM {feeds_node_item} WHERE nid = %d', $nid));
+    $hash = db_result(db_query("SELECT hash FROM {feeds_node_item} WHERE nid = %d", $nid));
     if ($hash) {
       // Return with the hash.
       return $hash;
@@ -341,8 +341,8 @@ function _feeds_node_delete($nid) {
 
   $node = node_load($nid);
 
-  db_query('DELETE FROM {node} WHERE nid = %d', $node->nid);
-  db_query('DELETE FROM {node_revisions} WHERE nid = %d', $node->nid);
+  db_query("DELETE FROM {node} WHERE nid = %d", $node->nid);
+  db_query("DELETE FROM {node_revisions} WHERE nid = %d", $node->nid);
 
   // Call the node-specific callback (if any):
   node_invoke($node, 'delete');

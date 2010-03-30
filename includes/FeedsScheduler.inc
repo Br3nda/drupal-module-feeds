@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.17 2010/03/01 14:33:27 alexb Exp $
+// $Id: FeedsScheduler.inc,v 1.18 2010/03/30 20:06:36 diggersf Exp $
 
 /**
  * @file
@@ -97,7 +97,7 @@ class FeedsScheduler implements FeedsSchedulerInterface {
     $start = time();
 
     // Release schedule lock where the lock is older than 1 hour.
-    db_query('UPDATE {feeds_schedule} SET scheduled = 0 WHERE scheduled < %d', FEEDS_REQUEST_TIME - 3600);
+    db_query("UPDATE {feeds_schedule} SET scheduled = 0 WHERE scheduled < %d", FEEDS_REQUEST_TIME - 3600);
 
     // Iterate over feed importers, pick $num jobs for each of them and
     // schedule them.
@@ -147,7 +147,7 @@ class FeedsScheduler implements FeedsSchedulerInterface {
    * Implementation of FeedsSchedulerInterface::remove().
    */
   public function remove($importer_id, $callback, $feed_nid = 0) {
-    db_query('DELETE FROM {feeds_schedule} WHERE id = "%s" AND callback = "%s" AND feed_nid = %d', $importer_id, $callback, $feed_nid);
+    db_query("DELETE FROM {feeds_schedule} WHERE id = '%s' AND callback = '%s' AND feed_nid = %d", $importer_id, $callback, $feed_nid);
   }
 
   /**

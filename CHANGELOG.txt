@@ -1,9 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.76 2010/03/30 19:42:44 diggersf Exp $
+// $Id: CHANGELOG.txt,v 1.77 2010/03/30 20:06:36 diggersf Exp $
 
 
 Feeds 6.x 1.0 xxxxx xx, 2010-xx-xx
 ----------------------------------
 
+- #622932 pounard: Fix non-standard SQL (PostgreSQL compatibility)
 - #705872 Scott Reynolds: Added HTTPFetcher autodiscovery
 - #740962 alex_b: Fix FileFetcher Attached to Feed Node, Upload Field Not Saving File
   Path.

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.17 2010/03/29 02:55:50 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.18 2010/03/30 20:06:36 diggersf Exp $
 
 /**
  * @file
@@ -164,7 +164,7 @@ class FeedsImporter extends FeedsConfigurable {
    * from database, does not delete configuration itself.
    */
   public function delete() {
-    db_query('DELETE FROM {feeds_importer} WHERE id = "%s"', $this->id);
+    db_query("DELETE FROM {feeds_importer} WHERE id = '%s'", $this->id);
   }
 
   /**
