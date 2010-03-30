@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.42 2010/03/29 14:04:46 alexb Exp $
+// $Id: feeds.module,v 1.43 2010/03/30 18:39:19 diggersf Exp $
 
 /**
  * @file
@@ -238,9 +238,19 @@ function feeds_feeds_plugins() {
 
 /**
  * Implementation of hook_nodeapi().
+ *
+ * @todo For Drupal 7, revisit static cache based shuttling of values between
+ *   'validate' and 'update'/'insert'.
  */
 function feeds_nodeapi(&$node, $op, $form) {
+
+  // $node looses any changes after 'validate' stage (see node_form_validate()).
+  // Keep a copy of title and feeds array between 'validate' and subsequent
+  // stages. This allows for automatically populating the title of the node form
+  // and modifying the $form['feeds'] array on node validation just like on the
+  // standalone form.
   static $last_title;
+  static $node_feeds;
 
   // Break out node processor related nodeapi functionality.
   _feeds_nodeapi_node_processor($node, $op);
@@ -253,16 +263,17 @@ function feeds_nodeapi(&$node, $op, $form) {
         // this stage.
         $source = feeds_source($importer_id);
 
+        // Node module magically moved $form['feeds'] to $node->feeds :P
+        $node_feeds = $node->feeds;
+        $source->configFormValidate($node_feeds);
+
         // If node title is empty, try to retrieve title from feed.
         if (trim($node->title) == '') {
           try {
-            $source->addConfig($node->feeds);
+            $source->addConfig($node_feeds);
             // @todo Too many indirections. Clean up.
             $batch = $source->importer->fetcher->fetch($source);
             $source->importer->parser->parse($batch, $source);
-            // Keep the title in a static cache and populate $node->title on
-            // 'presave' as node module looses any changes to $node after
-            // 'validate'.
             if (!$last_title = $batch->getTitle()) {
               throw new Exception();
             }
@@ -272,10 +283,6 @@ function feeds_nodeapi(&$node, $op, $form) {
             form_set_error('title', t('Could not retrieve title from feed.'), 'error');
           }
         }
-
-        // Invoke source
-        // Node module magically moved $form['feeds'] to $node->feeds :P
-        $source->configFormValidate($node->feeds);
         break;
       case 'presave':
         if (!empty($last_title)) {
@@ -287,12 +294,12 @@ function feeds_nodeapi(&$node, $op, $form) {
       case 'update':
         // Add configuration to feed source and save.
         $source = feeds_source($importer_id, $node->nid);
-        $source->addConfig($node->feeds);
+        $source->addConfig($node_feeds);
         $source->save();
 
         // Refresh feed if import on create is selected and suppress_import is
         // not set.
-        if ($op == 'insert' && feeds_importer($importer_id)->config['import_on_create'] && !isset($node->feeds['suppress_import'])) {
+        if ($op == 'insert' && feeds_importer($importer_id)->config['import_on_create'] && !isset($node_feeds['suppress_import'])) {
           feeds_batch_set(t('Importing'), 'import', $importer_id, $node->nid);
         }
         // Add import to scheduler.
@@ -300,6 +307,7 @@ function feeds_nodeapi(&$node, $op, $form) {
         // Add expiry to schedule, in case this is the first feed of this
         // configuration.
         feeds_scheduler()->add($importer_id, 'expire');
+        unset($node_feeds);
         break;
       case 'delete':
         // Remove feed from scheduler and delete source.
@@ -348,6 +356,8 @@ function feeds_form_alter(&$form, $form_state, $form_id) {
     if ($importer_id = feeds_get_importer_id($form['type']['#value'])) {
       // Set title to not required, try to retrieve it from feed.
       $form['title']['#required'] = FALSE;
+      // Enable uploads.
+      $form['#attributes']['enctype'] = 'multipart/form-data';
 
       // Build form.
       $source = feeds_source($importer_id, empty($form['nid']['#value']) ? 0 : $form['nid']['#value']);

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.10 2010/03/29 02:55:50 alexb Exp $
+// $Id: feeds.test,v 1.11 2010/03/30 18:39:19 diggersf Exp $
 
 /**
  * @file
@@ -20,7 +20,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
   public function getInfo() {
     return array(
       'name' => t('RSS import to nodes'),
-      'description' => t('Tests a feed configuration that is attached to a content type, uses common syndication parser and a node processor. Repeats the same test for a feed configuration that is not attached to a content type.'),
+      'description' => t('Tests a feed configuration that is attached to a content type, uses HTTP fetcher, common syndication parser and a node processor. Repeats the same test for an importer configuration that is not attached to a content type and for a configuration that is attached to a content type and uses the file fetcher.'),
       'group' => t('Feeds'),
     );
   }
@@ -321,6 +321,19 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     // Navigate to feed import form, access should be denied.
     $this->drupalGet('import/syndication_standalone');
     $this->assertResponse(403);
+
+    // Use File Fetcher.
+    $this->drupalLogin(
+      $this->drupalCreateUser(array('administer feeds', 'administer nodes'))
+    );
+    $this->setPlugin('syndication', 'FeedsFileFetcher');
+    // Create a feed node.
+    $edit = array(
+      'files[feeds]' => $this->absolutePath() .'/tests/feeds/drupalplanet.rss2',
+    );
+    $this->drupalPost('node/add/page', $edit, 'Save');
+    $this->assertText('has been created.');
+    $this->assertText('Created 25 Story nodes.');
   }
 }
 
