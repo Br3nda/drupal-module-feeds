@@ -1,4 +1,4 @@
-// $Id: CHANGELOG.txt,v 1.74 2010/03/30 18:54:29 diggersf Exp $
+// $Id: CHANGELOG.txt,v 1.75 2010/03/30 18:55:37 diggersf Exp $
 
 
 Feeds 6.x 1.0 xxxxx xx, 2010-xx-xx
@@ -31,7 +31,7 @@ Feeds 6.x 1.0 xxxxx xx, 2010-xx-xx
   importer id.
 - #718474 jerdavis: In FeedsNodeProcessor, check for duplicate items within
   same importer id.
-- #740962 Fix FileFetcher Attached to Feed Node, Upload Field Not Saving File
+- #740962 alex_b: Fix FileFetcher Attached to Feed Node, Upload Field Not Saving File
   Path.
 - #705872 Scott Reynolds: Added HTTPFetcher autodiscovery
 
