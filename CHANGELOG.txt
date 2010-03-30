@@ -1,7 +1,7 @@
-// $Id: CHANGELOG.txt,v 1.78 2010/03/30 20:16:42 diggersf Exp $
+// $Id: CHANGELOG.txt,v 1.79 2010/03/30 20:26:54 diggersf Exp $
 
 
-Feeds 6.x 1.0 xxxxx xx, 2010-xx-xx
+Feeds 6.x 1.0 Alpha 13, 2010-03-30
 ----------------------------------
 
 - #622932 pounard: Fix SQL capitalization.
