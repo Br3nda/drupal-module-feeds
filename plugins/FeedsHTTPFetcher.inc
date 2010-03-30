@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.20 2010/03/01 21:48:02 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.21 2010/03/30 18:54:29 diggersf Exp $
 
 /**
  * @file
@@ -94,6 +94,7 @@ class FeedsHTTPFetcher extends FeedsFetcher {
    */
   public function configDefaults() {
     return array(
+      'auto_detect_feeds' => FALSE,
       'use_pubsubhubbub' => FALSE,
       'designated_hub' => '',
     );
@@ -104,6 +105,12 @@ class FeedsHTTPFetcher extends FeedsFetcher {
    */
   public function configForm(&$form_state) {
     $form = array();
+    $form['auto_detect_feeds'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Auto detect feeds'),
+      '#description' => t('If the supplied URL does not point to a feed but an HTML document, attempt to extract a feed URL from the document.'),
+      '#default_value' => $this->config['auto_detect_feeds'],
+    );
     $form['use_pubsubhubbub'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use PubSubHubbub'),
@@ -133,6 +140,18 @@ class FeedsHTTPFetcher extends FeedsFetcher {
       '#required' => TRUE,
     );
     return $form;
+  }
+
+  /**
+   * Override parent::sourceFormValidate().
+   */
+  public function sourceFormValidate(&$values) {
+    if ($this->config['auto_detect_feeds']) {
+      feeds_include_library('http_request.inc', 'http_request');
+      if ($url = http_request_get_common_syndication($values['source'])) {
+        $values['source'] = $url;
+      }
+    }
   }
 
   /**

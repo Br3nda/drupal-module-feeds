@@ -1,4 +1,4 @@
-// $Id: CHANGELOG.txt,v 1.73 2010/03/30 18:39:19 diggersf Exp $
+// $Id: CHANGELOG.txt,v 1.74 2010/03/30 18:54:29 diggersf Exp $
 
 
 Feeds 6.x 1.0 xxxxx xx, 2010-xx-xx
@@ -33,6 +33,7 @@ Feeds 6.x 1.0 xxxxx xx, 2010-xx-xx
   same importer id.
 - #740962 Fix FileFetcher Attached to Feed Node, Upload Field Not Saving File
   Path.
+- #705872 Scott Reynolds: Added HTTPFetcher autodiscovery
 
 Feeds 6.x 1.0 Alpha 12, 2010-02-23
 ----------------------------------
