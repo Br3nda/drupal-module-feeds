@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.9 2010/03/30 20:06:36 diggersf Exp $
+// $Id: feeds.test.inc,v 1.10 2010/03/30 20:16:42 diggersf Exp $
 
 /**
  * @file
@@ -176,8 +176,8 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $this->assertTrue(is_numeric($nid), 'Found node id ('. $nid .').');
 
     // Check whether feed got recorded in feeds_source table.
-    $this->assertEqual(1, db_result(db_query("select COUNT(*) from {feeds_source} WHERE id = '%s' AND feed_nid = %d", $id, $nid)));
-    $source = db_fetch_object(db_query("select * from {feeds_source} WHERE id = '%s' AND feed_nid = %d", $id, $nid));
+    $this->assertEqual(1, db_result(db_query("SELECT COUNT(*) FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $id, $nid)));
+    $source = db_fetch_object(db_query("SELECT * FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $id, $nid));
     $config = unserialize($source->config);
     $this->assertEqual($config['FeedsHTTPFetcher']['source'], $feed_url, t('URL in DB correct.'));
 
@@ -209,7 +209,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $this->assertText('has been updated.');
 
     // Check that the URL was updated in the feeds_source table.
-    $source = db_fetch_object(db_query("select * from {feeds_source} WHERE feed_nid = %d", $nid));
+    $source = db_fetch_object(db_query("SELECT * FROM {feeds_source} WHERE feed_nid = %d", $nid));
     $config = unserialize($source->config);
     $this->assertEqual($config['FeedsHTTPFetcher']['source'], $feed_url, t('URL in DB correct.'));
   }

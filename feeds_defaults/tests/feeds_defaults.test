@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_defaults.test,v 1.6 2010/03/30 20:06:36 diggersf Exp $
+// $Id: feeds_defaults.test,v 1.7 2010/03/30 20:16:42 diggersf Exp $
 
 /**
  * @file
@@ -131,7 +131,7 @@ class FeedsDefaultsFeedTestCase extends FeedsDefaultsTestCase {
 
     // Create a batch of nodes.
     $this->createFeedNodes('feed', 10, 'feed');
-    $count = db_result(db_query("SELECT COUNT(*) from {node} WHERE type = 'feed_item'"));
+    $count = db_result(db_query("SELECT COUNT(*) FROM {node} WHERE type = 'feed_item'"));
     $this->assertEqual($count, 100, 'Imported 100 nodes.');
     $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
     $this->assertEqual($count, 100, 'Found 100 records in feeds_node_item.');
