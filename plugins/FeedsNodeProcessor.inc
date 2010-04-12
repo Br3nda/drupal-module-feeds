@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.25 2010/03/30 20:06:36 diggersf Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.26 2010/04/12 00:30:33 alexb Exp $
 
 /**
  * @file
@@ -100,12 +100,12 @@ class FeedsNodeProcessor extends FeedsProcessor {
     if (empty($batch->total)) {
       $batch->total = db_result(db_query("SELECT COUNT(nid) FROM {feeds_node_item} WHERE id = '%s' AND feed_nid = %d", $source->id, $source->feed_nid));
     }
-    $result = db_query_range('SELECT nid FROM {feeds_node_item} WHERE id = "%s" AND feed_nid = %d ', $source->id, $source->feed_nid, 0, variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE));
+    $result = db_query_range("SELECT nid FROM {feeds_node_item} WHERE id = '%s' AND feed_nid = %d", $source->id, $source->feed_nid, 0, variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE));
     while ($node = db_fetch_object($result)) {
       _feeds_node_delete($node->nid);
       $batch->deleted++;
     }
-    if (db_result(db_query_range('SELECT nid FROM {feeds_node_item} WHERE id = "%s" AND feed_nid = %d', $source->id, $source->feed_nid, 0, 1))) {
+    if (db_result(db_query_range("SELECT nid FROM {feeds_node_item} WHERE id = '%s' AND feed_nid = %d", $source->id, $source->feed_nid, 0, 1))) {
       return (1.0 / ($batch->total + 1)) * $batch->deleted;
     }
 
