@@ -1,4 +1,4 @@
-// $Id: CHANGELOG.txt,v 1.79 2010/03/30 20:26:54 diggersf Exp $
+// $Id: CHANGELOG.txt,v 1.80 2010/04/12 01:19:01 alexb Exp $
 
 
 Feeds 6.x 1.0 Alpha 13, 2010-03-30
@@ -7,8 +7,8 @@ Feeds 6.x 1.0 Alpha 13, 2010-03-30
 - #622932 pounard: Fix SQL capitalization.
 - #622932 pounard: Fix non-standard SQL (PostgreSQL compatibility)
 - #705872 Scott Reynolds: Added HTTPFetcher autodiscovery
-- #740962 alex_b: Fix FileFetcher Attached to Feed Node, Upload Field Not Saving File
-  Path.
+- #740962 alex_b: Fix FileFetcher Attached to Feed Node, Upload Field Not Saving 
+  File Path.
 - #754938 Monkey Master: FeedsCSVParser.inc uses strtolower() while parsing
   UTF-8 files.
 - #736684 Souvent22, Mixologic: FeedsDateTime & Batch DateTime causes core
