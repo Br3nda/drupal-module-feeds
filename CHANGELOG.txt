@@ -1,5 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.80 2010/04/12 01:19:01 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.81 2010/04/12 01:21:07 alexb Exp $
 
+
+Feeds 6.x 1.0 Alpha 14, 2010-04-11
+----------------------------------
+
+- #758664: Fix regression introduced with #740962.
 
 Feeds 6.x 1.0 Alpha 13, 2010-03-30
 ----------------------------------
