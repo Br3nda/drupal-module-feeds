@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFeedNodeProcessor.inc,v 1.11 2010/04/28 20:45:37 alexb Exp $
+// $Id: FeedsFeedNodeProcessor.inc,v 1.12 2010/04/28 22:18:30 alexb Exp $
 
 /**
  * @file
@@ -45,10 +45,10 @@ class FeedsFeedNodeProcessor extends FeedsProcessor {
 
     // Set messages.
     if ($batch->created) {
-      drupal_set_message(format_plural($batch->created, 'Created !number !type node.', 'Created !number !type nodes.', array('!number' => $batch->created, '!type' => $this->config['content_type'])));
+      drupal_set_message(format_plural($batch->created, 'Created @number @type node.', 'Created @number @type nodes.', array('@number' => $batch->created, '@type' => $this->config['content_type'])));
     }
     elseif ($batch->updated) {
-      drupal_set_message(format_plural($batch->updated, 'Updated !number !type node.', 'Updated !number !type nodes.', array('!number' => $batch->updated, '!type' => $this->config['content_type'])));
+      drupal_set_message(format_plural($batch->updated, 'Updated @number @type node.', 'Updated @number @type nodes.', array('@number' => $batch->updated, '@type' => $this->config['content_type'])));
     }
     else {
       drupal_set_message(t('There is no new content.'));

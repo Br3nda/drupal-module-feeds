@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.9 2010/04/28 20:45:37 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.10 2010/04/28 22:18:30 alexb Exp $
 
 /**
  * @file
@@ -64,18 +64,18 @@ class FeedsUserProcessor extends FeedsProcessor {
       drupal_set_message(
         format_plural(
           $failed,
-          'There was !number user that could not be imported because either their name or their email was empty or not valid. Check import data and mapping settings on User processor.',
-          'There were !number users that could not be imported because either their name or their email was empty or not valid. Check import data and mapping settings on User processor.',
-          array('!number' => $failed)
+          'There was @number user that could not be imported because either their name or their email was empty or not valid. Check import data and mapping settings on User processor.',
+          'There were @number users that could not be imported because either their name or their email was empty or not valid. Check import data and mapping settings on User processor.',
+          array('@number' => $failed)
         ),
         'error'
       );
     }
     if ($created) {
-      drupal_set_message(format_plural($created, 'Created !number user.', 'Created !number users.', array('!number' => $created)));
+      drupal_set_message(format_plural($created, 'Created @number user.', 'Created @number users.', array('@number' => $created)));
     }
     elseif ($updated) {
-      drupal_set_message(format_plural($updated, 'Updated !number user.', 'Updated !number users.', array('!number' => $updated)));
+      drupal_set_message(format_plural($updated, 'Updated @number user.', 'Updated @number users.', array('@number' => $updated)));
     }
     else {
       drupal_set_message(t('There are no new users.'));
