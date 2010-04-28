@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_defaults.test,v 1.7 2010/03/30 20:16:42 diggersf Exp $
+// $Id: feeds_defaults.test,v 1.8 2010/04/28 15:37:32 alexb Exp $
 
 /**
  * @file
@@ -332,10 +332,8 @@ class FeedsDefaultsNodeTestCase extends FeedsDefaultsTestCase {
     $this->drupalPost('import/node/import', array(), 'Import');
     $this->assertText('Created 79 Story nodes.');
 
-    // Disable.
+    // Disable, nodes should be still present.
     $this->disable('node');
-
-    // Nodes should be still present.
     $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
     $this->assertEqual($count, 79, 'Found correct number of items.');
     $count = db_result(db_query("SELECT COUNT(*) FROM {node} WHERE type = 'story' AND status = 1 AND uid = 0"));
@@ -343,6 +341,19 @@ class FeedsDefaultsNodeTestCase extends FeedsDefaultsTestCase {
     // Do not filter on type intentionally. There shouldn't be more than 8 nodes total.
     $count = db_result(db_query("SELECT COUNT(*) FROM {node_revisions}"));
     $this->assertEqual($count, 79, 'Found correct number of items.');
+
+    // Import a tab separated file.
+    $this->enable('node');
+    $this->drupalPost('import/node/delete-items', array(), 'Delete');
+    $edit = array(
+      'files[feeds]' => $this->absolutePath() .'/tests/feeds/nodes.tsv',
+      'feeds[FeedsCSVParser][delimiter]' => "\t",
+    );
+    $this->drupalPost('import/node', $edit, 'Import');
+    $this->assertText('Created 8 Story nodes.');
+
+    // Disable before exiting test.
+    $this->disable('node');
   }
 }
 

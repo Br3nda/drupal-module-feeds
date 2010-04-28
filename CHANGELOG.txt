@@ -1,9 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.81 2010/04/12 01:21:07 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.82 2010/04/28 15:37:32 alexb Exp $
 
 
 Feeds 6.x 1.0 Alpha 14, 2010-04-11
 ----------------------------------
 
+- #624464 bangpound: Support tabs as delimiters.
 - #758664: Fix regression introduced with #740962.
 
 Feeds 6.x 1.0 Alpha 13, 2010-03-30
@@ -12,7 +13,7 @@ Feeds 6.x 1.0 Alpha 13, 2010-03-30
 - #622932 pounard: Fix SQL capitalization.
 - #622932 pounard: Fix non-standard SQL (PostgreSQL compatibility)
 - #705872 Scott Reynolds: Added HTTPFetcher autodiscovery
-- #740962 alex_b: Fix FileFetcher Attached to Feed Node, Upload Field Not Saving 
+- #740962 alex_b: Fix FileFetcher Attached to Feed Node, Upload Field Not Saving
   File Path.
 - #754938 Monkey Master: FeedsCSVParser.inc uses strtolower() while parsing
   UTF-8 files.
