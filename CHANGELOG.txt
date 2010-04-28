@@ -1,10 +1,13 @@
-// $Id: CHANGELOG.txt,v 1.82 2010/04/28 15:37:32 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.83 2010/04/28 15:38:10 alexb Exp $
 
+Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
+----------------------------------
+
+- #624464 bangpound: Support tabs as delimiters.
 
 Feeds 6.x 1.0 Alpha 14, 2010-04-11
 ----------------------------------
 
-- #624464 bangpound: Support tabs as delimiters.
 - #758664: Fix regression introduced with #740962.
 
 Feeds 6.x 1.0 Alpha 13, 2010-03-30
