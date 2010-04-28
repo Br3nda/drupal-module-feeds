@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.87 2010/04/28 20:45:37 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.88 2010/04/28 21:10:49 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
 ----------------------------------
 
+- #725392 nicholasThompson: FeedsBatch does not check feeds folder exists before
+  uploading.
 - #776972 lyricnz: Messages use plural when describing single item.
 - #701390 frega, morningtime, Mixologic, alex_b et. al.: Fix RSS 1.0 parsing
   and add basic test framework for common_syndication_parser.

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsBatch.inc,v 1.7 2010/02/24 00:08:10 alexb Exp $
+// $Id: FeedsBatch.inc,v 1.8 2010/04/28 21:10:49 alexb Exp $
 
 /**
  * A FeedsBatch object holds the state of an import or clear batch. Used in
@@ -89,7 +89,11 @@ class FeedsImportBatch extends FeedsBatch {
    */
   public function getFilePath() {
     if (!isset($this->file_path)) {
-      $dest = file_destination(file_directory_path() .'/feeds/'. get_class($this) .'_'. md5($this->url) .'_'. time(), FILE_EXISTS_RENAME);
+      $dir = file_directory_path() .'/feeds/';
+      if (!file_check_directory($dir, TRUE)) {
+        throw new Exception(t('Feeds directory either cannot be created or is not writable.'));
+      }
+      $dest = file_destination($dir . get_class($this) .'_'. md5($this->url) .'_'. time(), FILE_EXISTS_RENAME);
       $this->file_path = file_save_data($this->getRaw(), $dest);
       if($this->file_path === 0) {
         throw new Exception(t('Cannot write content to %dest', array('%dest' => $dest)));
