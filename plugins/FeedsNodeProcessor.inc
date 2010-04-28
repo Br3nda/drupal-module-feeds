@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.30 2010/04/28 22:08:03 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.31 2010/04/28 22:09:05 alexb Exp $
 
 /**
  * @file
@@ -182,12 +182,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
       '#options' => $types,
       '#default_value' => $this->config['content_type'],
     );
-    $form['update_existing'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Update existing items'),
-      '#description' => t('Check if existing items should be updated from the feed.'),
-      '#default_value' => $this->config['update_existing'],
-    );
     $period = drupal_map_assoc(array(FEEDS_EXPIRE_NEVER, 3600, 10800, 21600, 43200, 86400, 259200, 604800, 604800 * 4, 604800 * 12, 604800 * 24, 31536000), 'feeds_format_expire');
     $form['expire'] = array(
       '#type' => 'select',
@@ -195,6 +189,12 @@ class FeedsNodeProcessor extends FeedsProcessor {
       '#options' => $period,
       '#description' => t('Select after how much time nodes should be deleted. The node\'s published date will be used for determining the node\'s age, see Mapping settings.'),
       '#default_value' => $this->config['expire'],
+    );
+    $form['update_existing'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Update existing items'),
+      '#description' => t('Check if existing items should be updated from the feed.'),
+      '#default_value' => $this->config['update_existing'],
     );
     return $form;
   }
