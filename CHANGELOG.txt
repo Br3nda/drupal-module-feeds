@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.85 2010/04/28 16:30:05 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.86 2010/04/28 20:30:07 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
 ----------------------------------
 
+- #701390 frega, morningtime, Mixologic, alex_b et. al.: Fix RSS 1.0 parsing
+  and add basic test framework for common_syndication_parser.
 - #781058 blakehall: Create teaser for imported nodes. NOTE: this may mean that
   your existing installation has shorter node teasers as expected. If this is
   the case, increase "Length of trimmed posts" on admin/content/node-settings.
