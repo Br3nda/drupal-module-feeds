@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.28 2010/04/28 16:30:05 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.29 2010/04/28 20:45:37 alexb Exp $
 
 /**
  * @file
@@ -81,10 +81,10 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
     // Set messages.
     if ($batch->created) {
-      drupal_set_message(t('Created !number !type nodes.', array('!number' => $batch->created, '!type' => node_get_types('name', $this->config['content_type']))));
+      drupal_set_message(format_plural($batch->created, 'Created !number !type node.', 'Created !number !type nodes.', array('!number' => $batch->created, '!type' => node_get_types('name', $this->config['content_type']))));
     }
     elseif ($batch->updated) {
-      drupal_set_message(t('Updated !number !type nodes.', array('!number' => $batch->updated, '!type' => node_get_types('name', $this->config['content_type']))));
+      drupal_set_message(format_plural($batch->updated, 'Updated !number !type node.', 'Updated !number !type nodes.', array('!number' => $batch->updated, '!type' => node_get_types('name', $this->config['content_type']))));
     }
     else {
       drupal_set_message(t('There is no new content.'));
@@ -112,7 +112,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     // Set message.
     drupal_get_messages('status');
     if ($batch->deleted) {
-      drupal_set_message(t('Deleted !number nodes.', array('!number' => $batch->deleted)));
+      drupal_set_message(format_plural($batch->deleted, 'Deleted !number node.', 'Deleted !number nodes.', array('!number' => $batch->deleted)));
     }
     else {
       drupal_set_message(t('There is no content to be deleted.'));
