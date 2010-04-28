@@ -1,8 +1,11 @@
-// $Id: CHANGELOG.txt,v 1.84 2010/04/28 16:16:53 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.85 2010/04/28 16:30:05 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
 ----------------------------------
 
+- #781058 blakehall: Create teaser for imported nodes. NOTE: this may mean that
+  your existing installation has shorter node teasers as expected. If this is
+  the case, increase "Length of trimmed posts" on admin/content/node-settings.
 - #622932-30 mikl: fix remaining non-standard SQL.
 - #624464 bangpound: Support tabs as delimiters.
 
