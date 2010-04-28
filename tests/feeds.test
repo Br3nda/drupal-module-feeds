@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.13 2010/03/30 20:16:42 diggersf Exp $
+// $Id: feeds.test,v 1.14 2010/04/28 16:44:14 alexb Exp $
 
 /**
  * @file
@@ -43,6 +43,12 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
    * Test node creation, refreshing/deleting feeds and feed items.
    */
   public function test() {
+    // Set the teaser length to unlimited otherwise tests looking for text on
+    // nodes will fail.
+    $edit = array(
+      'teaser_length' => 0,
+    );
+    $this->drupalPost('admin/content/node-settings', $edit, 'Save configuration');
 
     // Create a feed.
     $this->createFeedConfiguration('Syndication', 'syndication');
