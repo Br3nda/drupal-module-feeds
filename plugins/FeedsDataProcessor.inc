@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.11 2010/04/28 22:18:30 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.12 2010/04/28 22:57:57 alexb Exp $
 
 /**
  * @file
@@ -18,6 +18,7 @@ class FeedsDataProcessor extends FeedsProcessor {
 
     // Count number of created and updated nodes.
     $inserted  = $updated = 0;
+    $expiry_time = $this->expiryTime();
 
     while ($item = $batch->shiftItem()) {
       if (!($id = $this->existingItemId($item, $source)) || $this->config['update_existing']) {
@@ -26,6 +27,11 @@ class FeedsDataProcessor extends FeedsProcessor {
         $data['feed_nid'] = $source->feed_nid;
         $data['timestamp'] = FEEDS_REQUEST_TIME;
         $data = $this->map($item, $data);
+
+        // Only save if this item is not expired.
+        if ($expiry_time != FEEDS_EXPIRE_NEVER && $data['timestamp'] < (FEEDS_REQUEST_TIME - $expiry_time)) {
+          continue;
+        }
 
         // Save data.
         if ($id) {

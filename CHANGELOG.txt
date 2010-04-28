@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.88 2010/04/28 21:10:49 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.89 2010/04/28 22:57:57 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
 ----------------------------------
 
+- #653412 rbrandon: Do not create items older than expiry time.
 - #725392 nicholasThompson: FeedsBatch does not check feeds folder exists before
   uploading.
 - #776972 lyricnz: Messages use plural when describing single item.
