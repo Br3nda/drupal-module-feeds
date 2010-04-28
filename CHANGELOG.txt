@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.83 2010/04/28 15:38:10 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.84 2010/04/28 16:16:53 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
 ----------------------------------
 
+- #622932-30 mikl: fix remaining non-standard SQL.
 - #624464 bangpound: Support tabs as delimiters.
 
 Feeds 6.x 1.0 Alpha 14, 2010-04-11
