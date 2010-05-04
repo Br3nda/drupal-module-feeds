@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.15 2010/05/04 21:01:30 alexb Exp $
+// $Id: feeds.pages.inc,v 1.16 2010/05/04 21:05:46 alexb Exp $
 
 /**
  * @file
@@ -137,6 +137,8 @@ function feeds_delete_tab_form(&$form_state, $importer_id, $node = NULL) {
 function feeds_delete_tab_form_submit($form, &$form_state) {
   $form_state['redirect'] = $form['#redirect'];
   feeds_batch_set(t('Deleting'), 'clear', $form['#importer_id'], empty($form['#feed_nid']) ? 0 : $form['#feed_nid']);
+  // Reset import schedule.
+  feeds_scheduler()->add($form['#importer_id'], 'import');
 }
 
 /**
