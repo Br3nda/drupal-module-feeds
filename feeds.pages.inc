@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.14 2010/03/29 00:42:37 alexb Exp $
+// $Id: feeds.pages.inc,v 1.15 2010/05/04 21:01:30 alexb Exp $
 
 /**
  * @file
@@ -115,7 +115,7 @@ function feeds_import_tab_form_submit($form, &$form_state) {
  * Render a feeds delete form.
  *
  * Used on both node pages and configuration pages.
- * Therefore either $feed_id or $node may be missing.
+ * Therefore $node may be missing.
  */
 function feeds_delete_tab_form(&$form_state, $importer_id, $node = NULL) {
   if (empty($node)) {
