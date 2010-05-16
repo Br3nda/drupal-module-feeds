@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.93 2010/05/16 20:59:13 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.94 2010/05/16 21:08:17 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
 ----------------------------------
 
+- #783820 klonos: Fix warning: copy() [function.copy]: Filename cannot be empty
+  in FeedsParser.inc on line 168.
 - #778416 clemens.tolboom: Better message when plugin is missing.
 - #760140 lyricnz: FeedsBatch->total not updated when addItem($item) is called.
 - #755544 Monkey Master: Keep batch processing when mapping fails.

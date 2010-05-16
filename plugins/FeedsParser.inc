@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.12 2010/03/29 02:21:37 alexb Exp $
+// $Id: FeedsParser.inc,v 1.13 2010/05/16 21:08:18 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -162,7 +162,7 @@ class FeedsEnclosure extends FeedsElement {
    * @todo This is not concurrency safe.
    */
   public function getFile() {
-    if(!isset($this->file)) {
+    if(!isset($this->file) && $this->getValue()) {
       $dest = file_destination(file_directory_temp() .'/'. get_class($this) .'-'. basename($this->getValue()), FILE_EXISTS_RENAME);
       if (ini_get('allow_url_fopen')) {
         $this->file = copy($this->getValue(), $dest) ? $dest : 0;
