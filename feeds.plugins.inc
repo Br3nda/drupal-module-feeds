@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.plugins.inc,v 1.4 2010/01/25 20:03:05 alexb Exp $
+// $Id: feeds.plugins.inc,v 1.5 2010/05/16 21:35:08 alexb Exp $
 
 /**
  * @file
@@ -120,6 +120,16 @@ function _feeds_feeds_plugins() {
       ),
     );
   }
+  $info['FeedsSitemapParser'] = array(
+    'name' => 'Sitemap parser',
+    'description' => 'Parse Sitemap XML format feeds.',
+    'handler' => array(
+      'parent' => 'FeedsParser',
+      'class' => 'FeedsSitemapParser',
+      'file' => 'FeedsSitemapParser.inc',
+      'path' => $path,
+    ),
+  );
   $info['FeedsNodeProcessor'] = array(
     'name' => 'Node processor',
     'description' => 'Create nodes.',

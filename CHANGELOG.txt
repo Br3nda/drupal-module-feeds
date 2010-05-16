@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.96 2010/05/16 21:24:50 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.97 2010/05/16 21:35:08 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
 ----------------------------------
 
+- #759904 lyricnz: Provide a Google Sitemap Parser.
 - #774858 rjbrown99: Fix Node Processor updates node "created" time when
   updating.
 - #704236 jerdavis: Support mapping to CCK float field.
