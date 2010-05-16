@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.45 2010/04/12 01:21:07 alexb Exp $
+// $Id: feeds.module,v 1.46 2010/05/16 20:59:13 alexb Exp $
 
 /**
  * @file
@@ -700,7 +700,14 @@ function feeds_plugin_instance($plugin, $id) {
   if ($class = ctools_plugin_load_class('feeds', 'plugins', $plugin, 'handler')) {
     return FeedsConfigurable::instance($class, $id);
   }
-  drupal_set_message(t('Missing Feeds plugin. Check whether all required libraries and modules are installed properly.'), 'warning');
+  $args = array( '%plugin' => $plugin);
+  if (user_access('administer feeds')) {
+    $args['!link'] = l($id, 'admin/build/feeds/edit/' . $id);
+    drupal_set_message(t('Missing Feeds plugin %plugin. See !link. Check whether all required libraries and modules are installed properly.', $args), 'warning');
+  }
+  else {
+    drupal_set_message(t('Missing Feeds plugin %plugin. Please contact your site administrator.', $args), 'warning');
+  }
   $class = ctools_plugin_load_class('feeds', 'plugins', 'FeedsMissingPlugin', 'handler');
   return FeedsConfigurable::instance($class, $id);
 }
