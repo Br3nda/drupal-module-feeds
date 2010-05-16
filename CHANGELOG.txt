@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.95 2010/05/16 21:15:53 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.96 2010/05/16 21:24:50 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
 ----------------------------------
 
+- #774858 rjbrown99: Fix Node Processor updates node "created" time when
+  updating.
 - #704236 jerdavis: Support mapping to CCK float field.
 - #783820 klonos: Fix warning: copy() [function.copy]: Filename cannot be empty
   in FeedsParser.inc on line 168.
