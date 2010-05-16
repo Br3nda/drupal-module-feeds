@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.90 2010/05/04 21:05:46 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.91 2010/05/16 20:04:15 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
 ----------------------------------
 
+- #755544 Monkey Master: Keep batch processing when mapping fails.
 - alex_b: Reset import schedule after deleting items from feed.
 - #653412 rbrandon: Do not create items older than expiry time.
 - #725392 nicholasThompson: FeedsBatch does not check feeds folder exists before

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.32 2010/04/28 22:15:13 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.33 2010/05/16 20:04:15 alexb Exp $
 
 /**
  * @file
@@ -41,10 +41,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
           // If updating populate nid and vid avoiding an expensive node_load().
           $node->nid = $nid;
           $node->vid = db_result(db_query("SELECT vid FROM {node} WHERE nid = %d", $nid));
-          $batch->updated++;
-        }
-        else {
-          $batch->created++;
         }
 
         // Populate and prepare node object.
@@ -66,11 +62,21 @@ class FeedsNodeProcessor extends FeedsProcessor {
         $node->log = 'Created/updated by FeedsNodeProcessor';
         $node->uid = 0;
 
-        // Execute mappings from $item to $node.
-        $this->map($item, $node);
-
-        // Save the node.
-        node_save($node);
+        // Map and save nodes. If errors occur don't stop but report them.
+        try {
+          $this->map($item, $node);
+          node_save($node);
+          if (!empty($nid)) {
+            $batch->updated++;
+          }
+          else {
+            $batch->created++;
+          }
+        }
+        catch (Exception $e) {
+          drupal_set_message($e->getMessage(), 'warning');
+          watchdog('feeds', $e->getMessage(), array(), WATCHDOG_WARNING);
+        }
       }
 
       $processed++;
