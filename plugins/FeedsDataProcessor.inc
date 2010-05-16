@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.12 2010/04/28 22:57:57 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.13 2010/05/16 21:51:58 alexb Exp $
 
 /**
  * @file
@@ -21,7 +21,9 @@ class FeedsDataProcessor extends FeedsProcessor {
     $expiry_time = $this->expiryTime();
 
     while ($item = $batch->shiftItem()) {
-      if (!($id = $this->existingItemId($item, $source)) || $this->config['update_existing']) {
+      $id = $this->existingItemId($item, $source);
+
+      if ($id === FALSE || $this->config['update_existing']) {
         // Map item to a data record, feed_nid and timestamp are mandatory.
         $data = array();
         $data['feed_nid'] = $source->feed_nid;
@@ -34,7 +36,7 @@ class FeedsDataProcessor extends FeedsProcessor {
         }
 
         // Save data.
-        if ($id) {
+        if ($id !== FALSE) {
           $data['id'] = $id;
           $this->handler()->update($data, 'id');
           $updated++;
@@ -242,7 +244,7 @@ class FeedsDataProcessor extends FeedsProcessor {
         return $records[0]['id'];
       }
     }
-    return 0;
+    return FALSE;
   }
 
   /**
