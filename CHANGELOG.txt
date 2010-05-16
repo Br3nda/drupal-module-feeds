@@ -1,6 +1,6 @@
-// $Id: CHANGELOG.txt,v 1.98 2010/05/16 21:51:58 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.99 2010/05/16 22:04:48 alexb Exp $
 
-Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxxxx
+Feeds 6.x 1.0 Alpha 15, 2010-05-16
 ----------------------------------
 
 - #791296 B-Prod: Fix Feeds data processor does update id 0.
