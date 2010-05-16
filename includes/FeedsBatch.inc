@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsBatch.inc,v 1.9 2010/05/16 20:20:58 alexb Exp $
+// $Id: FeedsBatch.inc,v 1.10 2010/05/16 20:25:45 alexb Exp $
 
 /**
  * A FeedsBatch object holds the state of an import or clear batch. Used in
@@ -133,9 +133,7 @@ class FeedsImportBatch extends FeedsBatch {
    *   removed from the internal array.
    */
   public function shiftItem() {
-    $item = array_shift($this->items);
-    $this->total = count($this->items);
-    return $item;
+    return array_shift($this->items);
   }
 
   /**
