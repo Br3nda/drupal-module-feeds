@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.46 2010/05/16 20:59:13 alexb Exp $
+// $Id: feeds.module,v 1.47 2010/06/19 20:34:31 alexb Exp $
 
 /**
  * @file
@@ -259,8 +259,8 @@ function feeds_nodeapi(&$node, $op, $form) {
     switch ($op) {
       case 'validate':
         // On validation stage we are working with a FeedsSource object that is
-        // not tied to a nid - when creating a new node there is $node->nid at
-        // this stage.
+        // not tied to a nid - when creating a new node there is no
+        // $node->nid at this stage.
         $source = feeds_source($importer_id);
 
         // Node module magically moved $form['feeds'] to $node->feeds :P
