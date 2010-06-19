@@ -1,4 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.99 2010/05/16 22:04:48 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.100 2010/06/19 15:32:07 alexb Exp $
+
+Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXXXX
+----------------------------------
+
+- #783098 elliotttf: Introduce hook_feeds_user_processor_targets_alter(), mapper
+  for user profile fields.
 
 Feeds 6.x 1.0 Alpha 15, 2010-05-16
 ----------------------------------

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.10 2010/04/28 22:18:30 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.11 2010/06/19 15:32:07 alexb Exp $
 
 /**
  * @file
@@ -91,6 +91,26 @@ class FeedsUserProcessor extends FeedsProcessor {
     // Do not support deleting users as we have no way of knowing which ones we
     // imported.
     throw new Exception(t('User processor does not support deleting users.'));
+  }
+
+  /**
+   * Loads on-behalf implementations from mappers/
+   */
+  protected static function loadMappers() {
+    static $loaded = FALSE;
+
+    if (!$loaded) {
+      $path = drupal_get_path('module', 'feeds') .'/mappers';
+      $files = drupal_system_listing('.*\.inc$', $path, 'name', 0);
+      foreach ($files as $file) {
+        if (strstr($file->filename, '/mappers/')) {
+              require_once("./$file->filename");
+        }
+      }
+      // Rebuild cache.
+      module_implements('', FALSE, TRUE);
+    }
+    $loaded = TRUE;
   }
 
   /**
@@ -188,6 +208,11 @@ class FeedsUserProcessor extends FeedsProcessor {
         'optional_unique' => TRUE,
        );
     }
+
+    // Let other modules expose mapping targets.
+    self::loadMappers();
+    drupal_alter('feeds_user_processor_targets', $targets);
+
     return $targets;
   }
 
