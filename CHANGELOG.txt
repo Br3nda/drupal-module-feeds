@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.100 2010/06/19 15:32:07 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.101 2010/06/19 16:45:56 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXXXX
 ----------------------------------
 
+- #652180 ronald_istos, rjbrown99, et. al.: Assign author of imported nodes.
 - #783098 elliotttf: Introduce hook_feeds_user_processor_targets_alter(), mapper
   for user profile fields.
 
