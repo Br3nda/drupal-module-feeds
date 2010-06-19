@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.37 2010/06/19 17:04:30 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.38 2010/06/19 18:03:41 alexb Exp $
 
 /**
  * @file
@@ -26,45 +26,16 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
       // Create/update if item does not exist or update existing is enabled.
       if (!($nid = $this->existingItemId($item, $source)) || $this->config['update_existing']) {
+        $node = $this->buildNode($nid, $source->feed_nid);
 
-        $node = new stdClass();
+        // Only proceed if item has actually changed.
         $hash = $this->hash($item);
-
-        // If updating check whether item actually has changed and if so,
-        // retrieve its nid and vid.
-        if (!empty($nid)) {
-          if ($hash == $this->getHash($nid)) {
-            continue;
-          }
-          $node->nid = $nid;
-          $node->vid = db_result(db_query("SELECT vid FROM {node} WHERE nid = %d", $nid));
+        if (!empty($nid) && $hash == $this->getHash($nid)) {
+          continue;
         }
-        else {
-          $node->created = FEEDS_REQUEST_TIME;
-        }
-
-        // Populate and prepare node object.
-        $node->type = $this->config['content_type'];
-        $node->changed = FEEDS_REQUEST_TIME;
-        $node->feeds_node_item = new stdClass();
         $node->feeds_node_item->hash = $hash;
-        $node->feeds_node_item->id = $this->id;
-        $node->feeds_node_item->imported = FEEDS_REQUEST_TIME;
-        $node->feeds_node_item->feed_nid = $source->feed_nid;
-        $node->feeds_node_item->url = '';
-        $node->feeds_node_item->guid = '';
-        static $included;
-        if (!$included) {
-          module_load_include('inc', 'node', 'node.pages');
-          $included = TRUE;
-        }
-        node_object_prepare($node);
 
-        // Populate properties that are set by node_object_prepare().
-        $node->log = 'Created/updated by FeedsNodeProcessor';
-        $node->uid = $this->config['author'];
-
-        // Map and save nodes. If errors occur don't stop but report them.
+        // Map and save node. If errors occur don't stop but report them.
         try {
           $this->map($item, $node);
           node_save($node);
@@ -315,6 +286,39 @@ class FeedsNodeProcessor extends FeedsProcessor {
       }
     }
     return 0;
+  }
+
+  /**
+   * Creates a new node object in memory and returns it.
+   */
+  protected function buildNode($nid, $feed_nid) {
+    $node = new stdClass();
+    if (!empty($nid)) {
+      $node->nid = $nid;
+      $node->vid = db_result(db_query("SELECT vid FROM {node} WHERE nid = %d", $nid));
+    }
+    else {
+      $node->created = FEEDS_REQUEST_TIME;
+    }
+    $node->type = $this->config['content_type'];
+    $node->changed = FEEDS_REQUEST_TIME;
+    $node->feeds_node_item = new stdClass();
+    $node->feeds_node_item->id = $this->id;
+    $node->feeds_node_item->imported = FEEDS_REQUEST_TIME;
+    $node->feeds_node_item->feed_nid = $feed_nid;
+    $node->feeds_node_item->url = '';
+    $node->feeds_node_item->guid = '';
+    static $included;
+    if (!$included) {
+      module_load_include('inc', 'node', 'node.pages');
+      $included = TRUE;
+    }
+    node_object_prepare($node);
+
+    // Populate properties that are set by node_object_prepare().
+    $node->log = 'Created/updated by FeedsNodeProcessor';
+    $node->uid = $this->config['author'];
+    return $node;
   }
 
   /**
