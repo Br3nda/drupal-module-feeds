@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.103 2010/06/19 17:04:30 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.104 2010/06/19 19:40:43 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXXXX
 ----------------------------------
 
+- #759302 rjb, smartinm, et. al: Fix user warning: Duplicate entry.
 - #819876 alex_b: Fix field 'url' and 'guid' don't have default values.
 - #623444 mongolito404, pvhee, pdrake, servantleader, alex_b et. al.: Mapper for
   link module.

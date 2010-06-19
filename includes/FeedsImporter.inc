@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.18 2010/03/30 20:06:36 diggersf Exp $
+// $Id: FeedsImporter.inc,v 1.19 2010/06/19 19:40:43 alexb Exp $
 
 /**
  * @file
@@ -134,10 +134,10 @@ class FeedsImporter extends FeedsConfigurable {
     $save = new stdClass();
     $save->id = $this->id;
     $save->config = $this->getConfig();
-    // Make sure a source record is present at all time, try to update first,
-    // then insert.
-    drupal_write_record('feeds_importer', $save, 'id');
-    if (!db_affected_rows()) {
+    if (db_result(db_query_range("SELECT 1 FROM {feeds_importer} WHERE id = '%s'", $this->id, 0, 1))) {
+      drupal_write_record('feeds_importer', $save, 'id');
+    }
+    else {
       drupal_write_record('feeds_importer', $save);
     }
     // Clear menu cache, changes to importer can change menu items.

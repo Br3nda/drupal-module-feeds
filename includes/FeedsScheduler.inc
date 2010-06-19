@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsScheduler.inc,v 1.19 2010/04/28 16:16:53 alexb Exp $
+// $Id: FeedsScheduler.inc,v 1.20 2010/06/19 19:40:43 alexb Exp $
 
 /**
  * @file
@@ -137,8 +137,10 @@ class FeedsScheduler implements FeedsSchedulerInterface {
       'last_executed_time' => 0,
       'scheduled' => 0, // Means NOT scheduled at the moment.
     );
-    drupal_write_record('feeds_schedule', $save, array('id', 'callback', 'feed_nid'));
-    if (!db_affected_rows()) {
+    if (db_result(db_query_range("SELECT 1 FROM {feeds_schedule} WHERE id = '%s' AND callback = '%s' AND feed_nid = %d", $importer_id, $callback, $feed_nid, 0, 1))) {
+      drupal_write_record('feeds_schedule', $save, array('id', 'callback', 'feed_nid'));
+    }
+    else {
       drupal_write_record('feeds_schedule', $save);
     }
   }

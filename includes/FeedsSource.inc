@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.12 2010/03/30 20:06:36 diggersf Exp $
+// $Id: FeedsSource.inc,v 1.13 2010/06/19 19:40:43 alexb Exp $
 
 /**
  * @file
@@ -197,10 +197,10 @@ class FeedsSource extends FeedsConfigurable {
       'source' => $source,
       'batch' => isset($this->batch) ? $this->batch : FALSE,
     );
-    // Make sure a source record is present at all time, try to update first,
-    // then insert.
-    drupal_write_record('feeds_source', $object, array('id', 'feed_nid'));
-    if (!db_affected_rows()) {
+    if (db_result(db_query_range("SELECT 1 FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $this->id, $this->feed_nid, 0, 1))) {
+      drupal_write_record('feeds_source', $object, array('id', 'feed_nid'));
+    }
+    else {
       drupal_write_record('feeds_source', $object);
     }
   }
