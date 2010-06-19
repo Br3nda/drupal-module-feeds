@@ -1,11 +1,11 @@
-/* $Id: feeds_ui.css,v 1.4 2010/03/29 02:55:50 alexb Exp $ */
+/* $Id: feeds_ui.css,v 1.5 2010/06/19 14:50:50 alexb Exp $ */
 
 /* Feeds admin overview form. */
 table.feeds-admin-importers thead th {
   border: none;
   }
 table.feeds-admin-importers td.disabled {
-  color: #ccc;
+  color: #aaa;
   }
 table.feeds-admin-importers tr.disabled.odd,
 table.feeds-admin-importers tr.disabled.even {
