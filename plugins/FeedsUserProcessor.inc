@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.11 2010/06/19 15:32:07 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.12 2010/06/19 15:57:13 alexb Exp $
 
 /**
  * @file
@@ -94,26 +94,6 @@ class FeedsUserProcessor extends FeedsProcessor {
   }
 
   /**
-   * Loads on-behalf implementations from mappers/
-   */
-  protected static function loadMappers() {
-    static $loaded = FALSE;
-
-    if (!$loaded) {
-      $path = drupal_get_path('module', 'feeds') .'/mappers';
-      $files = drupal_system_listing('.*\.inc$', $path, 'name', 0);
-      foreach ($files as $file) {
-        if (strstr($file->filename, '/mappers/')) {
-              require_once("./$file->filename");
-        }
-      }
-      // Rebuild cache.
-      module_implements('', FALSE, TRUE);
-    }
-    $loaded = TRUE;
-  }
-
-  /**
    * Execute mapping on an item.
    */
   protected function map($source_item) {
@@ -124,6 +104,7 @@ class FeedsUserProcessor extends FeedsProcessor {
     $target_account->status = $this->config['status'];
 
     // Have parent class do the iterating.
+    self::loadMappers();
     return parent::map($source_item, $target_account);
   }
 

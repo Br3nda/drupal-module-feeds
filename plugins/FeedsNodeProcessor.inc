@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.34 2010/05/16 21:24:50 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.35 2010/06/19 15:57:13 alexb Exp $
 
 /**
  * @file
@@ -292,26 +292,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
       }
     }
     return 0;
-  }
-
-  /**
-   * Loads on-behalf implementations from mappers/
-   */
-  protected static function loadMappers() {
-    static $loaded = FALSE;
-
-    if (!$loaded) {
-      $path = drupal_get_path('module', 'feeds') .'/mappers';
-      $files = drupal_system_listing('.*\.inc$', $path, 'name', 0);
-      foreach ($files as $file) {
-        if (strstr($file->filename, '/mappers/')) {
-  	      require_once("./$file->filename");
-        }
-      }
-      // Rebuild cache.
-      module_implements('', FALSE, TRUE);
-    }
-    $loaded = TRUE;
   }
 
   /**

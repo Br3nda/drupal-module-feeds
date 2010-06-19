@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.10 2010/03/29 02:55:50 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.11 2010/06/19 15:57:13 alexb Exp $
 
 /**
  * Abstract class, defines interface for processors.
@@ -62,10 +62,12 @@ abstract class FeedsProcessor extends FeedsPlugin {
   }
 
   /**
-   * Execute mapping on an item. This method encapsulates the central mapping
-   * functionality. When an item is processed, it is passed through map() where
-   * the properties of $source_item are mapped onto $target_item following
-   * the processor's mapping configuration.
+   * Execute mapping on an item.
+   *
+   * This method encapsulates the central mapping functionality. When an item is
+   * processed, it is passed through map() where the properties of $source_item
+   * are mapped onto $target_item following the processor's mapping
+   * configuration.
    *
    * For each mapping FeedsParser::getSourceElement() is executed to retrieve
    * the source element, then FeedsProcessor::setTargetElement() is invoked
@@ -76,9 +78,10 @@ abstract class FeedsProcessor extends FeedsPlugin {
    *
    * @ingroup mappingapi
    *
+   * @see hook_feeds_data_processor_targets_alter()
    * @see hook_feeds_node_processor_targets_alter()
    * @see hook_feeds_term_processor_targets_alter()
-   * @see hook_feeds_data_processor_targets_alter()
+   * @see hook_feeds_user_processor_targets_alter()
    */
   protected function map($source_item, $target_item = NULL) {
 
@@ -244,5 +247,30 @@ abstract class FeedsProcessor extends FeedsPlugin {
       }
     }
     return $targets;
+  }
+
+  /**
+   * Loads on-behalf implementations from mappers/ directory.
+   *
+   * FeedsProcessor::map() does not load from mappers/ as only node and user
+   * processor ship with on-behalf implementations.
+   *
+   * @see FeedsNodeProcessor::map()
+   * @see FeedsUserProcessor::map()
+   */
+  protected static function loadMappers() {
+    static $loaded = FALSE;
+    if (!$loaded) {
+      $path = drupal_get_path('module', 'feeds') .'/mappers';
+      $files = drupal_system_listing('.*\.inc$', $path, 'name', 0);
+      foreach ($files as $file) {
+        if (strstr($file->filename, '/mappers/')) {
+          require_once("./$file->filename");
+        }
+      }
+      // Rebuild cache.
+      module_implements('', FALSE, TRUE);
+    }
+    $loaded = TRUE;
   }
 }
