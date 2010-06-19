@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.36 2010/06/19 16:45:56 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.37 2010/06/19 17:04:30 alexb Exp $
 
 /**
  * @file
@@ -51,6 +51,8 @@ class FeedsNodeProcessor extends FeedsProcessor {
         $node->feeds_node_item->id = $this->id;
         $node->feeds_node_item->imported = FEEDS_REQUEST_TIME;
         $node->feeds_node_item->feed_nid = $source->feed_nid;
+        $node->feeds_node_item->url = '';
+        $node->feeds_node_item->guid = '';
         static $included;
         if (!$included) {
           module_load_include('inc', 'node', 'node.pages');
