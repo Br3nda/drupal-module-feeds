@@ -1,6 +1,6 @@
-// $Id: CHANGELOG.txt,v 1.105 2010/06/20 01:10:29 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.106 2010/06/20 01:12:43 alexb Exp $
 
-Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXXXX
+Feeds 6.x 1.0 Alpha 16, 2010-06-19
 ----------------------------------
 
 - #830438 andrewlevine: More secret files in FeedsImportBatch::getFilePath().
