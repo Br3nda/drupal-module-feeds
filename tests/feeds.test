@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.17 2010/06/19 16:45:56 alexb Exp $
+// $Id: feeds.test,v 1.18 2010/06/20 16:46:12 alexb Exp $
 
 /**
  * @file
@@ -805,7 +805,7 @@ class FeedsSyndicationParserTestCase extends FeedsWebTestCase {
    * Set up test.
    */
   public function setUp() {
-    parent::setUp('feeds', 'feeds_ui', 'ctools');
+    parent::setUp('feeds', 'feeds_ui', 'ctools', 'libraries');
 
     $this->drupalLogin(
       $this->drupalCreateUser(

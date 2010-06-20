@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_filefield.test,v 1.4 2010/06/20 01:26:01 alexb Exp $
+// $Id: feeds_mapper_filefield.test,v 1.5 2010/06/20 16:46:12 alexb Exp $
 
 require_once(drupal_get_path('module', 'feeds') . '/tests/feeds_mapper_test.inc');
 
@@ -25,7 +25,7 @@ class FeedsMapperFileFieldTestCase extends FeedsMapperTestCase {
    */
   public function setUp() {
     // Call parent setup with the required module
-    parent::setUp('feeds', 'feeds_ui', 'ctools', 'content', 'filefield');
+    parent::setUp('feeds', 'feeds_ui', 'ctools', 'content', 'filefield', 'libraries');
 
     // Create user and login
     $this->drupalLogin($this->drupalCreateUser(
