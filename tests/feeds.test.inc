@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.10 2010/03/30 20:16:42 diggersf Exp $
+// $Id: feeds.test.inc,v 1.11 2010/06/27 17:24:51 alexb Exp $
 
 /**
  * @file
@@ -27,7 +27,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    * Absolute path to Drupal root.
    */
   public function absolute() {
-    return dirname($GLOBALS['_SERVER']['SCRIPT_FILENAME']);
+    return realpath(getcwd());
   }
 
   /**

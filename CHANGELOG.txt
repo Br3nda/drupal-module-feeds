@@ -1,4 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.107 2010/06/23 15:24:24 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.108 2010/06/27 17:24:51 alexb Exp $
+
+Feeds 6.x 1.X XXXX
+------------------
+
+- #836982 Steven Merrill: Fix Feeds.module tests do not work when run from the
+  command line.
 
 Feeds 6.x 1.0 Beta 1, 2010-06-23
 --------------------------------
