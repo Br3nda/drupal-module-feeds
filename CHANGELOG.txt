@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.108 2010/06/27 17:24:51 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.109 2010/07/01 14:19:18 alexb Exp $
 
 Feeds 6.x 1.X XXXX
 ------------------
 
+- #842040 dixon_: Accept all responses from the 2xx status code series.
 - #836982 Steven Merrill: Fix Feeds.module tests do not work when run from the
   command line.
 
