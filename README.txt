@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.29 2010/03/29 04:43:32 alexb Exp $
+$Id: README.txt,v 1.30 2010/07/05 23:51:36 alexb Exp $
 
 
 "It feeds"
@@ -80,6 +80,14 @@ external library used at the moment is SimplePie.
 
 Libraries found in the libraries search path are preferred over libraries in
 feeds/libraries/.
+
+Transliteration support
+=======================
+
+If you plan to store files with Feeds - for instance when storing podcasts
+or images from syndication feeds - it is recommended to enable the
+Transliteration module to avoid issues with non-ASCII characters in file names.
+http://drupal.org/project/transliteration
 
 API Overview
 ============
