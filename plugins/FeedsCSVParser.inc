@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.10 2010/07/06 00:47:22 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.11 2010/07/06 17:09:43 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
@@ -26,7 +26,7 @@ class FeedsCSVParser extends FeedsParser {
     // @todo Push this functionality into ParserCSV.
     $header = array_shift($rows);
     foreach ($header as $i => $title) {
-      $header[$i] = drupal_strtolower($title); // Use lower case only.
+      $header[$i] = trim(drupal_strtolower($title)); // Use lower case only.
     }
     $result_rows = array();
     foreach ($rows as $i => $row) {
