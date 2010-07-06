@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_defaults.test,v 1.9 2010/04/28 20:45:37 alexb Exp $
+// $Id: feeds_defaults.test,v 1.10 2010/07/06 00:47:22 alexb Exp $
 
 /**
  * @file
@@ -347,7 +347,7 @@ class FeedsDefaultsNodeTestCase extends FeedsDefaultsTestCase {
     $this->drupalPost('import/node/delete-items', array(), 'Delete');
     $edit = array(
       'files[feeds]' => $this->absolutePath() .'/tests/feeds/nodes.tsv',
-      'feeds[FeedsCSVParser][delimiter]' => "\t",
+      'feeds[FeedsCSVParser][delimiter]' => "TAB",
     );
     $this->drupalPost('import/node', $edit, 'Import');
     $this->assertText('Created 8 Story nodes.');
