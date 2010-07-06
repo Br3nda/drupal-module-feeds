@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.30 2010/05/05 23:52:48 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.31 2010/07/06 15:16:33 alexb Exp $
 
 /**
  * @file
@@ -525,7 +525,7 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
     foreach ($mappings as $i => $mapping) {
 
       $mappings[$i]['source'] = isset($source_options) ? $source_options[$mappings[$i]['source']] : $mappings[$i]['source'];
-      $mappings[$i]['target'] = $target_options[$mappings[$i]['target']];
+      $mappings[$i]['target'] = isset($target_options[$mappings[$i]['target']]) ? $target_options[$mappings[$i]['target']] : $mappings[$i]['target'];
       $param = array(
         'processor' => $importer->processor,
         'mapping' => $mapping,
