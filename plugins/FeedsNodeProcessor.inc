@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.38 2010/06/19 18:03:41 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.39 2010/07/06 00:38:24 alexb Exp $
 
 /**
  * @file
@@ -217,8 +217,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
   /**
    * Return available mapping targets.
-   *
-   * Static cached, may be called multiple times in a page load.
    */
   public function getMappingTargets() {
     $targets = array(
