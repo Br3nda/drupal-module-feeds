@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.39 2010/07/06 00:38:24 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.40 2010/07/08 17:39:27 alexb Exp $
 
 /**
  * @file
@@ -8,6 +8,11 @@
 
 // Create or delete FEEDS_NODE_BATCH_SIZE at a time.
 define('FEEDS_NODE_BATCH_SIZE', 50);
+
+// Updating mode for existing nodes.
+define('FEEDS_NODE_SKIP_EXISTING', 0);
+define('FEEDS_NODE_REPLACE_EXISTING', 1);
+define('FEEDS_NODE_UPDATE_EXISTING', 2);
 
 /**
  * Creates nodes from feed items.
@@ -25,7 +30,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     while ($item = $batch->shiftItem()) {
 
       // Create/update if item does not exist or update existing is enabled.
-      if (!($nid = $this->existingItemId($item, $source)) || $this->config['update_existing']) {
+      if (!($nid = $this->existingItemId($item, $source)) || ($this->config['update_existing'] != FEEDS_NODE_SKIP_EXISTING)) {
         $node = $this->buildNode($nid, $source->feed_nid);
 
         // Only proceed if item has actually changed.
@@ -142,7 +147,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $type = isset($types['story']) ? 'story' : key($types);
     return array(
       'content_type' => $type,
-      'update_existing' => 0,
+      'update_existing' => FEEDS_NODE_SKIP_EXISTING,
       'expire' => FEEDS_EXPIRE_NEVER,
       'mappings' => array(),
       'author' => 0,
@@ -179,9 +184,14 @@ class FeedsNodeProcessor extends FeedsProcessor {
       '#default_value' => $this->config['expire'],
     );
     $form['update_existing'] = array(
-      '#type' => 'checkbox',
+      '#type' => 'radios',
       '#title' => t('Update existing items'),
-      '#description' => t('Check if existing items should be updated from the feed.'),
+      '#description' => t('Choose how existing items should be updated from the feed.'),
+      '#options' => array(
+        FEEDS_NODE_SKIP_EXISTING => 'Do not update existing item nodes',
+        FEEDS_NODE_REPLACE_EXISTING => 'Replace existing item nodes',
+        FEEDS_NODE_UPDATE_EXISTING => 'Update existing item nodes (slower than replacing them)',
+      ),
       '#default_value' => $this->config['update_existing'],
     );
     return $form;
@@ -291,21 +301,31 @@ class FeedsNodeProcessor extends FeedsProcessor {
    */
   protected function buildNode($nid, $feed_nid) {
     $node = new stdClass();
-    if (!empty($nid)) {
-      $node->nid = $nid;
-      $node->vid = db_result(db_query("SELECT vid FROM {node} WHERE nid = %d", $nid));
+    if (empty($nid)) {
+      $node->created = FEEDS_REQUEST_TIME;
+      $populate = TRUE;
     }
     else {
-      $node->created = FEEDS_REQUEST_TIME;
+      if ($this->config['update_existing'] == FEEDS_NODE_UPDATE_EXISTING) {
+        $node = node_load($nid, NULL, TRUE);
+      }
+      else {
+        $node->nid = $nid;
+        $node->vid = db_result(db_query("SELECT vid FROM {node} WHERE nid = %d", $nid));
+        $populate = TRUE;
+      }
     }
-    $node->type = $this->config['content_type'];
-    $node->changed = FEEDS_REQUEST_TIME;
-    $node->feeds_node_item = new stdClass();
-    $node->feeds_node_item->id = $this->id;
-    $node->feeds_node_item->imported = FEEDS_REQUEST_TIME;
-    $node->feeds_node_item->feed_nid = $feed_nid;
-    $node->feeds_node_item->url = '';
-    $node->feeds_node_item->guid = '';
+    if ($populate) {
+      $node->type = $this->config['content_type'];
+      $node->changed = FEEDS_REQUEST_TIME;
+      $node->feeds_node_item = new stdClass();
+      $node->feeds_node_item->id = $this->id;
+      $node->feeds_node_item->imported = FEEDS_REQUEST_TIME;
+      $node->feeds_node_item->feed_nid = $feed_nid;
+      $node->feeds_node_item->url = '';
+      $node->feeds_node_item->guid = '';
+    }
+
     static $included;
     if (!$included) {
       module_load_include('inc', 'node', 'node.pages');
@@ -315,7 +335,9 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
     // Populate properties that are set by node_object_prepare().
     $node->log = 'Created/updated by FeedsNodeProcessor';
-    $node->uid = $this->config['author'];
+    if ($populate) {
+      $node->uid = $this->config['author'];
+    }
     return $node;
   }
 
