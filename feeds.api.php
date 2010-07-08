@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.api.php,v 1.11 2010/06/19 15:32:07 alexb Exp $
+// $Id: feeds.api.php,v 1.12 2010/07/08 17:19:16 alexb Exp $
 
 /**
  * @mainpage
@@ -129,6 +129,9 @@ function hook_feeds_user_processor_targets_alter(&$targets) {
  * Alter mapping targets for nodes. Use this hook to add additional target
  * options to the mapping form of Node processors.
  *
+ * If the key in $targets[] does not correspond to the actual key on the node
+ * object ($node->key), real_target MUST be specified. See mappers/link.inc
+ *
  * For an example implementation, see mappers/content.inc
  *
  * @param &$targets
@@ -143,6 +146,12 @@ function hook_feeds_node_processor_targets_alter(&$targets, $content_type) {
     'name' => t('My custom node field'),
     'description' => t('Description of what my custom node field does.'),
     'callback' => 'my_callback',
+  );
+  $targets['my_node_field2'] = array(
+    'name' => t('My Second custom node field'),
+    'description' => t('Description of what my second custom node field does.'),
+    'callback' => 'my_callback2',
+    'real_target' => 'my_node_field_two', // Specify real target field on node.
   );
 }
 

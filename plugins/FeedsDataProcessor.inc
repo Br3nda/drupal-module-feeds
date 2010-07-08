@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.13 2010/05/16 21:51:58 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.14 2010/07/08 17:19:16 alexb Exp $
 
 /**
  * @file
@@ -27,8 +27,10 @@ class FeedsDataProcessor extends FeedsProcessor {
         // Map item to a data record, feed_nid and timestamp are mandatory.
         $data = array();
         $data['feed_nid'] = $source->feed_nid;
-        $data['timestamp'] = FEEDS_REQUEST_TIME;
         $data = $this->map($item, $data);
+        if (!isset($data['timestamp'])) {
+          $data['timestamp'] = FEEDS_REQUEST_TIME;
+        }
 
         // Only save if this item is not expired.
         if ($expiry_time != FEEDS_EXPIRE_NEVER && $data['timestamp'] < (FEEDS_REQUEST_TIME - $expiry_time)) {
