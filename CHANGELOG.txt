@@ -1,7 +1,7 @@
-// $Id: CHANGELOG.txt,v 1.114 2010/07/10 15:49:44 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.115 2010/07/10 15:54:17 alexb Exp $
 
-Feeds 6.x 1.X XXXX
-------------------
+Feeds 6.x 1.0 Beta 2, 2010-07-10
+--------------------------------
 
 - #753426 Monkey Master, andrewlevine, alex_b: Partial update of nodes.
 - #840626 andrewlevine, alex_b: Support using same mapping target multiple
