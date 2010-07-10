@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.41 2010/07/10 22:26:27 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.42 2010/07/10 22:41:47 alexb Exp $
 
 /**
  * @file
@@ -164,7 +164,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $form['content_type'] = array(
       '#type' => 'select',
       '#title' => t('Content type'),
-      '#description' => t('Choose node type to create from this feed. <strong>Note:</strong> Users with "import !feed_id feeds" permissions will be able to <strong>import</strong> nodes of the content type selected here regardless of the node level permissions. Further, users with "clear !feed_id permissions" will be able to <strong>delete</strong> imported nodes regardless of their node level permissions.', array('!feed_id' => $this->id)),
+      '#description' => t('Select the content type for the nodes to be created. <strong>Note:</strong> Users with "import !feed_id feeds" permissions will be able to <strong>import</strong> nodes of the content type selected here regardless of the node level permissions. Further, users with "clear !feed_id permissions" will be able to <strong>delete</strong> imported nodes regardless of their node level permissions.', array('!feed_id' => $this->id)),
       '#options' => $types,
       '#default_value' => $this->config['content_type'],
     );
@@ -176,7 +176,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $form['input_format'] = array(
       '#type' => 'select',
       '#title' => t('Input format'),
-      '#description' => t('Choose the input format of the body field of created nodes.'),
+      '#description' => t('Select the input format for the body field of the nodes to be created.'),
       '#options' => $format_options,
       '#default_value' => $this->config['input_format'],
     );
@@ -184,7 +184,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $form['author'] = array(
       '#type' => 'textfield',
       '#title' => t('Author'),
-      '#description' => t('Author to be assigned to created nodes - leave empty to assign "anonymous".'),
+      '#description' => t('Select the author of the nodes to be created - leave empty to assign "anonymous".'),
       '#autocomplete_path' => 'user/autocomplete',
       '#default_value' => empty($author->name) ?  'anonymous' : check_plain($author->name),
     );
@@ -199,11 +199,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $form['update_existing'] = array(
       '#type' => 'radios',
       '#title' => t('Update existing items'),
-      '#description' => t('Choose how existing items should be updated from the feed.'),
+      '#description' => t('Select how existing nodes should be updated.'),
       '#options' => array(
-        FEEDS_NODE_SKIP_EXISTING => 'Do not update existing item nodes',
-        FEEDS_NODE_REPLACE_EXISTING => 'Replace existing item nodes',
-        FEEDS_NODE_UPDATE_EXISTING => 'Update existing item nodes (slower than replacing them)',
+        FEEDS_NODE_SKIP_EXISTING => 'Do not update existing nodes',
+        FEEDS_NODE_REPLACE_EXISTING => 'Replace existing nodes',
+        FEEDS_NODE_UPDATE_EXISTING => 'Update existing nodes (slower than replacing them)',
       ),
       '#default_value' => $this->config['update_existing'],
     );
