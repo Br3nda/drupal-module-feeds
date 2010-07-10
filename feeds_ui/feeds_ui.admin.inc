@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.32 2010/07/10 22:32:59 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.33 2010/07/10 23:13:21 alexb Exp $
 
 /**
  * @file
@@ -226,11 +226,19 @@ function feeds_ui_create_form_submit($form, &$form_state) {
 function feeds_ui_delete_form(&$form_state, $importer) {
   $form['#redirect'] = 'admin/build/feeds';
   $form['#importer'] = $importer;
+  if ($importer->export_type & EXPORT_IN_CODE) {
+    $title = t('Would you really like to revert the importer @importer?', array('@importer' => $importer->config['name']));
+    $button_label = t('Revert');
+  }
+  else {
+    $title = t('Would you really like to delete the importer @importer?', array('@importer' => $importer->config['name']));
+    $button_label = t('Delete');
+  }
   return confirm_form($form,
-    t('Would you really like to delete the configuration !id?', array('!id' => $importer->id)),
+    $title,
     $form['#redirect'],
     t('This action cannot be undone.'),
-    t('Delete')
+    $button_label
   );
 }
 
