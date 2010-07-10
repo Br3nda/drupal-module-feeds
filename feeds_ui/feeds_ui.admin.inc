@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.31 2010/07/06 15:16:33 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.32 2010/07/10 22:32:59 alexb Exp $
 
 /**
  * @file
@@ -29,7 +29,7 @@ function feeds_ui_edit_help() {
     Imports can be <strong>refreshed periodically</strong> - see the minimum refresh period in the Basic settings.
     </li>
     <li>
-    Processors can have <strong>mappings</strong> in addition to settings. Mappings allow you to define what elements of a data feed should be mapped to what content fields on a granular level. For instance, you can specify that a feed\'s author should be mapped to a node\'s body.
+    Processors can have <strong>mappings</strong> in addition to settings. Mappings allow you to define what elements of a data feed should be mapped to what content fields on a granular level. For instance, you can specify that a feed item\'s author should be mapped to a node\'s body.
     </li>
     </ul>
     ', array('!import' => l(t('Import'), 'import')));
