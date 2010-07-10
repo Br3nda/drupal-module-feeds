@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.40 2010/07/08 17:39:27 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.41 2010/07/10 22:26:27 alexb Exp $
 
 /**
  * @file
@@ -147,6 +147,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $type = isset($types['story']) ? 'story' : key($types);
     return array(
       'content_type' => $type,
+      'input_format' => FILTER_FORMAT_DEFAULT,
       'update_existing' => FEEDS_NODE_SKIP_EXISTING,
       'expire' => FEEDS_EXPIRE_NEVER,
       'mappings' => array(),
@@ -166,6 +167,18 @@ class FeedsNodeProcessor extends FeedsProcessor {
       '#description' => t('Choose node type to create from this feed. <strong>Note:</strong> Users with "import !feed_id feeds" permissions will be able to <strong>import</strong> nodes of the content type selected here regardless of the node level permissions. Further, users with "clear !feed_id permissions" will be able to <strong>delete</strong> imported nodes regardless of their node level permissions.', array('!feed_id' => $this->id)),
       '#options' => $types,
       '#default_value' => $this->config['content_type'],
+    );
+    $format_options = array(FILTER_FORMAT_DEFAULT => t('Default format'));
+    $formats = filter_formats();
+      foreach ($formats as $format) {
+        $format_options[$format->format] = $format->name;
+      }
+    $form['input_format'] = array(
+      '#type' => 'select',
+      '#title' => t('Input format'),
+      '#description' => t('Choose the input format of the body field of created nodes.'),
+      '#options' => $format_options,
+      '#default_value' => $this->config['input_format'],
     );
     $author = user_load(array('uid' => $this->config['author']));
     $form['author'] = array(
@@ -318,6 +331,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     if ($populate) {
       $node->type = $this->config['content_type'];
       $node->changed = FEEDS_REQUEST_TIME;
+      $node->format = $this->config['input_format'];
       $node->feeds_node_item = new stdClass();
       $node->feeds_node_item->id = $this->id;
       $node->feeds_node_item->imported = FEEDS_REQUEST_TIME;

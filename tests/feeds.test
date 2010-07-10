@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.19 2010/07/08 17:39:27 alexb Exp $
+// $Id: feeds.test,v 1.20 2010/07/10 22:26:27 alexb Exp $
 
 /**
  * @file
@@ -136,6 +136,10 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
+    // Assert default input format on first imported feed node.
+    $format = db_result(db_query_range("SELECT nr.format FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid JOIN {node_revisions} nr ON n.vid = nr.vid", 0, 1));
+    $this->assertEqual($format, FILTER_FORMAT_DEFAULT, 'Using default Input format.');
+
     // Import again.
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
     $this->assertText('There is no new content.');
@@ -173,9 +177,14 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
     $this->assertEqual($count, 0, 'Accurate number of items in database.');
 
-    // Change author, import again.
+    // Change author.
     $author = $this->drupalCreateUser();
     $this->setSettings('syndication', 'FeedsNodeProcessor', array('author' => $author->name));
+
+    // Change input format.
+    $this->setSettings('syndication', 'FeedsNodeProcessor', array('input_format' => FILTER_FORMAT_DEFAULT + 1));
+
+    // Import again.
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
     $this->assertText('Created 10 Story nodes.');
 
@@ -184,6 +193,10 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertPattern('/<span class="submitted">(.*?)'. check_plain($author->name) .'<\/span>/');
     $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid WHERE n.uid = %d", $author->uid));
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
+
+    // Assert input format.
+    $format = db_result(db_query_range("SELECT nr.format FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid JOIN {node_revisions} nr ON n.vid = nr.vid", 0, 1));
+    $this->assertEqual($format, FILTER_FORMAT_DEFAULT + 1, 'Set non-default Input format.');
 
     // Set to update existing, remove authorship of above nodes and import again.
     $this->setSettings('syndication', 'FeedsNodeProcessor', array('update_existing' => 2));
