@@ -1,10 +1,11 @@
-// $Id: CHANGELOG.txt,v 1.113 2010/07/08 17:39:27 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.114 2010/07/10 15:49:44 alexb Exp $
 
 Feeds 6.x 1.X XXXX
 ------------------
 
 - #753426 Monkey Master, andrewlevine, alex_b: Partial update of nodes.
-- #840626 alevine, alex_b: Support using same mapping target multiple times.
+- #840626 andrewlevine, alex_b: Support using same mapping target multiple
+  times.
 - #624464 lyricnz, alex_b: Fix to "support tabs as delimiters".
 - #840350 lyricnz: (Optionally) Transliterate enclosure filenames to provide
   protection from awkward names.
