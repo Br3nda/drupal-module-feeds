@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.9 2010/03/29 02:55:50 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.10 2010/07/11 13:54:35 alexb Exp $
 
 /**
  * @file
@@ -54,7 +54,6 @@ class FeedsFileFetcher extends FeedsFetcher {
    */
   public function sourceForm($source_config) {
     $form = array();
-    // When renaming, do not forget feeds_vews_handler_field_source class.
     $form['source'] = array(
       '#type' => 'textfield',
       '#title' => t('File'),
