@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.10 2010/07/11 13:54:35 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.11 2010/07/11 16:26:06 alexb Exp $
 
 /**
  * @file
@@ -53,17 +53,28 @@ class FeedsFileFetcher extends FeedsFetcher {
    * Source form.
    */
   public function sourceForm($source_config) {
-    $form = array();
+    $form = $info = array();
+    if (!empty($source_config['source'])) {
+      $info = array(
+        'path' => $source_config['source'],
+        'size' => filesize(realpath($source_config['source'])),
+      );
+      if (module_exists('mimedetect')) {
+        $info['mime'] = mimedetect_mime(realpath($source_config['source']));
+      }
+    }
     $form['source'] = array(
-      '#type' => 'textfield',
+      '#type' => empty($this->config['direct']) ? 'value' : 'textfield',
       '#title' => t('File'),
       '#description' => t('Specify a file in the site\'s file system path or upload a file below.'),
-      '#default_value' => isset($source_config['source']) ? $source_config['source'] : '',
+      '#default_value' => empty($source_config['source']) ? '' : $source_config['source'],
     );
     $form['upload'] = array(
       '#type' => 'file',
-      '#title' => t('Upload'),
-      '#description' => t('Choose a file from your local computer.'),
+      '#title' => empty($this->config['direct']) ? t('File') : NULL,
+      '#description' => empty($source_config['source']) ? t('Select the file to be imported from your local system.') : t('Select a different file to be imported from your local system.'),
+      '#theme' => 'feeds_upload',
+      '#file_info' => $info,
     );
     return $form;
   }
@@ -90,5 +101,28 @@ class FeedsFileFetcher extends FeedsFetcher {
     elseif (!file_check_location($values['source'], file_directory_path())) {
       form_set_error('feeds][source', t('File needs to point to a file in your Drupal file system path.'));
     }
+  }
+
+  /**
+   * Override parent::configDefaults().
+   */
+  public function configDefaults() {
+    return array(
+      'direct' => FALSE,
+    );
+  }
+
+  /**
+   * Override parent::configForm().
+   */
+  public function configForm(&$form_state) {
+    $form = array();
+    $form['direct'] = array(
+      '#type' =>'checkbox',
+      '#title' => t('Supply path to file directly'),
+      '#description' => t('For experts. If checked users can specify a path to a file when importing rather than uploading a file. This is useful when files to be imported are already present on server.'),
+      '#default_value' => $this->config['direct'],
+    );
+    return $form;
   }
 }
