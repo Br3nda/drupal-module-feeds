@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.14 2010/07/11 01:10:52 alexb Exp $
+// $Id: FeedsSource.inc,v 1.15 2010/07/11 13:53:17 alexb Exp $
 
 /**
  * @file
@@ -126,10 +126,7 @@ class FeedsSource extends FeedsConfigurable {
   }
 
   /**
-   * Import a feed: execute, fetching, parsing and processing stage.
-   *
-   * Lock a source before importing by using FeedsSource::lock(), after
-   * importing, release with FeedsSource::release().
+   * Import a feed: execute fetching, parsing and processing stage.
    *
    * @return
    *   FEEDS_BATCH_COMPLETE if the import process finished. A decimal between
