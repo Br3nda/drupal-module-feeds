@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.117 2010/07/10 23:45:36 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.118 2010/07/11 01:10:52 alexb Exp $
 
 Feeds 6.x 1.X XXXX
 ------------------
 
+- #850638 alex_b: Introduce FeedsSource::preview().
 - #850298 alex_b: ParserCSV: Support batching (only affects library, full parser
   level batch support to be added later with #744660).
 - Minor cleanup of admin UI language and CSS.

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.47 2010/06/19 20:34:31 alexb Exp $
+// $Id: feeds.module,v 1.48 2010/07/11 01:10:52 alexb Exp $
 
 /**
  * @file
@@ -271,10 +271,7 @@ function feeds_nodeapi(&$node, $op, $form) {
         if (trim($node->title) == '') {
           try {
             $source->addConfig($node_feeds);
-            // @todo Too many indirections. Clean up.
-            $batch = $source->importer->fetcher->fetch($source);
-            $source->importer->parser->parse($batch, $source);
-            if (!$last_title = $batch->getTitle()) {
+            if (!$last_title = $source->preview()->getTitle()) {
               throw new Exception();
             }
           }

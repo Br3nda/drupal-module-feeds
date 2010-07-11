@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.13 2010/06/19 19:40:43 alexb Exp $
+// $Id: FeedsSource.inc,v 1.14 2010/07/11 01:10:52 alexb Exp $
 
 /**
  * @file
@@ -108,6 +108,21 @@ class FeedsSource extends FeedsConfigurable {
     $this->importer = feeds_importer($importer_id);
     parent::__construct($importer_id);
     $this->load();
+  }
+
+  /**
+   * Preview = fetch and parse a feed.
+   *
+   * @return
+   *   FeedsImportBatch object, fetched and parsed.
+   *
+   * @throws
+   *   Throws Exception if an error occurs when fetching or parsing.
+   */
+  public function preview() {
+    $batch = $this->importer->fetcher->fetch($this);
+    $this->importer->parser->parse($batch, $this);
+    return $batch;
   }
 
   /**
