@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.11 2010/07/06 17:09:43 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.12 2010/07/11 01:36:39 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
@@ -11,35 +11,30 @@ class FeedsCSVParser extends FeedsParser {
    */
   public function parse(FeedsImportBatch $batch, FeedsSource $source) {
 
-    // Parse.
+    // Load and configure parser.
     feeds_include_library('ParserCSV.inc', 'ParserCSV');
     $iterator = new ParserCSVIterator(realpath($batch->getFilePath()));
     $source_config = $source->getConfigFor($this);
     $parser = new ParserCSV();
     $delimiter = $source_config['delimiter'] == 'TAB' ? "\t" : $source_config['delimiter'];
     $parser->setDelimiter($delimiter);
-    $parser->setSkipFirstLine(FALSE);
-    $rows = $parser->parse($iterator);
-    unset($parser);
 
-    // Apply titles in lower case.
-    // @todo Push this functionality into ParserCSV.
+    // Get first line and use it for column names, convert them to lower case.
+    $parser->setLineLimit(1);
+    $rows = $parser->parse($iterator);
     $header = array_shift($rows);
     foreach ($header as $i => $title) {
-      $header[$i] = trim(drupal_strtolower($title)); // Use lower case only.
+      $header[$i] = trim(drupal_strtolower($title));
     }
-    $result_rows = array();
-    foreach ($rows as $i => $row) {
-      $result_row = array();
-      foreach ($row as $j => $col) {
-        $result_row[$header[$j]] = $col;
-      }
-      $result_rows[$i] = $result_row;
-    }
-    unset($rows);
+    $parser->setColumnNames($header);
+
+    // Set line limit to 0 and start byte to last position and parse rest.
+    $parser->setLineLimit(0);
+    $parser->setStartByte($parser->lastLinePos());
+    $rows = $parser->parse($iterator);
 
     // Populate batch.
-    $batch->setItems($result_rows);
+    $batch->setItems($rows);
   }
 
   /**
