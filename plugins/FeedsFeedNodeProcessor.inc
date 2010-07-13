@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFeedNodeProcessor.inc,v 1.12 2010/04/28 22:18:30 alexb Exp $
+// $Id: FeedsFeedNodeProcessor.inc,v 1.13 2010/07/13 19:32:06 alexb Exp $
 
 /**
  * @file
@@ -137,10 +137,11 @@ class FeedsFeedNodeProcessor extends FeedsProcessor {
       '#options' => $types,
       '#default_value' => $this->config['content_type'],
     );
+    // @todo Implement real updating.
     $form['update_existing'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Update existing items'),
-      '#description' => t('Check if existing items should be updated from the feed.'),
+      '#title' => t('Replace existing feed nodes'),
+      '#description' => t('If an existing node is found for an imported node, replace it. Existing nodes will be determined using mappings that are a "unique target".'),
       '#default_value' => $this->config['update_existing'],
     );
     return $form;

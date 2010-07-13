@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.42 2010/07/10 22:41:47 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.43 2010/07/13 19:32:06 alexb Exp $
 
 /**
  * @file
@@ -9,7 +9,8 @@
 // Create or delete FEEDS_NODE_BATCH_SIZE at a time.
 define('FEEDS_NODE_BATCH_SIZE', 50);
 
-// Updating mode for existing nodes.
+// Deprecated. Use FEEDS_SKIPE_EXISTING, FEEDS_REPLACE_EXISTNG,
+// FEEDS_UPDATE_EXISTING instead.
 define('FEEDS_NODE_SKIP_EXISTING', 0);
 define('FEEDS_NODE_REPLACE_EXISTING', 1);
 define('FEEDS_NODE_UPDATE_EXISTING', 2);
@@ -30,7 +31,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     while ($item = $batch->shiftItem()) {
 
       // Create/update if item does not exist or update existing is enabled.
-      if (!($nid = $this->existingItemId($item, $source)) || ($this->config['update_existing'] != FEEDS_NODE_SKIP_EXISTING)) {
+      if (!($nid = $this->existingItemId($item, $source)) || ($this->config['update_existing'] != FEEDS_SKIP_EXISTING)) {
         $node = $this->buildNode($nid, $source->feed_nid);
 
         // Only proceed if item has actually changed.
@@ -148,7 +149,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     return array(
       'content_type' => $type,
       'input_format' => FILTER_FORMAT_DEFAULT,
-      'update_existing' => FEEDS_NODE_SKIP_EXISTING,
+      'update_existing' => FEEDS_SKIP_EXISTING,
       'expire' => FEEDS_EXPIRE_NEVER,
       'mappings' => array(),
       'author' => 0,
@@ -199,11 +200,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $form['update_existing'] = array(
       '#type' => 'radios',
       '#title' => t('Update existing items'),
-      '#description' => t('Select how existing nodes should be updated.'),
+      '#description' => t('Select how existing nodes should be updated. Existing nodes will be determined using mappings that are a "unique target".'),
       '#options' => array(
-        FEEDS_NODE_SKIP_EXISTING => 'Do not update existing nodes',
-        FEEDS_NODE_REPLACE_EXISTING => 'Replace existing nodes',
-        FEEDS_NODE_UPDATE_EXISTING => 'Update existing nodes (slower than replacing them)',
+        FEEDS_SKIP_EXISTING => 'Do not update existing nodes',
+        FEEDS_REPLACE_EXISTING => 'Replace existing nodes',
+        FEEDS_UPDATE_EXISTING => 'Update existing nodes (slower than replacing them)',
       ),
       '#default_value' => $this->config['update_existing'],
     );
@@ -319,7 +320,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
       $populate = TRUE;
     }
     else {
-      if ($this->config['update_existing'] == FEEDS_NODE_UPDATE_EXISTING) {
+      if ($this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
         $node = node_load($nid, NULL, TRUE);
       }
       else {

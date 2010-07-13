@@ -1,5 +1,11 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.12 2010/07/08 17:19:16 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.13 2010/07/13 19:32:06 alexb Exp $
+
+
+// Update mode for existing items.
+define('FEEDS_SKIP_EXISTING', 0);
+define('FEEDS_REPLACE_EXISTING', 1);
+define('FEEDS_UPDATE_EXISTING', 2);
 
 /**
  * Abstract class, defines interface for processors.

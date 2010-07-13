@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.9 2010/04/28 22:18:30 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.10 2010/07/13 19:32:06 alexb Exp $
 
 /**
  * @file
@@ -145,10 +145,11 @@ class FeedsTermProcessor extends FeedsProcessor {
       '#options' => $options,
       '#default_value' => $this->config['vocabulary'],
     );
+    // @todo Implement true updating.
     $form['update_existing'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Update existing items'),
-      '#description' => t('Check if existing terms should be updated from the feed.'),
+      '#title' => t('Replace existing terms'),
+      '#description' => t('If an existing term is found for an imported term, replace it. Existing terms will be determined using mappings that are a "unique target".'),
       '#default_value' => $this->config['update_existing'],
     );
     return $form;

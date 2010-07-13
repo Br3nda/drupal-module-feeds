@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.14 2010/07/08 17:19:16 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.15 2010/07/13 19:32:06 alexb Exp $
 
 /**
  * @file
@@ -254,7 +254,7 @@ class FeedsDataProcessor extends FeedsProcessor {
    */
   public function configDefaults() {
     return array(
-      'update_existing' => 0,
+      'update_existing' => FEEDS_SKIP_EXISTING,
       'expire' => FEEDS_EXPIRE_NEVER, // Don't expire items by default.
       'mappings' => array(),
     );
@@ -264,12 +264,6 @@ class FeedsDataProcessor extends FeedsProcessor {
    * Override parent::configForm().
    */
   public function configForm(&$form_state) {
-    $form['update_existing'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Update existing items'),
-      '#description' => t('Check if existing items should be updated from the feed.'),
-      '#default_value' => $this->config['update_existing'],
-    );
     $period = drupal_map_assoc(array(FEEDS_EXPIRE_NEVER, 3600, 10800, 21600, 43200, 86400, 259200, 604800, 604800 * 4, 604800 * 12, 604800 * 24, 31536000), 'feeds_format_expire');
     $form['expire'] = array(
       '#type' => 'select',
@@ -277,6 +271,12 @@ class FeedsDataProcessor extends FeedsProcessor {
       '#options' => $period,
       '#description' => t('Select after how much time data records should be deleted. The timestamp target value will be used for determining the item\'s age, see Mapping settings.'),
       '#default_value' => $this->config['expire'],
+    );
+    $form['update_existing'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Replace existing records'),
+      '#description' => t('If an existing record is found for an imported record, replace it. Existing records will be determined using mappings that are a "unique target".'),
+      '#default_value' => $this->config['update_existing'],
     );
     return $form;
   }
