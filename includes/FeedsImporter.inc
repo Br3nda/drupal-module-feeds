@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.20 2010/07/10 22:57:50 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.21 2010/07/13 20:18:55 alexb Exp $
 
 /**
  * @file
@@ -232,7 +232,7 @@ class FeedsImporter extends FeedsConfigurable {
       'processor' => array(
         'plugin_key' => 'FeedsNodeProcessor',
       ),
-      'content_type' => 'page',
+      'content_type' => '',
       'update' => 0,
       'import_period' => 1800, // Refresh every 30 minutes by default.
       'expire_period' => 3600, // Expire every hour by default, this is a hidden setting.
