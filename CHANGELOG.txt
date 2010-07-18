@@ -1,9 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.125 2010/07/18 19:47:36 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.126 2010/07/18 20:36:16 alexb Exp $
 
 Feeds 6.x 1.X XXXX
 ------------------
 
-- #854628 DanielJohnston, alex_b: Fix user importer assigns all roles.
+- #854628 DanielJohnston, alex_b: Fix user processor assigns all roles.
 - #838018 infojunkie: Mapper for Formatted Number CCK field.
 - #856408 c.ex: Pass all $targets for hook_feeds_node_processor_targets_alter()
   by reference.
