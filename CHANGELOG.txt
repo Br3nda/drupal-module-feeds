@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.122 2010/07/18 18:33:43 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.123 2010/07/18 18:42:31 alexb Exp $
 
 Feeds 6.x 1.X XXXX
 ------------------
 
+- #856408 c.ex: Pass all $targets for hook_feeds_node_processor_targets_alter()
+  by reference.
 - #853194 andrewlevine, alex_b: Mapping: don't reset all targets.
 - #853144 alex_b: Consistent use of "replace" vs "update".
 - #850998 alex_b: Clean up file upload form. Note: If you supply file paths

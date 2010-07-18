@@ -1,5 +1,5 @@
 <?php
-// $Id: link.inc,v 1.2 2010/07/08 17:19:16 alexb Exp $
+// $Id: link.inc,v 1.3 2010/07/18 18:42:31 alexb Exp $
 
 /**
  * @file
@@ -9,7 +9,7 @@
 /**
  * Implementation of hook_feeds_node_processor_targets_alter().
  */
-function link_feeds_node_processor_targets_alter($targets, $content_type) {
+function link_feeds_node_processor_targets_alter(&$targets, $content_type) {
   $info = content_types($content_type);
 
   $fields = array();
