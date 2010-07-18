@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.13 2010/07/13 19:32:06 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.14 2010/07/18 19:15:03 alexb Exp $
 
 /**
  * @file
@@ -140,7 +140,7 @@ class FeedsUserProcessor extends FeedsProcessor {
       $form['roles'] = array(
         '#type' => 'checkboxes',
         '#title' => t('Additional roles'),
-        '#description' => t('Every user will be assigned the "autenticated user" role. Select additional roles here.'),
+        '#description' => t('Every user is assigned the "authenticated user" role. Select additional roles here.'),
         '#default_value' => $this->config['roles'],
         '#options' => $roles,
       );
