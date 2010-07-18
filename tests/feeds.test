@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.21 2010/07/18 18:33:43 alexb Exp $
+// $Id: feeds.test,v 1.22 2010/07/18 19:22:46 alexb Exp $
 
 /**
  * @file
@@ -612,10 +612,9 @@ class FeedsCSVtoUsersTest extends FeedsWebTestCase {
     );
     $this->addMappings('user_import', $mappings);
 
-    // Change some of the basic configuration.
+    // Use standalone form.
     $edit = array(
       'content_type' => '',
-      'import_period' => FEEDS_SCHEDULE_NEVER,
     );
     $this->drupalPost('admin/build/feeds/edit/user_import/settings', $edit, 'Save');
 
