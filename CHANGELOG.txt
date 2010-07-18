@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.123 2010/07/18 18:42:31 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.124 2010/07/18 19:06:10 alexb Exp $
 
 Feeds 6.x 1.X XXXX
 ------------------
 
+- #838018 infojunkie: Mapper for Formatted Number CCK field.
 - #856408 c.ex: Pass all $targets for hook_feeds_node_processor_targets_alter()
   by reference.
 - #853194 andrewlevine, alex_b: Mapping: don't reset all targets.
