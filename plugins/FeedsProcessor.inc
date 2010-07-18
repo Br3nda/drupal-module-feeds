@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.13 2010/07/13 19:32:06 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.14 2010/07/18 18:33:43 alexb Exp $
 
 
 // Update mode for existing items.
@@ -108,12 +108,12 @@ abstract class FeedsProcessor extends FeedsPlugin {
       $target_item = (object)$target_item;
       $convert_to_array = TRUE;
     }
-    foreach ($targets[$this->id] as $target_name => $target) {
-      if (isset($target['real_target']) && isset($target_item->$target['real_target'])) {
-        unset($target_item->$target['real_target']);
+    foreach ($this->config['mappings'] as $mapping) {
+      if (isset($targets[$mapping['target']]['real_target'])) {
+        unset($target_item->{$targets[$mapping['target']]['real_target']});
       }
-      else if (isset($target_item->$target_name)) {
-        unset($target_item->$target_name);
+      elseif (isset($target_item->{$mapping['target']})) {
+        unset($target_item->{$mapping['target']});
       }
     }
     if ($convert_to_array) {

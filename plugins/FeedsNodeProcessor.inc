@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.44 2010/07/13 19:37:37 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.45 2010/07/18 18:33:43 alexb Exp $
 
 /**
  * @file
@@ -259,6 +259,10 @@ class FeedsNodeProcessor extends FeedsProcessor {
       );
     }
     $targets += array(
+      'uid' => array(
+        'name' => t('User ID'),
+        'description' => t('The Drupal user ID of the node author.'),
+      ),
       'status' => array(
         'name' => t('Published status'),
         'description' => t('Whether a node is published or not. 1 stands for published, 0 for not published.'),

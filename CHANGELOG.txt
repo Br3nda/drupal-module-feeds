@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.121 2010/07/13 19:32:06 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.122 2010/07/18 18:33:43 alexb Exp $
 
 Feeds 6.x 1.X XXXX
 ------------------
 
+- #853194 andrewlevine, alex_b: Mapping: don't reset all targets.
 - #853144 alex_b: Consistent use of "replace" vs "update".
 - #850998 alex_b: Clean up file upload form. Note: If you supply file paths
   directly in the textfield rather than uploading them through the UI, you will

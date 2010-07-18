@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.20 2010/07/10 22:26:27 alexb Exp $
+// $Id: feeds.test,v 1.21 2010/07/18 18:33:43 alexb Exp $
 
 /**
  * @file
@@ -33,7 +33,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->drupalLogin(
       $this->drupalCreateUser(
         array(
-          'administer feeds', 'administer nodes',
+          'administer feeds', 'administer nodes', 'administer content types',
         )
       )
     );
@@ -133,7 +133,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('The first major change is switching');
 
     // Assert DB status.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
+    $count = db_result(db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid"));
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
     // Assert default input format on first imported feed node.
@@ -145,10 +145,29 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('There is no new content.');
 
     // Assert DB status, there still shouldn't be more than 10 items.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
+    $count = db_result(db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid"));
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
+    // All of the above tests should have produced published nodes, set default
+    // to unpublished, import again.
+    $count = db_result(db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE n.status = 1"));
+    $this->assertEqual($count, 10, 'All items are published.');
+    $edit = array(
+      'node_options[status]' => FALSE,
+    );
+    $this->drupalPost('admin/content/node-type/story', $edit, t('Save content type'));
+    $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
+    $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
+    $count = db_result(db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE n.status = 0"));
+    $this->assertEqual($count, 10, 'No items are published.');
+    $edit = array(
+      'node_options[status]' => TRUE,
+    );
+    $this->drupalPost('admin/content/node-type/story', $edit, t('Save content type'));
+    $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
+
     // Enable replace existing and import updated feed file.
+    $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
     $this->setSettings('syndication', 'FeedsNodeProcessor', array('update_existing' => 1));
     $feed_url = $GLOBALS['base_url'] .'/'. drupal_get_path('module', 'feeds') .'/tests/feeds/developmentseed_changes.rss2';
     $this->editFeedNode($nid, $feed_url);
