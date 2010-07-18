@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.15 2010/07/18 19:22:46 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.16 2010/07/18 19:35:05 alexb Exp $
 
 /**
  * @file
@@ -100,7 +100,7 @@ class FeedsUserProcessor extends FeedsProcessor {
     // Prepare term object.
     $target_account = new stdClass();
     $target_account->uid = 0;
-    $target_account->roles = array_filter($this->config['roles']);
+    $target_account->roles = $this->config['roles'];
     $target_account->status = $this->config['status'];
 
     // Have parent class do the iterating.
