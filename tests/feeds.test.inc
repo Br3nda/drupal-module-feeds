@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.11 2010/06/27 17:24:51 alexb Exp $
+// $Id: feeds.test.inc,v 1.12 2010/07/18 16:56:54 alexb Exp $
 
 /**
  * @file
@@ -98,6 +98,8 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     // Assert message and presence of default plugins.
     $this->assertText('Your configuration has been created with default settings.');
     $this->assertPlugins($id, 'FeedsHTTPFetcher', 'FeedsSyndicationParser', 'FeedsNodeProcessor');
+    // Per default attach to page content type.
+    $this->setSettings($id, NULL, array('content_type' => 'page'));
   }
 
   /**
