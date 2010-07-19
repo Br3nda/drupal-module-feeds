@@ -1,7 +1,7 @@
-// $Id: CHANGELOG.txt,v 1.126 2010/07/18 20:36:16 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.127 2010/07/19 02:54:36 alexb Exp $
 
-Feeds 6.x 1.X XXXX
-------------------
+Feeds 6.x 1.0 Beta 3, 2010-07-18
+--------------------------------
 
 - #854628 DanielJohnston, alex_b: Fix user processor assigns all roles.
 - #838018 infojunkie: Mapper for Formatted Number CCK field.
