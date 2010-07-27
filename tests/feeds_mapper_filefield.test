@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_filefield.test,v 1.5 2010/06/20 16:46:12 alexb Exp $
+// $Id: feeds_mapper_filefield.test,v 1.6 2010/07/27 20:09:41 alexb Exp $
 
 require_once(drupal_get_path('module', 'feeds') . '/tests/feeds_mapper_test.inc');
 
@@ -15,7 +15,7 @@ class FeedsMapperFileFieldTestCase extends FeedsMapperTestCase {
   public static function getInfo() {
     return array(
       'name' => t('Mapper: FileField'),
-      'description' => t('Test Feeds Mapper support for FileField CCK fields. <strong>Requires CCK and filefield module</strong>.'),
+      'description' => t('Test Feeds Mapper support for FileField CCK fields. <strong>Requires CCK and filefield module; requires SimplePie library</strong>.'),
       'group' => t('Feeds'),
     );
   }

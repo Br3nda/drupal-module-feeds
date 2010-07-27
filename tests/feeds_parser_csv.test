@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_parser_csv.test,v 1.1 2010/07/10 23:45:36 alexb Exp $
+// $Id: feeds_parser_csv.test,v 1.2 2010/07/27 20:09:41 alexb Exp $
 /**
  * @file
  * Tests for ParserCSV library.
@@ -28,6 +28,7 @@ class FeedsParserCSVTest extends DrupalWebTestCase  {
    * Test method.
    */
   public function test() {
+    drupal_load('module', 'feeds');
     feeds_include_library('ParserCSV.inc', 'ParserCSV');
 
     $this->_testSimple();

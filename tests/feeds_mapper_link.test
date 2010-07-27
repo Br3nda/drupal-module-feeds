@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_link.test,v 1.1 2010/06/19 16:53:34 alexb Exp $
+// $Id: feeds_mapper_link.test,v 1.2 2010/07/27 20:09:41 alexb Exp $
 
 require_once(drupal_get_path('module', 'feeds') . '/tests/feeds_mapper_test.inc');
 
@@ -22,7 +22,7 @@ class FeedsMapperLinkTestCase extends FeedsMapperTestCase {
   public function setUp() {
     // Call parent setup with the required module
     parent::setUp(
-      'devel', 'feeds', 'feeds_ui', 'ctools', 'content', 'link'
+      'feeds', 'feeds_ui', 'ctools', 'content', 'link'
     );
 
     // Create user and login
@@ -32,7 +32,6 @@ class FeedsMapperLinkTestCase extends FeedsMapperTestCase {
           'administer feeds',
           'administer nodes',
           'administer site configuration',
-          'access devel information'
         )
     ));
   }
