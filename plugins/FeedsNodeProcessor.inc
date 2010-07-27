@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.45 2010/07/18 18:33:43 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.46 2010/07/27 18:39:11 alexb Exp $
 
 /**
  * @file
@@ -361,13 +361,21 @@ class FeedsNodeProcessor extends FeedsProcessor {
   }
 
   /**
-   * Create MD5 hash of $item array.
+   * Create MD5 hash of item and mappings array.
+   *
+   * Include mappings as a change in mappings may have an affect on the item
+   * produced.
+   *
    * @return Always returns a hash, even with empty, NULL, FALSE:
    *  Empty arrays return 40cd750bba9870f18aada2478b24840a
    *  Empty/NULL/FALSE strings return d41d8cd98f00b204e9800998ecf8427e
    */
   protected function hash($item) {
-    return hash('md5', serialize($item));
+    static $serialized_mappings;
+    if (!$serialized_mappings) {
+      $serialized_mappings = serialize($this->config['mappings']);
+    }
+    return hash('md5', serialize($item) . $serialized_mappings);
   }
 
   /**
