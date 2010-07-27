@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.install,v 1.7 2010/02/23 04:59:06 alexb Exp $
+// $Id: feeds.install,v 1.8 2010/07/27 23:01:24 alexb Exp $
 
 /**
  * @file
@@ -491,4 +491,25 @@ function feeds_update_6009() {
   );
   db_create_table($ret, 'feeds_push_subscriptions', $table);
   return $ret;
+}
+
+/**
+ * Enable all Feeds News, Feeds Import and Feeds fast news features.
+ */
+function feeds_update_6010() {
+  drupal_install_modules(array('feeds_news', 'feeds_import'));
+  if (module_exist('data')) {
+    drupal_install_modules(array('feeds_fast_news'));
+    drupal_set_message(t('Installed Feeds News, Feeds Fast News and Feeds Import as replacement for Feeds Defaults module.'));
+  }
+  else {
+    drupal_set_message(t('Installed Feeds News and Feeds Import as replacement for Feeds Defaults module.'));
+  }
+  if (module_exists('features')) {
+    drupal_set_message(t('Review importer configurations on admin/build/feeds and disable Feeds Features on admin/build/features if undesired configurations show up.'));
+  }
+  else {
+    drupal_set_message(t('Review importer configurations on admin/build/feeds and disable Feeds Feature modules on admin/build/modules if undesired configurations show up.'));
+  }
+  return array();
 }
