@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.15 2010/07/25 14:02:55 alexb Exp $
+// $Id: FeedsParser.inc,v 1.16 2010/07/27 18:56:35 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -169,7 +169,7 @@ class FeedsEnclosure extends FeedsElement {
         require_once (drupal_get_path('module', 'transliteration') . '/transliteration.inc');
         $filename = transliteration_clean_filename($filename);
       }
-      $dest = file_destination(file_directory_temp() .'/'. get_class($this) .'-'. $filename, FILE_EXISTS_RENAME);
+      $dest = file_destination(file_directory_temp() .'/'. $filename, FILE_EXISTS_RENAME);
       if (ini_get('allow_url_fopen')) {
         $this->file = copy($this->getValue(), $dest) ? $dest : 0;
       }
