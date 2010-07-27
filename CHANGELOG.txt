@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.132 2010/07/27 18:39:11 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.133 2010/07/27 18:51:26 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
-
+- #851570 morningtime: Avoid trailing slashes when passing file paths to
+  file_check_directory().
 - #836090 andrewlevine, alex_b: Include mapping configuration in hash.
 - #853156 alex_b: Support real updates of terms.
 - #858684 alex_b: Fix notices when file not found.
