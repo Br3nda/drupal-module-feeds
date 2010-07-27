@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFeedNodeProcessor.inc,v 1.13 2010/07/13 19:32:06 alexb Exp $
+// $Id: FeedsFeedNodeProcessor.inc,v 1.14 2010/07/27 20:27:41 alexb Exp $
 
 /**
  * @file
@@ -53,8 +53,6 @@ class FeedsFeedNodeProcessor extends FeedsProcessor {
     else {
       drupal_set_message(t('There is no new content.'));
     }
-
-    return FEEDS_BATCH_COMPLETE;
   }
 
   /**

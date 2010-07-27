@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.17 2010/07/18 19:47:37 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.18 2010/07/27 20:27:41 alexb Exp $
 
 /**
  * @file
@@ -80,8 +80,6 @@ class FeedsUserProcessor extends FeedsProcessor {
     else {
       drupal_set_message(t('There are no new users.'));
     }
-
-    return FEEDS_BATCH_COMPLETE;
   }
 
   /**

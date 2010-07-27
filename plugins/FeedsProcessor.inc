@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.14 2010/07/18 18:33:43 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.15 2010/07/27 20:27:41 alexb Exp $
 
 
 // Update mode for existing items.
@@ -20,10 +20,6 @@ abstract class FeedsProcessor extends FeedsPlugin {
    *   The current feed import data passed in from the parsing stage.
    * @param FeedsSource $source
    *   Source information about this import.
-   *
-   * @return
-   *   FEEDS_BATCH_COMPLETE if all items have been processed, a float between 0
-   *   and 0.99* indicating progress otherwise.
    */
   public abstract function process(FeedsImportBatch $batch, FeedsSource $source);
 
@@ -40,10 +36,6 @@ abstract class FeedsProcessor extends FeedsPlugin {
    *   item pertains to a certain souce is by using $source->feed_nid. It is the
    *   processor's responsibility to store the feed_nid of an imported item in
    *   the processing stage.
-   *
-   * @return
-   *   FEEDS_BATCH_COMPLETE if all items have been processed, a float between 0
-   *   and 0.99* indicating progress otherwise.
    */
   public abstract function clear(FeedsBatch $batch, FeedsSource $source);
 

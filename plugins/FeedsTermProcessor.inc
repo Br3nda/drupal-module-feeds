@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.11 2010/07/27 18:11:10 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.12 2010/07/27 20:27:41 alexb Exp $
 
 /**
  * @file
@@ -82,8 +82,6 @@ class FeedsTermProcessor extends FeedsProcessor {
     else {
       drupal_set_message(t('There are no new terms.'));
     }
-
-    return FEEDS_BATCH_COMPLETE;
   }
 
   /**
@@ -108,7 +106,6 @@ class FeedsTermProcessor extends FeedsProcessor {
     else {
       drupal_set_message(t('No terms to be deleted.'));
     }
-    return FEEDS_BATCH_COMPLETE;
   }
 
   /**

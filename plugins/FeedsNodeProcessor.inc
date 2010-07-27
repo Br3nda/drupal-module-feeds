@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.46 2010/07/27 18:39:11 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.47 2010/07/27 20:27:41 alexb Exp $
 
 /**
  * @file
@@ -25,8 +25,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
    */
   public function process(FeedsImportBatch $batch, FeedsSource $source) {
 
-    // Keep track of processed items in this pass.
+    // Keep track of processed items in this pass, set total number of items.
     $processed = 0;
+    if (!$batch->getTotal(FEEDS_PROCESSING)) {
+      $batch->setTotal(FEEDS_PROCESSING, $batch->getItemCount());
+    }
 
     while ($item = $batch->shiftItem()) {
 
@@ -60,7 +63,8 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
       $processed++;
       if ($processed >= variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE)) {
-        return (1.0 / ($batch->total + 1)) * ($batch->updated + $batch->created); // Add + 1 to make sure that result is not 1.0 = finished.
+        $batch->setProgress(FEEDS_PROCESSING, $batch->created + $batch->updated);
+        return;
       }
     }
 
@@ -74,16 +78,16 @@ class FeedsNodeProcessor extends FeedsProcessor {
     else {
       drupal_set_message(t('There is no new content.'));
     }
-
-    return FEEDS_BATCH_COMPLETE;
+    $batch->setProgress(FEEDS_PROCESSING, FEEDS_BATCH_COMPLETE);
   }
 
   /**
    * Implementation of FeedsProcessor::clear().
    */
   public function clear(FeedsBatch $batch, FeedsSource $source) {
-    if (empty($batch->total)) {
-      $batch->total = db_result(db_query("SELECT COUNT(nid) FROM {feeds_node_item} WHERE id = '%s' AND feed_nid = %d", $source->id, $source->feed_nid));
+    if (!$batch->getTotal(FEEDS_CLEARING)) {
+      $total = db_result(db_query("SELECT COUNT(nid) FROM {feeds_node_item} WHERE id = '%s' AND feed_nid = %d", $source->id, $source->feed_nid));
+      $batch->setTotal(FEEDS_CLEARING, $total);
     }
     $result = db_query_range("SELECT nid FROM {feeds_node_item} WHERE id = '%s' AND feed_nid = %d", $source->id, $source->feed_nid, 0, variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE));
     while ($node = db_fetch_object($result)) {
@@ -91,7 +95,8 @@ class FeedsNodeProcessor extends FeedsProcessor {
       $batch->deleted++;
     }
     if (db_result(db_query_range("SELECT nid FROM {feeds_node_item} WHERE id = '%s' AND feed_nid = %d", $source->id, $source->feed_nid, 0, 1))) {
-      return (1.0 / ($batch->total + 1)) * $batch->deleted;
+      $batch->setProgress(FEEDS_CLEARING, $batch->deleted);
+      return;
     }
 
     // Set message.
@@ -102,7 +107,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     else {
       drupal_set_message(t('There is no content to be deleted.'));
     }
-    return FEEDS_BATCH_COMPLETE;
+    $batch->setProgress(FEEDS_CLEARING, FEEDS_BATCH_COMPLETE);
   }
 
   /**

@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.136 2010/07/27 20:09:41 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.137 2010/07/27 20:27:40 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
 
+- #849986 lyricnz, alex_b: Cleaner batch support.
 - #866492 lyricnz: Clean up tests.
 - #862444 pounard: Do not name files after their enclosure class.
 - #851570 morningtime: Avoid trailing slashes when passing file paths to
