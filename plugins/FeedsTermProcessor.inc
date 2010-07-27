@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.10 2010/07/13 19:32:06 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.11 2010/07/27 18:11:10 alexb Exp $
 
 /**
  * @file
@@ -25,10 +25,15 @@ class FeedsTermProcessor extends FeedsProcessor {
 
     while ($item = $batch->shiftItem()) {
 
-      if (!($tid = $this->existingItemId($item, $source)) || $this->config['update_existing']) {
+      if (!($tid = $this->existingItemId($item, $source)) || $this->config['update_existing'] != FEEDS_SKIP_EXISTING) {
 
         // Map item to a term.
-        $term = $this->map($item);
+        $term = array();
+        if ($tid && $this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
+          $term = (array) taxonomy_get_term($tid, TRUE);
+          $term = module_invoke_all('feeds_taxonomy_load', $term);
+        }
+        $term = $this->map($item, $term);
 
         // Check if term name is set, otherwise continue.
         if (empty($term['name'])) {
@@ -109,13 +114,15 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Execute mapping on an item.
    */
-  protected function map($source_item) {
-    // Prepare term object.
-    $target_term = array();
+  protected function map($source_item, $target_term = array()) {
+    // Prepare term object, have parent class do the iterating.
     $target_term['vid'] = $this->config['vocabulary'];
-
-    // Have parent class do the iterating.
-    return parent::map($source_item, $target_term);
+    $target_term = parent::map($source_item, $target_term);
+    // Taxonomy module expects synonyms to be supplied as a single string.
+    if (isset($target_term['synonyms']) && is_array(isset($target_term['synonyms']))) {
+      $target_term['synonyms'] = implode("\n", $target_term['synonyms']);
+    }
+    return $target_term;
   }
 
   /**
@@ -124,7 +131,7 @@ class FeedsTermProcessor extends FeedsProcessor {
   public function configDefaults() {
     return array(
       'vocabulary' => 0,
-      'update_existing' => 0,
+      'update_existing' => FEEDS_SKIP_EXISTING,
       'mappings' => array(),
     );
   }
@@ -145,11 +152,15 @@ class FeedsTermProcessor extends FeedsProcessor {
       '#options' => $options,
       '#default_value' => $this->config['vocabulary'],
     );
-    // @todo Implement true updating.
     $form['update_existing'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Replace existing terms'),
-      '#description' => t('If an existing term is found for an imported term, replace it. Existing terms will be determined using mappings that are a "unique target".'),
+      '#type' => 'radios',
+      '#title' => t('Update existing terms'),
+      '#description' => t('Select how existing terms should be updated. Existing terms will be determined using mappings that are a "unique target".'),
+      '#options' => array(
+        FEEDS_SKIP_EXISTING => 'Do not update existing terms',
+        FEEDS_REPLACE_EXISTING => 'Replace existing terms',
+        FEEDS_UPDATE_EXISTING => 'Update existing terms (slower than replacing them)',
+      ),
       '#default_value' => $this->config['update_existing'],
     );
     return $form;
@@ -164,6 +175,14 @@ class FeedsTermProcessor extends FeedsProcessor {
         'name' => t('Term name'),
         'description' => t('Name of the taxonomy term.'),
         'optional_unique' => TRUE,
+       ),
+      'description' => array(
+        'name' => t('Term description'),
+        'description' => t('Description of the taxonomy term.'),
+       ),
+      'synonyms' => array(
+        'name' => t('Term synonyms'),
+        'description' => t('One synonym or an array of synonyms of the taxonomy term.'),
        ),
     );
     // Let implementers of hook_feeds_term_processor_targets() add their targets.
