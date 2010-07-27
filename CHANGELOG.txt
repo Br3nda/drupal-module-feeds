@@ -1,4 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.129 2010/07/25 22:09:36 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.130 2010/07/27 17:55:44 alexb Exp $
+
+Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
+--------------------------------
+
+- #858684 alex_b: Fix notices when file not found.
 
 Feeds 6.x 1.0 Beta 4, 2010-07-25
 --------------------------------

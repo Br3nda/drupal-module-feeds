@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.11 2010/07/11 16:26:06 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.12 2010/07/27 17:55:44 alexb Exp $
 
 /**
  * @file
@@ -32,6 +32,9 @@ class FeedsFileBatch extends FeedsImportBatch {
    * Implementation of FeedsImportBatch::getFilePath().
    */
   public function getFilePath() {
+    if (!file_exists($this->file_path)) {
+      throw new Exception(t('File @filepath is not accessible.', array('@filepath' => $this->file_path)));
+    }
     return $this->file_path;
   }
 }

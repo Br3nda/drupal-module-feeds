@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.12 2010/07/11 01:36:39 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.13 2010/07/27 17:55:44 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
@@ -22,6 +22,9 @@ class FeedsCSVParser extends FeedsParser {
     // Get first line and use it for column names, convert them to lower case.
     $parser->setLineLimit(1);
     $rows = $parser->parse($iterator);
+    if (!count($rows)) {
+      return;
+    }
     $header = array_shift($rows);
     foreach ($header as $i => $title) {
       $header[$i] = trim(drupal_strtolower($title));
