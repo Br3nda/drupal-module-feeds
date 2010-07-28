@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.137 2010/07/27 20:27:40 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.138 2010/07/28 21:12:43 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
 
+- #863494 ekes, alex_b: Delete temporary enclosures file.
 - #849986 lyricnz, alex_b: Cleaner batch support.
 - #866492 lyricnz: Clean up tests.
 - #862444 pounard: Do not name files after their enclosure class.

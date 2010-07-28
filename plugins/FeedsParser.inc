@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.16 2010/07/27 18:56:35 alexb Exp $
+// $Id: FeedsParser.inc,v 1.17 2010/07/28 21:12:43 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -130,6 +130,15 @@ class FeedsEnclosure extends FeedsElement {
   public function __construct($value, $mime_type) {
     parent::__construct($value);
     $this->mime_type = $mime_type;
+  }
+
+  /**
+   * Destructor, clean up any temporary files.
+   */
+  public function __destruct() {
+    if (!empty($this->file)) {
+      file_delete($this->file);
+    }
   }
 
   /**
