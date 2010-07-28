@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.30 2010/07/05 23:51:36 alexb Exp $
+$Id: README.txt,v 1.31 2010/07/28 16:04:26 alexb Exp $
 
 
 "It feeds"
@@ -44,16 +44,56 @@ Requirements
 Installation
 ============
 
-- Install Feeds, Feeds Admin UI and Feeds defaults.
+- Install Feeds, Feeds Admin UI.
+- To get started quick, install one or all of the following Feature modules:
+  Feeds News, Feeds Import, Feeds Fast News (more info below).
 - Make sure cron is correctly configured http://drupal.org/cron
-- Navigate to admin/build/feeds.
-- Enable one or more importers, create your own by adding a new one, modify an
-  existing one by clicking on 'override' or copy and modify an existing one by
-  clicking on 'clone'.
 - Go to import/ to import data.
 - To use SimplePie parser, download SimplePie and place simplepie.inc into
   feeds/libraries. Recommended version: 1.2.
   http://simplepie.org/
+
+Feature modules
+===============
+
+Feeds ships with three feature modules that can be enabled on
+admin/build/modules or - if you are using Features - on admin/build/features.
+http://drupal.org/project/features
+
+The purpose of these modules is to provide a quick start for using Feeds. You
+can either use them out of the box as they come or you can take them as samples
+to learn how to build import or aggregation functionality with Feeds.
+
+The feature modules merely contain sets of configurations using Feeds and in
+some cases the modules Node, Views or Data. If the default configurations do not
+fit your use case you can change them on the respective configuration pages for
+Feeds, Node, Views or Data.
+
+Here is a description of the provided feature modules:
+
+- Feeds News -
+
+This feature is a news aggregator. It provides a content type "Feed" that can
+be used to subscribe to RSS or Atom feeds. Every item on such a feed is
+aggregated as a node of the type "Feed item", also provided by the module.
+
+What's neat about Feeds News is that it comes with a configured View that shows
+a list of news items with every feed on the feed node's "View items" tab. It
+also comes with an OPML importer filter that can be accessed under /import.
+
+- Feeds Fast News -
+
+This feature is very similar to Feeds News. The big difference is that instead
+of aggregating a node for every item on a feed, it creates a database record
+in a single table, thus significantly improving performance. This approach
+especially starts to save resources when many items are being aggregated and
+expired (= deleted) on a site.
+
+- Feeds Import -
+
+This feature is an example illustrating Feeds' import capabilities. It contains
+a node importer and a user importer that can be accessed under /import. Both
+accept CSV or TSV files as imports.
 
 PubSubHubbub support
 ====================
