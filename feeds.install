@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.install,v 1.8 2010/07/27 23:01:24 alexb Exp $
+// $Id: feeds.install,v 1.9 2010/07/28 13:38:48 alexb Exp $
 
 /**
  * @file
@@ -498,7 +498,7 @@ function feeds_update_6009() {
  */
 function feeds_update_6010() {
   drupal_install_modules(array('feeds_news', 'feeds_import'));
-  if (module_exist('data')) {
+  if (module_exists('data')) {
     drupal_install_modules(array('feeds_fast_news'));
     drupal_set_message(t('Installed Feeds News, Feeds Fast News and Feeds Import as replacement for Feeds Defaults module.'));
   }
