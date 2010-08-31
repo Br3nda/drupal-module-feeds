@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.50 2010/07/11 16:30:36 alexb Exp $
+// $Id: feeds.module,v 1.51 2010/08/31 00:42:07 alexb Exp $
 
 /**
  * @file
@@ -190,7 +190,7 @@ function feeds_page_access() {
     return TRUE;
   }
   foreach (feeds_enabled_importers() as $id) {
-    if (user_access("import $id feed")) {
+    if (user_access("import $id feeds")) {
       return TRUE;
     }
   }
