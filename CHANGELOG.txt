@@ -1,4 +1,4 @@
-// $Id: CHANGELOG.txt,v 1.141 2010/08/31 01:14:36 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.142 2010/08/31 01:16:23 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
@@ -8,6 +8,7 @@ Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 - #863494 ekes, alex_b: Delete temporary enclosures file.
 - #851194 alex_b: Featurize - move default functionality from feeds_defaults to
   feeds_fast_news, feeds_import and feeds_news features.
+- #617486 alex_b: Create link to original source, view of items on feed nodes.
 - #849986 lyricnz, alex_b: Cleaner batch support.
 - #866492 lyricnz: Clean up tests.
 - #862444 pounard: Do not name files after their enclosure class.
