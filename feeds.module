@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.51 2010/08/31 00:42:07 alexb Exp $
+// $Id: feeds.module,v 1.52 2010/08/31 00:45:54 alexb Exp $
 
 /**
  * @file
@@ -513,7 +513,7 @@ function _feeds_importer_digest() {
     else {
       $importers = array();
       foreach (feeds_importer_load_all() as $importer) {
-        $importers[$importer->id] = $importer->config['content_type'];
+        $importers[$importer->id] = isset($importer->config['content_type']) ? $importer->config['content_type'] : '';
       }
       cache_set(__FUNCTION__, $importers);
     }

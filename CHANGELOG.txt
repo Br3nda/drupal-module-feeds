@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.139 2010/08/31 00:42:07 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.140 2010/08/31 00:45:54 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
 
+- #885724 eliotttf: Avoid array_flip() on non scalars.
 - #885052 Hanno: Fix small typo in access rights.
 - #863494 ekes, alex_b: Delete temporary enclosures file.
 - #849986 lyricnz, alex_b: Cleaner batch support.
