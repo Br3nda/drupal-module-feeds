@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.12 2010/07/27 17:55:44 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.13 2010/09/03 21:01:18 alexb Exp $
 
 /**
  * @file
@@ -57,7 +57,7 @@ class FeedsFileFetcher extends FeedsFetcher {
    */
   public function sourceForm($source_config) {
     $form = $info = array();
-    if (!empty($source_config['source'])) {
+    if (!empty($source_config['source']) && file_exists($source_config['source'])) {
       $info = array(
         'path' => $source_config['source'],
         'size' => filesize(realpath($source_config['source'])),
