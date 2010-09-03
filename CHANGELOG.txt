@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.142 2010/08/31 01:16:23 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.143 2010/09/03 20:59:03 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
 
+- #901798 alex_b: Fix time off in SitemapParser.
 - #885724 eliotttf: Avoid array_flip() on non scalars.
 - #885052 Hanno: Fix small typo in access rights.
 - #863494 ekes, alex_b: Delete temporary enclosures file.
