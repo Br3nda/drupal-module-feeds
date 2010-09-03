@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.48 2010/09/03 21:08:51 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.49 2010/09/03 21:44:03 alexb Exp $
 
 /**
  * @file
@@ -239,7 +239,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
       $target_node->teaser = node_teaser($value);
       $target_node->body = $value;
     }
-    elseif (in_array($target_element, array('title', 'status', 'created'))) {
+    elseif (in_array($target_element, array('title', 'status', 'created', 'nid'))) {
       $target_node->$target_element = $value;
     }
   }
@@ -264,6 +264,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
       );
     }
     $targets += array(
+      'nid' => array(
+        'name' => t('Node ID'),
+        'description' => t('The nid of the node. NOTE: use this feature with care, node ids are usually assigned by Drupal.'),
+        'optional_unique' => TRUE,
+      ),
       'uid' => array(
         'name' => t('User ID'),
         'description' => t('The Drupal user ID of the node author.'),
@@ -304,6 +309,9 @@ class FeedsNodeProcessor extends FeedsProcessor {
     // exist in the database.
     foreach ($this->uniqueTargets($source_item) as $target => $value) {
       switch ($target) {
+        case 'nid':
+          $nid = db_result(db_query("SELECT nid FROM {node} WHERE nid = %d", $value));
+          break;
         case 'url':
           $nid = db_result(db_query("SELECT nid FROM {feeds_node_item} WHERE feed_nid = %d AND id = '%s' AND url = '%s'", $source->feed_nid, $source->id, $value));
           break;
