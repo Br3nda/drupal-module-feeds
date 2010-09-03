@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.19 2010/07/11 16:26:06 alexb Exp $
+// $Id: feeds.pages.inc,v 1.20 2010/09/03 21:03:48 alexb Exp $
 
 /**
  * @file
@@ -169,7 +169,7 @@ function theme_feeds_upload($element) {
     $output .= '<div class="file-size">';
     $output .= format_size($info['size']);
     $output .= '</div>';
-    if ($info['mime']) {
+    if (isset($info['mime'])) {
       $output .= '<div class="file-mime">';
       $output .= check_plain($info['mime']);
       $output .= '</div>';
