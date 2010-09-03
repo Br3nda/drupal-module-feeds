@@ -1,5 +1,5 @@
 <?php
-// $Id: taxonomy.inc,v 1.2 2010/07/08 17:19:16 alexb Exp $
+// $Id: taxonomy.inc,v 1.3 2010/09/03 21:22:44 alexb Exp $
 
 /**
  * @file
@@ -58,6 +58,7 @@ function taxonomy_feeds_set_target(&$node, $key, $terms) {
 
   if ($vocab->tags) {
     // Simply add a comma separated list to the node for a "tags" vocabulary.
+    $terms = array_merge($terms, drupal_explode_tags($node->taxonomy['tags'][$vocab->vid]));
     $node->taxonomy['tags'][$vocab->vid] = implode(',', $terms);
   }
   else {
