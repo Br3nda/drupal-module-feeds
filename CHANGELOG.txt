@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.145 2010/09/03 21:03:48 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.146 2010/09/03 21:08:51 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
 
+- #872772 andrewlevine: Fix buildNode() (and node_load()) called unnecessarily.
 - #873240 thsutton: Use isset() to avoid notices.
 - #878528 Sutharsan: Don't show file in UI if file does not exist.
 - #901798 alex_b: Fix time off in SitemapParser.

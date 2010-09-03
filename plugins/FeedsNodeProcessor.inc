@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.47 2010/07/27 20:27:41 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.48 2010/09/03 21:08:51 alexb Exp $
 
 /**
  * @file
@@ -35,13 +35,13 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
       // Create/update if item does not exist or update existing is enabled.
       if (!($nid = $this->existingItemId($item, $source)) || ($this->config['update_existing'] != FEEDS_SKIP_EXISTING)) {
-        $node = $this->buildNode($nid, $source->feed_nid);
-
         // Only proceed if item has actually changed.
         $hash = $this->hash($item);
         if (!empty($nid) && $hash == $this->getHash($nid)) {
           continue;
         }
+
+        $node = $this->buildNode($nid, $source->feed_nid);
         $node->feeds_node_item->hash = $hash;
 
         // Map and save node. If errors occur don't stop but report them.
