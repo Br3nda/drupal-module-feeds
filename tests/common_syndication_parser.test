@@ -1,5 +1,5 @@
 <?php
-// $Id: common_syndication_parser.test,v 1.1 2010/04/28 20:30:07 alexb Exp $
+// $Id: common_syndication_parser.test,v 1.2 2010/09/07 22:00:54 alexb Exp $
 
 /**
  * Test cases for common syndication parser.
@@ -45,6 +45,9 @@ class CommonSyndicationParserTestCase extends DrupalWebTestCase {
     $this->assertEqual($feed['items'][0]['title'], 'Gezondheidswebwinkel');
     $this->assertEqual($feed['items'][0]['url'], 'http://www.magentosites.net/store/2010/04/28/gezondheidswebwinkel/index.html');
     $this->assertEqual($feed['items'][1]['url'], 'http://www.magentosites.net/store/2010/04/26/mybobinocom/index.html');
+    $this->assertEqual($feed['items'][1]['guid'], 'http://www.magentosites.net/node/3472');
+    $this->assertEqual($feed['items'][2]['guid'], 'http://www.magentosites.net/node/3471');
+    $this->assertEqual($feed['items'][2]['timestamp'], 1272285294);
   }
 
   /**
@@ -56,6 +59,9 @@ class CommonSyndicationParserTestCase extends DrupalWebTestCase {
     $this->assertEqual($feed['title'], 'Development Seed - Technological Solutions for Progressive Organizations');
     $this->assertEqual($feed['items'][0]['title'], 'Open Atrium Translation Workflow: Two Way Translation Updates');
     $this->assertEqual($feed['items'][1]['url'], 'http://developmentseed.org/blog/2009/oct/05/week-dc-tech-october-5th-edition');
+    $this->assertEqual($feed['items'][1]['guid'], '973 at http://developmentseed.org');
+    $this->assertEqual($feed['items'][2]['guid'], '972 at http://developmentseed.org');
+    $this->assertEqual($feed['items'][2]['timestamp'], 1254493864);
   }
 
   /**
