@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.16 2010/07/27 20:27:41 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.17 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * @file
@@ -21,13 +21,13 @@ class FeedsDataProcessor extends FeedsProcessor {
     $expiry_time = $this->expiryTime();
 
     while ($item = $batch->shiftItem()) {
-      $id = $this->existingItemId($item, $source);
+      $id = $this->existingItemId($batch, $source);
 
       if ($id === FALSE || $this->config['update_existing']) {
         // Map item to a data record, feed_nid and timestamp are mandatory.
         $data = array();
         $data['feed_nid'] = $source->feed_nid;
-        $data = $this->map($item, $data);
+        $data = $this->map($batch, $data);
         if (!isset($data['timestamp'])) {
           $data['timestamp'] = FEEDS_REQUEST_TIME;
         }
@@ -237,8 +237,8 @@ class FeedsDataProcessor extends FeedsProcessor {
    * Iterate through unique targets and try to load existing records.
    * Return id for the first match.
    */
-  protected function existingItemId($source_item, FeedsSource $source) {
-    foreach ($this->uniqueTargets($source_item) as $target => $value) {
+  protected function existingItemId(FeedsImportBatch $batch, FeedsSource $source) {
+    foreach ($this->uniqueTargets($batch) as $target => $value) {
       if ($records = $this->handler()->load(array('feed_nid' => $source->feed_nid, $target => $value))) {
         return $records[0]['id'];
       }

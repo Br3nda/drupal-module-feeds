@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.12 2010/07/27 20:27:41 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.13 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * @file
@@ -25,7 +25,7 @@ class FeedsTermProcessor extends FeedsProcessor {
 
     while ($item = $batch->shiftItem()) {
 
-      if (!($tid = $this->existingItemId($item, $source)) || $this->config['update_existing'] != FEEDS_SKIP_EXISTING) {
+      if (!($tid = $this->existingItemId($batch, $source)) || $this->config['update_existing'] != FEEDS_SKIP_EXISTING) {
 
         // Map item to a term.
         $term = array();
@@ -33,7 +33,7 @@ class FeedsTermProcessor extends FeedsProcessor {
           $term = (array) taxonomy_get_term($tid, TRUE);
           $term = module_invoke_all('feeds_taxonomy_load', $term);
         }
-        $term = $this->map($item, $term);
+        $term = $this->map($item, $term, $source->feed_nid);
 
         // Check if term name is set, otherwise continue.
         if (empty($term['name'])) {
@@ -111,10 +111,13 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Execute mapping on an item.
    */
-  protected function map($source_item, $target_term = array()) {
+  protected function map(FeedsImportBatch $batch, $target_term = NULL) {
     // Prepare term object, have parent class do the iterating.
+    if (!$target_term) {
+      $target_term = array();
+    }
     $target_term['vid'] = $this->config['vocabulary'];
-    $target_term = parent::map($source_item, $target_term);
+    $target_term = parent::map($batch, $target_term);
     // Taxonomy module expects synonyms to be supplied as a single string.
     if (isset($target_term['synonyms']) && is_array(isset($target_term['synonyms']))) {
       $target_term['synonyms'] = implode("\n", $target_term['synonyms']);
@@ -190,10 +193,10 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Get id of an existing feed item term if available.
    */
-  protected function existingItemId($source_item, FeedsSource $source) {
+  protected function existingItemId(FeedsImportBatch $batch, FeedsSource $source) {
 
     // The only possible unique target is name.
-    foreach ($this->uniqueTargets($source_item) as $target => $value) {
+    foreach ($this->uniqueTargets($batch) as $target => $value) {
       if ($target == 'name') {
         if ($tid = db_result(db_query("SELECT tid FROM {term_data} WHERE name = '%s' AND vid = %d", $value, $this->config["vocabulary"]))) {
           return $tid;

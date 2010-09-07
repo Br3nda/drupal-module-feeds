@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.12 2010/07/18 16:56:54 alexb Exp $
+// $Id: feeds.test.inc,v 1.13 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * @file
@@ -171,11 +171,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $this->assertText('has been created.');
 
     // Get the node id from URL.
-    $url = $this->getUrl();
-    $matches = array();
-    preg_match('/node\/(\d+?)$/', $this->getUrl(), $matches);
-    $nid = $matches[1];
-    $this->assertTrue(is_numeric($nid), 'Found node id ('. $nid .').');
+    $nid = $this->getNid($this->getUrl());
 
     // Check whether feed got recorded in feeds_source table.
     $this->assertEqual(1, db_result(db_query("SELECT COUNT(*) FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $id, $nid)));
@@ -314,5 +310,18 @@ class FeedsWebTestCase extends DrupalWebTestCase {
         $this->drupalPost($path, $edit, t('Save'));
       }
     }
+  }
+
+  /**
+   * Helper function, retrieves node id from a URL.
+   */
+  public function getNid($url) {
+    $matches = array();
+    preg_match('/node\/(\d+?)$/', $url, $matches);
+    $nid = $matches[1];
+    if (!is_numeric($nid)) {
+      $this->error(t('Could not find node id, found @nid instead.', array('@nid' => $nid)));
+    }
+    return $nid;
   }
 }

@@ -1,10 +1,60 @@
 <?php
-// $Id: taxonomy.inc,v 1.3 2010/09/03 21:22:44 alexb Exp $
+// $Id: taxonomy.inc,v 1.4 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * @file
  * Mapper that exposes a node's taxonomy vocabularies as mapping targets.
  */
+
+/**
+ * Encapsulates a taxonomy style term object.
+ */
+class FeedsTermElement extends FeedsElement {
+  public $tid, $vid;
+  public function __construct($term) {
+    parent::__construct($term->name);
+    $this->tid = $term->tid;
+    $this->vid = $term->vid;
+  }
+}
+
+/**
+ * Implementation of hook_feeds_parser_sources_alter().
+ */
+function taxonomy_feeds_parser_sources_alter(&$sources, $content_type) {
+  if (!empty($content_type)) {
+    //options to inherit terms for all vocabs I have
+    $vocabs = taxonomy_get_vocabularies($content_type);
+    foreach($vocabs as $voc) {
+      $vid = $voc->vid;
+      if (strpos($voc->module, 'features_') === 0) {
+        $vid = $voc->module;
+      }
+      $sources['parent:taxonomy:'. $vid] = array(
+        'name' => t('Feed node: Taxonomy: @vocabulary', array('@vocabulary' => $voc->name)),
+        'description' => t('Taxonomy terms from feed node in given vocabulary.'),
+        'callback' => 'taxonomy_feeds_get_source',
+      );
+    }
+  }
+}
+
+/**
+ * Callback, returns taxonomy from feed node.
+ */
+function taxonomy_feeds_get_source(FeedsImportBatch $batch, $key) {
+  if ($node = $batch->feedNode()) {
+    $terms = taxonomy_node_get_terms($node);
+    $vocab_id = (int) str_replace('parent:taxonomy:', '', $key);
+    $result = array();
+    foreach ($terms as $tid => $term) {
+      if ($term->vid == $vocab_id) {
+        $result[] = new FeedsTermElement($term);
+      }
+    }
+    return $result;
+  }
+}
 
 /**
  * Implementation of hook_feeds_node_processor_targets_alter().
@@ -62,9 +112,12 @@ function taxonomy_feeds_set_target(&$node, $key, $terms) {
     $node->taxonomy['tags'][$vocab->vid] = implode(',', $terms);
   }
   else {
-    foreach ($terms as $term_name) {
+    foreach ($terms as $term) {
+      if ($term instanceof FeedsTermElement) {
+        $node->taxonomy[$vocab->vid][$term->tid] = $term->tid;
+      }
       // Check if a term already exists.
-      if ($terms_found = taxonomy_get_term_by_name_vid($term_name, $vocab->vid)) {
+      elseif ($terms_found = taxonomy_get_term_by_name_vid($term, $vocab->vid)) {
         // If any terms are found add them to the node's taxonomy by found tid.
         foreach ($terms_found AS $term_found) {
           $node->taxonomy[$vocab->vid][$term_found->tid] = $term_found->tid;
@@ -72,11 +125,10 @@ function taxonomy_feeds_set_target(&$node, $key, $terms) {
             break;
           }
         }
-        // If the vocab is not for multiple tags break after the first hit.
-        if (!$vocab->multiple) {
-          break;
-        }
-
+      }
+      // If the vocab is not for multiple tags break after the first hit.
+      if (!$vocab->multiple) {
+        break;
       }
     }
   }

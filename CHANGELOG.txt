@@ -1,8 +1,12 @@
-// $Id: CHANGELOG.txt,v 1.148 2010/09/03 21:44:03 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.149 2010/09/07 17:29:36 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
 
+- #632920 nickbits, dixon_, David Goode, alex_b et al: Inherit OG, taxonomy,
+  language, user properties from parent feed node. Note: Signatures of
+  FeedsProcessor::map(), existingItemId(), FeedsParser::getSourceElement()
+  changed.
 - #897258 TrevorBradley, alex_b: Mapping target nid.
 - #873198 BWPanda, morningtime: Import multiple values to tag vocabulary.
 - #872772 andrewlevine: Fix buildNode() (and node_load()) called unnecessarily.

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.api.php,v 1.12 2010/07/08 17:19:16 alexb Exp $
+// $Id: feeds.api.php,v 1.13 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * @mainpage
@@ -106,6 +106,47 @@ function hook_feeds_after_import(FeedsImporter $importer, FeedsSource $source) {
  * @defgroup mappingapi Mapping API
  * @{
  */
+
+/**
+ * Alter mapping sources.
+ *
+ * Use this hook to add additional mapping sources for any parser. Allows for
+ * registering a callback to be invoked at mapping time.
+ *
+ * my_callback(FeedsImportBatch $batch, $key)
+ *
+ * @see my_source_callback().
+ * @see locale_feeds_parser_sources_alter().
+ */
+function hook_feeds_parser_sources_alter(&$sources, $content_type) {
+  $sources['my_source'] = array(
+    'name' => t('Images in description element'),
+    'description' => t('Images occuring in the description element of a feed item.'),
+    'callback' => 'my_source_get_source',
+  );
+}
+
+/**
+ * Callback specified in hook_feeds_parser_sources_alter().
+ *
+ * To be invoked on mapping time.
+ *
+ * @param $batch
+ *   The FeedsImportBatch object being mapped from.
+ * @param $key
+ *   The key specified in the $sources array in
+ *   hook_feeds_parser_sources_alter().
+ *
+ * @return
+ *   The value to be extracted from the source.
+ *
+ * @see hook_feeds_parser_sources_alter().
+ * @see locale_feeds_get_source().
+ */
+function my_source_get_source(FeedsImportBatch $batch, $key) {
+  $item = $batch->currentItem();
+  return my_source_parse_images($item['description']);
+}
 
 /**
  * Alter mapping targets for users. Use this hook to add additional target

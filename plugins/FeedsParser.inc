@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.17 2010/07/28 21:12:43 alexb Exp $
+// $Id: FeedsParser.inc,v 1.18 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -47,7 +47,17 @@ abstract class FeedsParser extends FeedsPlugin {
    *   @endcode
    */
   public function getMappingSources() {
-    return FALSE;
+    self::loadMappers();
+    $sources = array();
+    drupal_alter('feeds_parser_sources', $sources, feeds_importer($this->id)->config['content_type']);
+    if (!feeds_importer($this->id)->config['content_type']) {
+      return $sources;
+    }
+    $sources['parent:uid'] = array(
+      'name' => t('Feed node: User ID'),
+      'description' => t('The feed node author uid.'),
+    );
+    return $sources;
   }
 
   /**
@@ -60,10 +70,12 @@ abstract class FeedsParser extends FeedsPlugin {
    *
    * @ingroup mappingapi
    *
-   * @param $item
-   *   The source item that the source element should be retrieved from.
+   * @param $batch
+   *   FeedsImportBatch object containing the sources to be mapped from.
    * @param $element_key
    *   The key identifying the element that should be retrieved from $source
+   * @param $feed_nid
+   *   The feed node's nid if the importer is attached to a content type.
    *
    * @return
    *   The source element from $item identified by $element_key.
@@ -71,7 +83,11 @@ abstract class FeedsParser extends FeedsPlugin {
    * @see FeedsProcessor::map()
    * @see FeedsCSVParser::getSourceElement().
    */
-  public function getSourceElement($item, $element_key) {
+  public function getSourceElement(FeedsImportBatch $batch, $element_key) {
+    if (($node = $batch->feedNode()) && $element_key == 'parent:uid') {
+      return $node->uid;
+    }
+    $item = $batch->currentItem();
     return isset($item[$element_key]) ? $item[$element_key] : '';
   }
 }
@@ -95,6 +111,8 @@ class FeedsElement {
   }
 
   /**
+   * @todo Make value public and deprecate use of getValue().
+   *
    * @return
    *   Standard value of this FeedsElement.
    */

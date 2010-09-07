@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSitemapParser.inc,v 1.2 2010/09/03 20:59:03 alexb Exp $
+// $Id: FeedsSitemapParser.inc,v 1.3 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * A parser for the Sitemap specification http://www.sitemaps.org/protocol.php
@@ -51,6 +51,6 @@ class FeedsSitemapParser extends FeedsParser {
         'name' => t('Priority'),
         'description' => t('The priority of this URL relative to other URLs on the site.'),
       ),
-    );
+    ) + parent::getMappingSources();
   }
 }

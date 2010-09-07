@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.24 2010/09/03 20:59:03 alexb Exp $
+// $Id: feeds.test,v 1.25 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * @file
@@ -225,6 +225,23 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertNoPattern('/<span class="submitted">(.*?)'. check_plain($author->name) .'<\/span>/');
     $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid WHERE n.uid = %d", $author->uid));
     $this->assertEqual($count, 0, 'Accurate number of items in database.');
+
+    // Map feed node's author to feed item author, update - feed node's items
+    // should now be assigned to feed node author.
+    $this->addMappings('syndication',
+      array(
+        array(
+          'source' => 'parent:uid',
+          'target' => 'uid',
+        ),
+      )
+    );
+    $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
+    $this->drupalGet('node');
+    $this->assertNoPattern('/<span class="submitted">(.*?)'. check_plain($author->name) .'<\/span>/');
+    $uid = db_result(db_query("SELECT uid FROM {node} WHERE nid = %d", $nid));
+    $count = db_result(db_query("SELECT COUNT(*) FROM {node} WHERE uid = %d", $uid));
+    $this->assertEqual($count, 11, 'All feed item nodes are assigned to feed node author.');
 
     // Login with new user with only access content permissions.
     $this->drupalLogin(

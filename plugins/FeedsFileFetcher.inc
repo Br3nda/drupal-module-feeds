@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.13 2010/09/03 21:01:18 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.14 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * @file
@@ -16,9 +16,9 @@ class FeedsFileBatch extends FeedsImportBatch {
   /**
    * Constructor.
    */
-  public function __construct($file_path) {
+  public function __construct($file_path, $feed_nid = 0) {
     $this->file_path = $file_path;
-    parent::__construct();
+    parent::__construct('', $feed_nid);
   }
 
   /**
@@ -49,7 +49,7 @@ class FeedsFileFetcher extends FeedsFetcher {
    */
   public function fetch(FeedsSource $source) {
     $source_config = $source->getConfigFor($this);
-    return new FeedsFileBatch($source_config['source']);
+    return new FeedsFileBatch($source_config['source'], $source->feed_nid);
   }
 
   /**

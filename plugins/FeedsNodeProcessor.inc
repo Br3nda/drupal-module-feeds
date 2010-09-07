@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.49 2010/09/03 21:44:03 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.50 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * @file
@@ -34,7 +34,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     while ($item = $batch->shiftItem()) {
 
       // Create/update if item does not exist or update existing is enabled.
-      if (!($nid = $this->existingItemId($item, $source)) || ($this->config['update_existing'] != FEEDS_SKIP_EXISTING)) {
+      if (!($nid = $this->existingItemId($batch, $source)) || ($this->config['update_existing'] != FEEDS_SKIP_EXISTING)) {
         // Only proceed if item has actually changed.
         $hash = $this->hash($item);
         if (!empty($nid) && $hash == $this->getHash($nid)) {
@@ -46,7 +46,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
         // Map and save node. If errors occur don't stop but report them.
         try {
-          $this->map($item, $node);
+          $this->map($batch, $node);
           node_save($node);
           if (!empty($nid)) {
             $batch->updated++;
@@ -128,14 +128,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
       return FEEDS_BATCH_ACTIVE;
     }
     return FEEDS_BATCH_COMPLETE;
-  }
-
-  /**
-   * Override parent::map() to load all available add-on mappers.
-   */
-  protected function map($source_item, $target_node) {
-    self::loadMappers();
-    return parent::map($source_item, $target_node);
   }
 
   /**
@@ -239,7 +231,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
       $target_node->teaser = node_teaser($value);
       $target_node->body = $value;
     }
-    elseif (in_array($target_element, array('title', 'status', 'created', 'nid'))) {
+    elseif (in_array($target_element, array('title', 'status', 'created', 'nid', 'uid'))) {
       $target_node->$target_element = $value;
     }
   }
@@ -303,11 +295,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
   /**
    * Get nid of an existing feed item node if available.
    */
-  protected function existingItemId($source_item, FeedsSource $source) {
+  protected function existingItemId(FeedsImportBatch $batch, FeedsSource $source) {
 
     // Iterate through all unique targets and test whether they do already
     // exist in the database.
-    foreach ($this->uniqueTargets($source_item) as $target => $value) {
+    foreach ($this->uniqueTargets($batch) as $target => $value) {
       switch ($target) {
         case 'nid':
           $nid = db_result(db_query("SELECT nid FROM {node} WHERE nid = %d", $value));

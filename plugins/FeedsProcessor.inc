@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.15 2010/07/27 20:27:41 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.16 2010/09/07 17:29:36 alexb Exp $
 
 
 // Update mode for existing items.
@@ -81,9 +81,13 @@ abstract class FeedsProcessor extends FeedsPlugin {
    * @see hook_feeds_term_processor_targets_alter()
    * @see hook_feeds_user_processor_targets_alter()
    */
-  protected function map($source_item, $target_item = NULL) {
+  protected function map(FeedsImportBatch $batch, $target_item = NULL) {
 
     // Static cache $targets as getMappingTargets() may be an expensive method.
+    static $sources;
+    if (!isset($sources[$this->id])) {
+      $sources[$this->id] = feeds_importer($this->id)->parser->getMappingSources();
+    }
     static $targets;
     if (!isset($targets[$this->id])) {
       $targets[$this->id] = $this->getMappingTargets();
@@ -121,10 +125,23 @@ abstract class FeedsProcessor extends FeedsPlugin {
     If the mapping specifies a callback method, use the callback instead of
     setTargetElement().
     */
+    self::loadMappers();
     foreach ($this->config['mappings'] as $mapping) {
-      $value = $parser->getSourceElement($source_item, $mapping['source']);
+      // Retrieve source element's value from parser.
+      if (is_array($sources[$this->id][$mapping['source']]) &&
+          isset($sources[$this->id][$mapping['source']]['callback']) &&
+          function_exists($sources[$this->id][$mapping['source']]['callback'])) {
+        $callback = $sources[$this->id][$mapping['source']]['callback'];
+        $value = $callback($batch, $mapping['source']);
+      }
+      else {
+        $value = $parser->getSourceElement($batch, $mapping['source']);
+      }
 
-      if (is_array($targets[$this->id][$mapping['target']]) && isset($targets[$this->id][$mapping['target']]['callback']) && function_exists($targets[$this->id][$mapping['target']]['callback'])) {
+      // Map the source element's value to the target.
+      if (is_array($targets[$this->id][$mapping['target']]) &&
+          isset($targets[$this->id][$mapping['target']]['callback']) &&
+          function_exists($targets[$this->id][$mapping['target']]['callback'])) {
         $callback = $targets[$this->id][$mapping['target']]['callback'];
         $callback($target_item, $mapping['target'], $value);
       }
@@ -233,12 +250,12 @@ abstract class FeedsProcessor extends FeedsPlugin {
    *
    * @ingroup mappingapi
    *
-   * @param $source_item
-   *   A single item that has been aggregated from a feed.
+   * @param $batch
+   *   A FeedsImportBatch object.
    * @param FeedsSource $source
    *   The source information about this import.
    */
-  protected function existingItemId($source_item, FeedsSource $source) {
+  protected function existingItemId(FeedsImportBatch $batch, FeedsSource $source) {
     return 0;
   }
 
@@ -246,48 +263,23 @@ abstract class FeedsProcessor extends FeedsPlugin {
    * Utility function that iterates over a target array and retrieves all
    * sources that are unique.
    *
-   * @param $source_item
-   *   A feed item from a FeedsImportBatch.
+   * @param $batch
+   *   A FeedsImportBatch.
    *
    * @return
    *   An array where the keys are target field names and the values are the
    *   elements from the source item mapped to these targets.
    */
-  protected function uniqueTargets($source_item) {
+  protected function uniqueTargets(FeedsImportBatch $batch) {
     $parser = feeds_importer($this->id)->parser;
     $targets = array();
     foreach ($this->config['mappings'] as $mapping) {
       if ($mapping['unique']) {
         // Invoke the parser's getSourceElement to retrieve the value for this
         // mapping's source.
-        $targets[$mapping['target']] = $parser->getSourceElement($source_item, $mapping['source']);
+        $targets[$mapping['target']] = $parser->getSourceElement($batch, $mapping['source']);
       }
     }
     return $targets;
-  }
-
-  /**
-   * Loads on-behalf implementations from mappers/ directory.
-   *
-   * FeedsProcessor::map() does not load from mappers/ as only node and user
-   * processor ship with on-behalf implementations.
-   *
-   * @see FeedsNodeProcessor::map()
-   * @see FeedsUserProcessor::map()
-   */
-  protected static function loadMappers() {
-    static $loaded = FALSE;
-    if (!$loaded) {
-      $path = drupal_get_path('module', 'feeds') .'/mappers';
-      $files = drupal_system_listing('.*\.inc$', $path, 'name', 0);
-      foreach ($files as $file) {
-        if (strstr($file->filename, '/mappers/')) {
-          require_once("./$file->filename");
-        }
-      }
-      // Rebuild cache.
-      module_implements('', FALSE, TRUE);
-    }
-    $loaded = TRUE;
   }
 }

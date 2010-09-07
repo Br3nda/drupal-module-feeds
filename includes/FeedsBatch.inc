@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsBatch.inc,v 1.14 2010/07/27 20:27:40 alexb Exp $
+// $Id: FeedsBatch.inc,v 1.15 2010/09/07 17:29:36 alexb Exp $
 
 // Batch stages.
 define('FEEDS_FETCHING', 'fetching');
@@ -147,10 +147,12 @@ class FeedsImportBatch extends FeedsBatch {
   protected $link;
   protected $items;
   protected $raw;
+  protected $feed_nid;
+  protected $current_item;
   public $created;
   public $updated;
 
-  public function __construct($raw = '') {
+  public function __construct($raw = '', $feed_nid = 0) {
     parent::__construct();
     $this->progress = array(
       FEEDS_FETCHING => FEEDS_BATCH_COMPLETE,
@@ -162,6 +164,7 @@ class FeedsImportBatch extends FeedsBatch {
     $this->link = '';
     $this->items = array();
     $this->raw = $raw;
+    $this->feed_nid = $feed_nid;
     $this->created = 0;
     $this->updated = 0;
   }
@@ -200,6 +203,15 @@ class FeedsImportBatch extends FeedsBatch {
   }
 
   /**
+   * Return the feed node related to this batch object.
+   */
+  public function feedNode() {
+    if ($this->feed_nid) {
+      return node_load($this->feed_nid);
+    }
+  }
+
+  /**
    * @return
    *   A string that is the feed's title.
    */
@@ -225,12 +237,25 @@ class FeedsImportBatch extends FeedsBatch {
   }
 
   /**
+   * @todo Move to a nextItem() based approach, not consuming the item array.
+   *   Can only be done once we don't cache the entire batch object between page
+   *   loads for batching anymore.
+   *
    * @return
    *   Next available item or NULL if there is none. Every returned item is
    *   removed from the internal array.
    */
   public function shiftItem() {
-    return array_shift($this->items);
+    $this->current_item = array_shift($this->items);
+    return $this->current_item;
+  }
+
+  /**
+   * @return
+   *   Current feed item.
+   */
+  public function currentItem() {
+    return empty($this->current_item) ? NULL : $this->current_item;
   }
 
   /**

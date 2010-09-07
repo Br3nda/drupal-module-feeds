@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSyndicationParser.inc,v 1.14 2010/03/29 02:55:50 alexb Exp $
+// $Id: FeedsSyndicationParser.inc,v 1.15 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -59,6 +59,6 @@ class FeedsSyndicationParser extends FeedsParser {
         'name' => t('Categories'),
         'description' => t('An array of categories that have been assigned to the feed item.'),
       ),
-     );
+     ) + parent::getMappingSources();
   }
 }

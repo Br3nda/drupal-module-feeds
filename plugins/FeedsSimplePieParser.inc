@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.12 2010/03/29 02:55:50 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.13 2010/09/07 17:29:36 alexb Exp $
 
 /**
  * Adapter to present SimplePie_Enclosure as FeedsEnclosure object.
@@ -183,7 +183,7 @@ class FeedsSimplePieParser extends FeedsParser {
         'name' => t('Enclosures'),
         'description' => t('An array of enclosures attached to the feed item.'),
       ),
-     );
+     ) + parent::getMappingSources();
   }
 
   /**
