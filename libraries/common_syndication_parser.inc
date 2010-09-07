@@ -1,5 +1,5 @@
 <?php
-// $Id: common_syndication_parser.inc,v 1.14 2010/09/07 22:22:28 alexb Exp $
+// $Id: common_syndication_parser.inc,v 1.15 2010/09/07 22:26:02 alexb Exp $
 
 /**
  * @file
@@ -364,6 +364,7 @@ function _parser_common_syndication_RSS20_parse($feed_XML) {
 
   foreach ($feed_XML->xpath('//item') as $news) {
     $title = $body = $original_author = $original_url = $guid = '';
+
     $category = $news->xpath('category');
     // Get children for current namespace.
     if (version_compare(phpversion(), '5.1.2', '>')) {
