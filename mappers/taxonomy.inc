@@ -1,5 +1,5 @@
 <?php
-// $Id: taxonomy.inc,v 1.5 2010/09/07 22:30:07 alexb Exp $
+// $Id: taxonomy.inc,v 1.6 2010/09/07 22:51:23 alexb Exp $
 
 /**
  * @file
@@ -23,15 +23,13 @@ class FeedsTermElement extends FeedsElement {
  */
 function taxonomy_feeds_parser_sources_alter(&$sources, $content_type) {
   if (!empty($content_type)) {
-    //options to inherit terms for all vocabs I have
-    $vocabs = taxonomy_get_vocabularies($content_type);
-    foreach($vocabs as $voc) {
-      $id = $voc->vid;
-      if (strpos($voc->module, 'features_') === 0) {
-        $id = $voc->module;
+    foreach (taxonomy_get_vocabularies($content_type) as $vocabulary) {
+      $id = $vocabulary->vid;
+      if (strpos($vocabulary->module, 'features_') === 0) {
+        $id = $vocabulary->module;
       }
       $sources['parent:taxonomy:'. $id] = array(
-        'name' => t('Feed node: Taxonomy: @vocabulary', array('@vocabulary' => $voc->name)),
+        'name' => t('Feed node: Taxonomy: @vocabulary', array('@vocabulary' => $vocabulary->name)),
         'description' => t('Taxonomy terms from feed node in given vocabulary.'),
         'callback' => 'taxonomy_feeds_get_source',
       );
@@ -45,10 +43,10 @@ function taxonomy_feeds_parser_sources_alter(&$sources, $content_type) {
 function taxonomy_feeds_get_source(FeedsImportBatch $batch, $key) {
   if ($node = $batch->feedNode()) {
     $terms = taxonomy_node_get_terms($node);
-    $vocab_id = (int) str_replace('parent:taxonomy:', '', $key);
+    $vid = (int) str_replace('parent:taxonomy:', '', $key);
     $result = array();
     foreach ($terms as $tid => $term) {
-      if ($term->vid == $vocab_id) {
+      if ($term->vid == $vid) {
         $result[] = new FeedsTermElement($term);
       }
     }
@@ -62,11 +60,11 @@ function taxonomy_feeds_get_source(FeedsImportBatch $batch, $key) {
  * @see FeedsNodeProcessor::getMappingTargets().
  */
 function taxonomy_feeds_node_processor_targets_alter(&$targets, $content_type) {
-  foreach (taxonomy_get_vocabularies($content_type) as $vocab) {
-    $description = t('The !name vocabulary of the node. If this is a "Tags" vocabulary, any new terms will be created on import. Otherwise only existing terms will be used. If this is not a "Tags" vocabulary and not a "Multiple select" vocabulary, only the first available term will be created. See !settings.', array('!name' => $vocab->name, '!settings' => l(t('vocabulary settings'), 'admin/content/taxonomy/edit/vocabulary/'. $vocab->vid, array('query' => 'destination='. $_GET['q']))));
+  foreach (taxonomy_get_vocabularies($content_type) as $vocabulary) {
+    $description = t('The !name vocabulary of the node. If this is a "Tags" vocabulary, any new terms will be created on import. Otherwise only existing terms will be used. If this is not a "Tags" vocabulary and not a "Multiple select" vocabulary, only the first available term will be created. See !settings.', array('!name' => $vocabulary->name, '!settings' => l(t('vocabulary settings'), 'admin/content/taxonomy/edit/vocabulary/'. $vocabulary->vid, array('query' => 'destination='. $_GET['q']))));
 
-    $targets['taxonomy:'. $vocab->vid] = array(
-      'name' => "Taxonomy: ". $vocab->name,
+    $targets['taxonomy:'. $vocabulary->vid] = array(
+      'name' => "Taxonomy: ". $vocabulary->name,
       'callback' => 'taxonomy_feeds_set_target',
       'description' => $description,
       'real_target' => 'taxonomy',
@@ -98,36 +96,36 @@ function taxonomy_feeds_set_target(&$node, $key, $terms) {
   }
 
   // Load target vocabulary to check, if it has the "tags" flag.
-  $vocab_id = (int) str_replace('taxonomy:', '', $key);
-  $vocab = taxonomy_vocabulary_load($vocab_id);
+  $vid = (int) str_replace('taxonomy:', '', $key);
+  $vocabulary = taxonomy_vocabulary_load($vid);
 
   // Cast a given single string to an array so we can use it.
   if (!is_array($terms)) {
     $terms = array($terms);
   }
 
-  if ($vocab->tags) {
+  if ($vocabulary->tags) {
     // Simply add a comma separated list to the node for a "tags" vocabulary.
-    $terms = array_merge($terms, drupal_explode_tags($node->taxonomy['tags'][$vocab->vid]));
-    $node->taxonomy['tags'][$vocab->vid] = implode(',', $terms);
+    $terms = array_merge($terms, drupal_explode_tags($node->taxonomy['tags'][$vocabulary->vid]));
+    $node->taxonomy['tags'][$vocabulary->vid] = implode(',', $terms);
   }
   else {
     foreach ($terms as $term) {
       if ($term instanceof FeedsTermElement) {
-        $node->taxonomy[$vocab->vid][$term->tid] = $term->tid;
+        $node->taxonomy[$vocabulary->vid][$term->tid] = $term->tid;
       }
       // Check if a term already exists.
-      elseif ($terms_found = taxonomy_get_term_by_name_vid($term, $vocab->vid)) {
+      elseif ($terms_found = taxonomy_get_term_by_name_vid($term, $vocabulary->vid)) {
         // If any terms are found add them to the node's taxonomy by found tid.
         foreach ($terms_found AS $term_found) {
-          $node->taxonomy[$vocab->vid][$term_found->tid] = $term_found->tid;
-          if (!$vocab->multiple) {
+          $node->taxonomy[$vocabulary->vid][$term_found->tid] = $term_found->tid;
+          if (!$vocabulary->multiple) {
             break;
           }
         }
       }
       // If the vocab is not for multiple tags break after the first hit.
-      if (!$vocab->multiple) {
+      if (!$vocabulary->multiple) {
         break;
       }
     }
