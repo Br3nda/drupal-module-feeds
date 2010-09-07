@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.api.php,v 1.13 2010/09/07 17:29:36 alexb Exp $
+// $Id: feeds.api.php,v 1.14 2010/09/07 17:57:40 alexb Exp $
 
 /**
  * @mainpage
@@ -115,7 +115,7 @@ function hook_feeds_after_import(FeedsImporter $importer, FeedsSource $source) {
  *
  * my_callback(FeedsImportBatch $batch, $key)
  *
- * @see my_source_callback().
+ * @see my_source_get_source().
  * @see locale_feeds_parser_sources_alter().
  */
 function hook_feeds_parser_sources_alter(&$sources, $content_type) {

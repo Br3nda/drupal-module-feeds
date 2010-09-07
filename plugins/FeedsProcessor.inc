@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.16 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.17 2010/09/07 17:57:15 alexb Exp $
 
 
 // Update mode for existing items.
@@ -76,6 +76,7 @@ abstract class FeedsProcessor extends FeedsPlugin {
    *
    * @ingroup mappingapi
    *
+   * @see hook_feeds_parser_sources_alter()
    * @see hook_feeds_data_processor_targets_alter()
    * @see hook_feeds_node_processor_targets_alter()
    * @see hook_feeds_term_processor_targets_alter()
