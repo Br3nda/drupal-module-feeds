@@ -1,5 +1,5 @@
 <?php
-// $Id: taxonomy.inc,v 1.4 2010/09/07 17:29:36 alexb Exp $
+// $Id: taxonomy.inc,v 1.5 2010/09/07 22:30:07 alexb Exp $
 
 /**
  * @file
@@ -26,11 +26,11 @@ function taxonomy_feeds_parser_sources_alter(&$sources, $content_type) {
     //options to inherit terms for all vocabs I have
     $vocabs = taxonomy_get_vocabularies($content_type);
     foreach($vocabs as $voc) {
-      $vid = $voc->vid;
+      $id = $voc->vid;
       if (strpos($voc->module, 'features_') === 0) {
-        $vid = $voc->module;
+        $id = $voc->module;
       }
-      $sources['parent:taxonomy:'. $vid] = array(
+      $sources['parent:taxonomy:'. $id] = array(
         'name' => t('Feed node: Taxonomy: @vocabulary', array('@vocabulary' => $voc->name)),
         'description' => t('Taxonomy terms from feed node in given vocabulary.'),
         'callback' => 'taxonomy_feeds_get_source',
