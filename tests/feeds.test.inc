@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.13 2010/09/07 17:29:36 alexb Exp $
+// $Id: feeds.test.inc,v 1.14 2010/09/07 17:55:03 alexb Exp $
 
 /**
  * @file
@@ -75,8 +75,6 @@ class FeedsWebTestCase extends DrupalWebTestCase {
   /**
    * Create an importer configuration.
    *
-   * @todo Rename to createImporterConfig()
-   *
    * @param $name
    *   The natural name of the feed.
    * @param $id
@@ -85,7 +83,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    *   Optional array that defines the basic settings for the feed in a format
    *   that can be posted to the feed's basic settings form.
    */
-  public function createFeedConfiguration($name = 'Syndication', $id = 'syndication') {
+  public function createImporterConfiguration($name = 'Syndication', $id = 'syndication') {
     // Create new feed configuration.
     $this->drupalGet('admin/build/feeds');
     $this->clickLink('New importer');
@@ -145,8 +143,8 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    * * create [type] content
    * * use feeds
    *
-   * Assumes that page content type has been configured with createFeedConfiguration()
-   * as a feed content type.
+   * Assumes that page content type has been configured with
+   * createImporterConfiguration() as a feed content type.
    *
    * @return
    *   The node id of the node created.

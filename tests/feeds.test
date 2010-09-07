@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.25 2010/09/07 17:29:36 alexb Exp $
+// $Id: feeds.test,v 1.26 2010/09/07 17:55:03 alexb Exp $
 
 /**
  * @file
@@ -50,8 +50,8 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     );
     $this->drupalPost('admin/content/node-settings', $edit, 'Save configuration');
 
-    // Create a feed.
-    $this->createFeedConfiguration('Syndication', 'syndication');
+    // Create an importer configuration.
+    $this->createImporterConfiguration('Syndication', 'syndication');
     $this->addMappings('syndication',
       array(
         array(
@@ -262,8 +262,8 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     // Remove all items again so that next test can check for them.
     $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
 
-    // Create a feed, not attached to content type.
-    $this->createFeedConfiguration('Syndication standalone', 'syndication_standalone');
+    // Create an importer, not attached to content type.
+    $this->createImporterConfiguration('Syndication standalone', 'syndication_standalone');
     $edit = array(
       'content_type' => '',
     );
@@ -441,8 +441,8 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
    */
   public function test() {
 
-    // Create a feed.
-    $this->createFeedConfiguration('Data feed', 'rss');
+    // Create an importer.
+    $this->createImporterConfiguration('Data feed', 'rss');
 
     // Go to edit page and select the data processor.
     $edit = array(
@@ -601,8 +601,8 @@ class FeedsCSVtoUsersTest extends FeedsWebTestCase {
    */
   public function test() {
 
-    // Create a feed.
-    $this->createFeedConfiguration('User import', 'user_import');
+    // Create an importer.
+    $this->createImporterConfiguration('User import', 'user_import');
 
     // Set and configure plugins.
     $this->setPlugin('user_import', 'FeedsFileFetcher');
@@ -694,7 +694,7 @@ class FeedsSchedulerTestCase extends FeedsWebTestCase {
         )
       )
     );
-    $this->createFeedConfiguration();
+    $this->createImporterConfiguration();
     $this->addMappings('syndication',
       array(
         array(
@@ -891,7 +891,7 @@ class FeedsSyndicationParserTestCase extends FeedsWebTestCase {
    * Run tests.
    */
   public function test() {
-    $this->createFeedConfiguration('Syndication', 'syndication');
+    $this->createImporterConfiguration('Syndication', 'syndication');
 
     foreach (array('FeedsSyndicationParser', 'FeedsSimplePieParser') as $parser) {
       $this->setPlugin('syndication', $parser);
@@ -953,7 +953,7 @@ class FeedsSitemapParserTestCase extends FeedsWebTestCase {
    * Run tests.
    */
   public function test() {
-    $this->createFeedConfiguration('Sitemap', 'sitemap');
+    $this->createImporterConfiguration('Sitemap', 'sitemap');
     $this->setPlugin('sitemap', 'FeedsSitemapParser');
 
     $this->addMappings('sitemap',

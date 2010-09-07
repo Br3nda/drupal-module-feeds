@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_filefield.test,v 1.7 2010/09/07 17:50:57 alexb Exp $
+// $Id: feeds_mapper_filefield.test,v 1.8 2010/09/07 17:55:03 alexb Exp $
 
 /**
  * @file
@@ -59,8 +59,8 @@ class FeedsMapperFileFieldTestCase extends FeedsMapperTestCase {
       ),
     ));
 
-    //Create importer configuration
-    $this->createFeedConfiguration(); //Create a default importer configuration
+    // Create importer configuration.
+    $this->createImporterConfiguration(); //Create a default importer configuration
     $this->setPlugin('syndication', 'FeedsSimplePieParser');
     $this->setSettings('syndication', 'FeedsNodeProcessor', array('content_type' => $typename)); //Processor settings
     $this->addMappings('syndication', array(

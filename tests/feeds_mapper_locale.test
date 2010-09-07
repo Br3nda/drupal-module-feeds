@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_locale.test,v 1.2 2010/09/07 17:50:57 alexb Exp $
+// $Id: feeds_mapper_locale.test,v 1.3 2010/09/07 17:55:03 alexb Exp $
 
 /**
  * @file
@@ -53,7 +53,7 @@ class FeedsMapperLocaleTestCase extends FeedsMapperTestCase {
     }
 
     // Create an importer configuration with basic mapping.
-    $this->createFeedConfiguration('Syndication', 'syndication');
+    $this->createImporterConfiguration('Syndication', 'syndication');
     $this->addMappings('syndication',
       array(
         array(

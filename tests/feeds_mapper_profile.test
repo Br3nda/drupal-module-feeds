@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_profile.test,v 1.2 2010/09/07 17:50:57 alexb Exp $
+// $Id: feeds_mapper_profile.test,v 1.3 2010/09/07 17:55:03 alexb Exp $
 
 /**
  * @file
@@ -58,8 +58,8 @@ class FeedsMapperProfileTestCase extends FeedsMapperTestCase {
     );
     $name = $this->drupalPost('admin/user/profile/add/selection', $edit, t('Save field'));
 
-    // Create a feed.
-    $this->createFeedConfiguration('Profile import', 'profile_import');
+    // Create an importer.
+    $this->createImporterConfiguration('Profile import', 'profile_import');
 
     // Set and configure plugins.
     $this->setPlugin('profile_import', 'FeedsFileFetcher');

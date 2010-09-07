@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_link.test,v 1.3 2010/09/07 17:50:57 alexb Exp $
+// $Id: feeds_mapper_link.test,v 1.4 2010/09/07 17:55:03 alexb Exp $
 
 /**
  * @file
@@ -80,8 +80,8 @@ class FeedsMapperLinkTestCase extends FeedsMapperTestCase {
       ),
     ));
 
-    //Create importer configuration
-    $this->createFeedConfiguration(); //Create a default importer configuration
+    // Create importer configuration.
+    $this->createImporterConfiguration(); //Create a default importer configuration
     $this->setSettings('syndication', 'FeedsNodeProcessor', array('content_type' => $typename)); //Processor settings
     $this->addMappings('syndication', array(
       array(

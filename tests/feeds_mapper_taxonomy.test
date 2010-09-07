@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_taxonomy.test,v 1.4 2010/09/07 17:50:57 alexb Exp $
+// $Id: feeds_mapper_taxonomy.test,v 1.5 2010/09/07 17:55:03 alexb Exp $
 
 /**
  * @file
@@ -48,7 +48,7 @@ class FeedsMapperTaxonomyTestCase extends FeedsMapperTestCase {
     );
     $this->drupalPost('admin/content/taxonomy/add/vocabulary', $edit, 'Save');
     // Create an importer configuration with basic mapping.
-    $this->createFeedConfiguration('Syndication', 'syndication');
+    $this->createImporterConfiguration('Syndication', 'syndication');
     $this->addMappings('syndication',
       array(
         array(
