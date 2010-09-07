@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.13 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.14 2010/09/07 20:31:48 alexb Exp $
 
 /**
  * @file
@@ -60,8 +60,7 @@ class FeedsTermProcessor extends FeedsProcessor {
     }
 
     // Set messages.
-    $vocabularies = taxonomy_get_vocabularies();
-    $vocabulary = $vocabularies[$this->config['vocabulary']];
+    $vocabulary = $this->vocabulary();
     if ($no_name) {
       drupal_set_message(
         format_plural(
@@ -89,8 +88,8 @@ class FeedsTermProcessor extends FeedsProcessor {
    */
   public function clear(FeedsBatch $batch, FeedsSource $source) {
     $deleted = 0;
-
-    $result = db_query("SELECT tid FROM {term_data} WHERE vid = %d", $this->config["vocabulary"]);
+    $vocabulary = $this->vocabulary();
+    $result = db_query("SELECT tid FROM {term_data} WHERE vid = %d", $vocabulary->vid);
     while ($term = db_fetch_object($result)) {
       if (taxonomy_del_term($term->tid) == SAVED_DELETED) {
         $deleted++;
@@ -98,8 +97,6 @@ class FeedsTermProcessor extends FeedsProcessor {
     }
 
     // Set messages.
-    $vocabularies = taxonomy_get_vocabularies();
-    $vocabulary = $vocabularies[$this->config['vocabulary']];
     if ($deleted) {
       drupal_set_message(format_plural($deleted, 'Deleted @number term from !vocabulary.', 'Deleted @number terms from !vocabulary.', array('@number' => $deleted, '!vocabulary' => $vocabulary->name)));
     }
@@ -116,7 +113,8 @@ class FeedsTermProcessor extends FeedsProcessor {
     if (!$target_term) {
       $target_term = array();
     }
-    $target_term['vid'] = $this->config['vocabulary'];
+    $vocabulary = $this->vocabulary();
+    $target_term['vid'] = $vocabulary->vid;
     $target_term = parent::map($batch, $target_term);
     // Taxonomy module expects synonyms to be supplied as a single string.
     if (isset($target_term['synonyms']) && is_array(isset($target_term['synonyms']))) {
@@ -142,7 +140,12 @@ class FeedsTermProcessor extends FeedsProcessor {
   public function configForm(&$form_state) {
     $options = array(0 => t('Select a vocabulary'));
     foreach (taxonomy_get_vocabularies() as $vid => $vocab) {
-      $options[$vid] = $vocab->name;
+      if (strpos($vocab->module, 'features_') === 0) {
+        $options[$vocab->module] = $vocab->name;
+      }
+      else {
+        $options[$vid] = $vocab->name;
+      }
     }
     $form = array();
     $form['vocabulary'] = array(
@@ -186,7 +189,8 @@ class FeedsTermProcessor extends FeedsProcessor {
        ),
     );
     // Let implementers of hook_feeds_term_processor_targets() add their targets.
-    drupal_alter('feeds_term_processor_targets', $targets, $this->config['vocabulary']);
+    $vocabulary = $this->vocabulary();
+    drupal_alter('feeds_term_processor_targets', $targets, $vocabulary->vid);
     return $targets;
   }
 
@@ -198,11 +202,33 @@ class FeedsTermProcessor extends FeedsProcessor {
     // The only possible unique target is name.
     foreach ($this->uniqueTargets($batch) as $target => $value) {
       if ($target == 'name') {
-        if ($tid = db_result(db_query("SELECT tid FROM {term_data} WHERE name = '%s' AND vid = %d", $value, $this->config["vocabulary"]))) {
+        $vocabulary = $this->vocabulary();
+        if ($tid = db_result(db_query("SELECT tid FROM {term_data} WHERE name = '%s' AND vid = %d", $value, $vocabulary->vid))) {
           return $tid;
         }
       }
     }
     return 0;
+  }
+
+  /**
+   * Return vocabulary to map to.
+   *
+   * Feeds supports looking up vocabularies by their module name as part of an
+   * effort to use the vocabulary.module field as machine name to make
+   * vocabularies exportable.
+   */
+  protected function vocabulary() {
+    $vocabularies = taxonomy_get_vocabularies();
+    if (is_numeric($this->config['vocabulary'])) {
+      return $vocabularies[$this->config['vocabulary']];
+    }
+    else {
+      foreach ($vocabularies as $vocabulary) {
+        if ($vocabulary->module == $this->config['vocabulary']) {
+          return $vocabulary;
+        }
+      }
+    }
   }
 }
