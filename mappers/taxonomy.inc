@@ -1,5 +1,5 @@
 <?php
-// $Id: taxonomy.inc,v 1.6 2010/09/07 22:51:23 alexb Exp $
+// $Id: taxonomy.inc,v 1.7 2010/09/07 23:09:46 alexb Exp $
 
 /**
  * @file
@@ -24,11 +24,7 @@ class FeedsTermElement extends FeedsElement {
 function taxonomy_feeds_parser_sources_alter(&$sources, $content_type) {
   if (!empty($content_type)) {
     foreach (taxonomy_get_vocabularies($content_type) as $vocabulary) {
-      $id = $vocabulary->vid;
-      if (strpos($vocabulary->module, 'features_') === 0) {
-        $id = $vocabulary->module;
-      }
-      $sources['parent:taxonomy:'. $id] = array(
+      $sources['parent:taxonomy:'. taxonomy_vocabulary_id($vocabulary)] = array(
         'name' => t('Feed node: Taxonomy: @vocabulary', array('@vocabulary' => $vocabulary->name)),
         'description' => t('Taxonomy terms from feed node in given vocabulary.'),
         'callback' => 'taxonomy_feeds_get_source',
@@ -43,10 +39,10 @@ function taxonomy_feeds_parser_sources_alter(&$sources, $content_type) {
 function taxonomy_feeds_get_source(FeedsImportBatch $batch, $key) {
   if ($node = $batch->feedNode()) {
     $terms = taxonomy_node_get_terms($node);
-    $vid = (int) str_replace('parent:taxonomy:', '', $key);
+    $vocabulary = taxonomy_get_vocabulary(str_replace('parent:taxonomy:', '', $key));
     $result = array();
     foreach ($terms as $tid => $term) {
-      if ($term->vid == $vid) {
+      if ($term->vid == $vocabulary->vid) {
         $result[] = new FeedsTermElement($term);
       }
     }
@@ -63,7 +59,7 @@ function taxonomy_feeds_node_processor_targets_alter(&$targets, $content_type) {
   foreach (taxonomy_get_vocabularies($content_type) as $vocabulary) {
     $description = t('The !name vocabulary of the node. If this is a "Tags" vocabulary, any new terms will be created on import. Otherwise only existing terms will be used. If this is not a "Tags" vocabulary and not a "Multiple select" vocabulary, only the first available term will be created. See !settings.', array('!name' => $vocabulary->name, '!settings' => l(t('vocabulary settings'), 'admin/content/taxonomy/edit/vocabulary/'. $vocabulary->vid, array('query' => 'destination='. $_GET['q']))));
 
-    $targets['taxonomy:'. $vocabulary->vid] = array(
+    $targets['taxonomy:'. taxonomy_vocabulary_id($vocabulary)] = array(
       'name' => "Taxonomy: ". $vocabulary->name,
       'callback' => 'taxonomy_feeds_set_target',
       'description' => $description,
@@ -96,8 +92,7 @@ function taxonomy_feeds_set_target(&$node, $key, $terms) {
   }
 
   // Load target vocabulary to check, if it has the "tags" flag.
-  $vid = (int) str_replace('taxonomy:', '', $key);
-  $vocabulary = taxonomy_vocabulary_load($vid);
+  $vocabulary = taxonomy_get_vocabulary(str_replace('taxonomy:', '', $key));
 
   // Cast a given single string to an array so we can use it.
   if (!is_array($terms)) {
@@ -154,4 +149,44 @@ function taxonomy_get_term_by_name_vid($name, $vid) {
     $result[] = $term;
   }
   return $result;
+}
+
+/**
+ * Look up a vocabulary by vid or module name.
+ *
+ * @param $id
+ *   A module name or a numeric vocabulary id.
+ *
+ * @return
+ *   An object of type stdClass that represents a vocabulary.
+ */
+function taxonomy_get_vocabulary($id) {
+  static $vocabularies;
+  if (!isset($vocabularies[$id])) {
+    foreach (taxonomy_get_vocabularies() as $vocabulary) {
+      if ($vocabulary->vid == $id) {
+        $vocabularies[$id] = $vocabulary;
+        break;
+      }
+      elseif ($vocabulary->module == $id) {
+        $vocabularies[$id] = $vocabulary;
+        break;
+      }
+    }
+  }
+  return $vocabularies[$id];
+}
+
+/**
+ * Return the vocabulary identifier, the vocabulary's vid or module.
+ *
+ * @return
+ *   Vocabulary's module name if it is a features vocabulary (= exportable),
+ *   vocabulary's vid otherwise.
+ */
+function taxonomy_vocabulary_id($vocabulary) {
+  if (strpos($vocabulary->module, 'features_') === 0) {
+    return $vocabulary->module;
+  }
+  return $vocabulary->vid;
 }
