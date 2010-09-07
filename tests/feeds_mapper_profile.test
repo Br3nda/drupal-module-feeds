@@ -1,9 +1,9 @@
 <?php
-// $Id: feeds_mapper_profile.test,v 1.1 2010/06/19 15:32:07 alexb Exp $
+// $Id: feeds_mapper_profile.test,v 1.2 2010/09/07 17:50:57 alexb Exp $
 
 /**
  * @file
- * Test suite for the feeds profile mapper.
+ * Test suite for profile mapper mappers/profile.inc.
  */
 
 require_once(drupal_get_path('module', 'feeds') . '/tests/feeds_mapper_test.inc');

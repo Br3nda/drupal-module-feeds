@@ -1,9 +1,9 @@
 <?php
-// $Id: feeds_mapper_date.test,v 1.2 2010/01/28 19:40:49 alexb Exp $
+// $Id: feeds_mapper_date.test,v 1.3 2010/09/07 17:50:57 alexb Exp $
 
 /**
  * @file
- * Test case for CCK date field mapper mappers/content.inc.
+ * Test case for CCK date field mapper mappers/date.inc.
  */
 
 require_once(drupal_get_path('module', 'feeds') . '/tests/feeds_mapper_test.inc');

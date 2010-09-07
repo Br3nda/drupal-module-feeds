@@ -1,5 +1,10 @@
 <?php
-// $Id: feeds_mapper_filefield.test,v 1.6 2010/07/27 20:09:41 alexb Exp $
+// $Id: feeds_mapper_filefield.test,v 1.7 2010/09/07 17:50:57 alexb Exp $
+
+/**
+ * @file
+ * Test case for Filefield mapper mappers/filefield.inc.
+ */
 
 require_once(drupal_get_path('module', 'feeds') . '/tests/feeds_mapper_test.inc');
 

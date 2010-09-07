@@ -1,9 +1,9 @@
 <?php
-// $Id: feeds_mapper_og.test,v 1.1 2010/09/07 17:29:36 alexb Exp $
+// $Id: feeds_mapper_og.test,v 1.2 2010/09/07 17:50:57 alexb Exp $
 
 /**
  * @file
- * Test case for locale mapper mappers/locale.inc.
+ * Test case for OG mapper mappers/og.inc.
  */
 
 require_once(drupal_get_path('module', 'feeds') . '/tests/feeds_mapper_test.inc');

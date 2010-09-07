@@ -1,9 +1,9 @@
 <?php
-// $Id: feeds_mapper_taxonomy.test,v 1.3 2010/09/07 17:29:36 alexb Exp $
+// $Id: feeds_mapper_taxonomy.test,v 1.4 2010/09/07 17:50:57 alexb Exp $
 
 /**
  * @file
- * Test case for taxonomy field mapper mappers/taxonomy.inc.
+ * Test case for taxonomy mapper mappers/taxonomy.inc.
  */
 
 require_once(drupal_get_path('module', 'feeds') . '/tests/feeds_mapper_test.inc');
