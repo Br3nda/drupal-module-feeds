@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSyndicationParser.inc,v 1.15 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsSyndicationParser.inc,v 1.16 2010/09/07 22:18:46 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -58,6 +58,10 @@ class FeedsSyndicationParser extends FeedsParser {
       'tags' => array(
         'name' => t('Categories'),
         'description' => t('An array of categories that have been assigned to the feed item.'),
+      ),
+      'geolocations' => array(
+        'name' => t('Geo Locations'),
+        'description' => t('An array of geographic locations with a name and a position.'),
       ),
      ) + parent::getMappingSources();
   }

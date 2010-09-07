@@ -1,5 +1,5 @@
 <?php
-// $Id: common_syndication_parser.test,v 1.2 2010/09/07 22:00:54 alexb Exp $
+// $Id: common_syndication_parser.test,v 1.3 2010/09/07 22:18:46 alexb Exp $
 
 /**
  * Test cases for common syndication parser.
@@ -33,6 +33,7 @@ class CommonSyndicationParserTestCase extends DrupalWebTestCase {
   public function test() {
     $this->_testRSS10();
     $this->_testRSS2();
+    $this->_testAtomGeoRSS();
   }
 
   /**
@@ -62,6 +63,25 @@ class CommonSyndicationParserTestCase extends DrupalWebTestCase {
     $this->assertEqual($feed['items'][1]['guid'], '973 at http://developmentseed.org');
     $this->assertEqual($feed['items'][2]['guid'], '972 at http://developmentseed.org');
     $this->assertEqual($feed['items'][2]['timestamp'], 1254493864);
+  }
+
+  /**
+   * Test Geo RSS in Atom feed.
+   */
+  protected function _testAtomGeoRSS() {
+    $string = $this->readFeed('earthquake-georss.atom');
+    $feed = common_syndication_parser_parse($string);
+    $this->assertEqual($feed['title'], 'USGS M2.5+ Earthquakes');
+    $this->assertEqual($feed['items'][0]['title'], 'M 2.6, Central Alaska');
+    $this->assertEqual($feed['items'][1]['url'], 'http://earthquake.usgs.gov/earthquakes/recenteqsww/Quakes/us2010axbz.php');
+    $this->assertEqual($feed['items'][1]['guid'], 'urn:earthquake-usgs-gov:us:2010axbz');
+    $this->assertEqual($feed['items'][2]['guid'], 'urn:earthquake-usgs-gov:us:2010axbr');
+    $this->assertEqual($feed['items'][2]['geolocations'][0]['name'], '-53.1979 -118.0676');
+    $this->assertEqual($feed['items'][2]['geolocations'][0]['lat'], '-53.1979');
+    $this->assertEqual($feed['items'][2]['geolocations'][0]['lon'], '-118.0676');
+    $this->assertEqual($feed['items'][3]['geolocations'][0]['name'], '-43.4371 172.5902');
+    $this->assertEqual($feed['items'][3]['geolocations'][0]['lat'], '-43.4371');
+    $this->assertEqual($feed['items'][3]['geolocations'][0]['lon'], '172.5902');
   }
 
   /**

@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.150 2010/09/07 20:31:48 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.151 2010/09/07 22:18:46 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
 
+- #836876 rsoden, Will White, alex_b: Add simple georss support to Common
+  Syndication Parser.
 - #889196 David Goode: Support for non-numeric vocabulary IDs for feature-based
   vocabularies.
 - #632920 nickbits, dixon_, David Goode, alex_b et al: Inherit OG, taxonomy,
