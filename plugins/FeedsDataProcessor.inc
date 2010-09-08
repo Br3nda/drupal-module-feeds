@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.18 2010/09/08 01:10:06 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.19 2010/09/08 01:12:04 alexb Exp $
 
 /**
  * @file
@@ -209,9 +209,7 @@ class FeedsDataProcessor extends FeedsProcessor {
       return;
     }
     if (strpos($target_element, '.')) {
-
       /**
-
       Add field in FeedsDataHandler format.
 
       This is the tricky part, FeedsDataHandler expects an *array* of records
