@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.20 2010/09/08 20:50:51 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.21 2010/09/08 22:02:08 alexb Exp $
 
 /**
  * @file
@@ -235,7 +235,12 @@ class FeedsDataProcessor extends FeedsProcessor {
       }
     }
     else {
-      $target_item[$target_element] = $value;
+      if (is_array($target_item[$target_element]) && is_array($value)) {
+        $target_item[$target_element] = array_merge($target_item[$target_element], $value);
+      }
+      else {
+        $target_item[$target_element] = $value;
+      }
     }
   }
 
