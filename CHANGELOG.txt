@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.152 2010/09/07 23:09:46 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.153 2010/09/08 01:10:06 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
 
+- #878002 Will White, David Goode: Support multiple sources per mapping target
+  in FeedsDataProcessor.
 - #904804 alex_b: Support exportable vocabularies.
 - #836876 rsoden, Will White, alex_b: Add simple georss support to Common
   Syndication Parser.

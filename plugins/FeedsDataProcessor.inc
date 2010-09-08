@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.17 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.18 2010/09/08 01:10:06 alexb Exp $
 
 /**
  * @file
@@ -205,6 +205,9 @@ class FeedsDataProcessor extends FeedsProcessor {
    * Set target element, bring element in a FeedsDataHandler format.
    */
   public function setTargetElement(&$target_item, $target_element, $value) {
+    if (empty($value)) {
+      return;
+    }
     if (strpos($target_element, '.')) {
 
       /**
@@ -226,7 +229,12 @@ class FeedsDataProcessor extends FeedsProcessor {
           $field => $v,
         );
       }
-      $target_item['#'. $table] = $values;
+      if (is_array($target_item["#$table"])) {
+        $target_item["#$table"] = array_merge($target_item["#$table"], $values);
+      }
+      else {
+        $target_item["#$table"] = $values;
+      }
     }
     else {
       $target_item[$target_element] = $value;
