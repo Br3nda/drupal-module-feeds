@@ -1,22 +1,10 @@
 <?php
-// $Id: taxonomy.inc,v 1.8 2010/09/07 23:11:03 alexb Exp $
+// $Id: taxonomy.inc,v 1.9 2010/09/08 02:43:16 alexb Exp $
 
 /**
  * @file
  * Mapper that exposes a node's taxonomy vocabularies as mapping targets.
  */
-
-/**
- * Encapsulates a taxonomy style term object.
- */
-class FeedsTermElement extends FeedsElement {
-  public $tid, $vid;
-  public function __construct($term) {
-    parent::__construct($term->name);
-    $this->tid = $term->tid;
-    $this->vid = $term->vid;
-  }
-}
 
 /**
  * Implementation of hook_feeds_parser_sources_alter().

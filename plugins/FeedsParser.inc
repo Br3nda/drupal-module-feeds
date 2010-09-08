@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.19 2010/09/07 17:57:15 alexb Exp $
+// $Id: FeedsParser.inc,v 1.20 2010/09/08 02:43:16 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -130,6 +130,23 @@ class FeedsElement {
       return 'Object';
     }
     return (string) $this->value;
+  }
+}
+
+/**
+ * Encapsulates a taxonomy style term object.
+ */
+class FeedsTermElement extends FeedsElement {
+  public $tid, $vid;
+
+  /**
+   * @param $term
+   *   A stdClass object that is a Drupal taxonomy term.
+   */
+  public function __construct($term) {
+    parent::__construct($term->name);
+    $this->tid = $term->tid;
+    $this->vid = $term->vid;
   }
 }
 
