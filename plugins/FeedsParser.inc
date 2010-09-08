@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.20 2010/09/08 02:43:16 alexb Exp $
+// $Id: FeedsParser.inc,v 1.21 2010/09/08 20:14:36 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -129,24 +129,63 @@ class FeedsElement {
     if (is_object($this->value)) {
       return 'Object';
     }
-    return (string) $this->value;
+    return (string) $this->getValue();
   }
 }
 
 /**
  * Encapsulates a taxonomy style term object.
+ *
+ * Objects of this class can be turned into a taxonomy term style arrays by
+ * casting them.
+ *
+ * @code
+ *   $term_object = new FeedsTermElement($term_array);
+ *   $term_array = (array)$term_object;
+ * @endcode
  */
 class FeedsTermElement extends FeedsElement {
-  public $tid, $vid;
+  public $tid, $vid, $name;
 
   /**
    * @param $term
-   *   A stdClass object that is a Drupal taxonomy term.
+   *   An array or a stdClass object that is a Drupal taxonomy term.
    */
   public function __construct($term) {
-    parent::__construct($term->name);
-    $this->tid = $term->tid;
-    $this->vid = $term->vid;
+    if (is_array($term)) {
+      parent::__construct($term['name']);
+      foreach ($this as $key => $value) {
+        $this->$key = isset($term[$key]) ? $term[$key] : NULL;
+      }
+    }
+    elseif (is_object($term)) {
+      parent::__construct($term->name);
+      foreach ($this as $key => $value) {
+        $this->$key = isset($term->$key) ? $term->$key : NULL;
+      }
+    }
+  }
+
+  /**
+   * Use $name as $value.
+   */
+  public function getValue() {
+    return $this->name;
+  }
+}
+
+/**
+ * A geo term element.
+ */
+class FeedsGeoTermElement extends FeedsTermElement {
+  public $lat, $lon, $bound_top, $bound_right, $bound_bottom, $bound_left, $geometry;
+  /**
+   * @param $term
+   *   An array or a stdClass object that is a Drupal taxonomy term. Can include
+   *   geo extensions.
+   */
+  public function __construct($term) {
+    parent::__construct($term);
   }
 }
 
