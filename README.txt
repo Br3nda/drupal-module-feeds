@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.32 2010/09/08 01:31:26 alexb Exp $
+$Id: README.txt,v 1.33 2010/09/08 14:54:36 alexb Exp $
 
 
 "It feeds"
@@ -207,6 +207,10 @@ Name:        feeds_node_batch_size
 Default:     50
              The number of nodes feed node processor creates or deletes in one
              page load.
+
+Name:        http_request_timeout
+Default:     15
+Description: Timeout in seconds to wait for an HTTP get request to finish.
 
 Glossary
 ========
