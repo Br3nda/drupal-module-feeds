@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.15 2010/09/08 03:12:33 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.16 2010/09/08 21:03:50 alexb Exp $
 
 /**
  * @file
@@ -33,7 +33,7 @@ class FeedsTermProcessor extends FeedsProcessor {
           $term = (array) taxonomy_get_term($tid, TRUE);
           $term = module_invoke_all('feeds_taxonomy_load', $term);
         }
-        $term = $this->map($item, $term, $source->feed_nid);
+        $term = $this->map($batch, $term, $source->feed_nid);
 
         // Check if term name is set, otherwise continue.
         if (empty($term['name'])) {
