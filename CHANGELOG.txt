@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.153 2010/09/08 01:10:06 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.154 2010/09/08 14:50:24 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
 
+- #671538 mburak: Use CURLOPT_TIMEOUT to limit download time of feeds.
 - #878002 Will White, David Goode: Support multiple sources per mapping target
   in FeedsDataProcessor.
 - #904804 alex_b: Support exportable vocabularies.
