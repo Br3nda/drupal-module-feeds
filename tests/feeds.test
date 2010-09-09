@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test,v 1.26 2010/09/07 17:55:03 alexb Exp $
+// $Id: feeds.test,v 1.27 2010/09/09 22:32:34 alexb Exp $
 
 /**
  * @file
@@ -546,7 +546,7 @@ class FeedsRSStoDataTest extends FeedsWebTestCase {
 
     // Now delete all items.
     $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
-    $this->assertText('Deleted 10 items.');
+    $this->assertText('All items have been deleted.');
 
     // Assert DB status, now there should be no items.
     $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_data_rss}"));
