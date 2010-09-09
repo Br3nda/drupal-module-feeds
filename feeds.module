@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.52 2010/08/31 00:45:54 alexb Exp $
+// $Id: feeds.module,v 1.53 2010/09/09 23:06:51 alexb Exp $
 
 /**
  * @file
@@ -346,6 +346,29 @@ function _feeds_nodeapi_node_processor($node, $op) {
         db_query("DELETE FROM {feeds_node_item} WHERE nid = %d", $node->nid);
       }
       break;
+  }
+}
+
+/**
+ * Implementation of hook_taxonomy().
+ */
+function feeds_taxonomy($op = NULL, $type = NULL, $term = NULL) {
+  if ($type =='term' && $term['tid']) {
+    switch ($op) {
+      case 'delete':
+        db_query("DELETE FROM {feeds_term_item} WHERE tid = %d", $term['tid']);
+        break;
+      case 'update':
+        if (isset($term['importer_id'])) {
+          db_query("DELETE FROM {feeds_term_item} WHERE tid = %d", $term['tid']);
+        }
+      case 'insert':
+        if (isset($term['importer_id'])) {
+          $term['id'] = $term['importer_id'];
+          drupal_write_record('feeds_term_item', $term);
+        }
+        break;
+    }
   }
 }
 

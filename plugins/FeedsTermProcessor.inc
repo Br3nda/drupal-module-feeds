@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.16 2010/09/08 21:03:50 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.17 2010/09/09 23:06:51 alexb Exp $
 
 /**
  * @file
@@ -47,6 +47,8 @@ class FeedsTermProcessor extends FeedsProcessor {
         }
 
         // Save the term.
+        $term['importer_id'] = $this->id;
+        $term['feed_nid'] = $this->feed_nid;
         taxonomy_save_term($term);
 
         if ($tid) {
@@ -89,7 +91,13 @@ class FeedsTermProcessor extends FeedsProcessor {
   public function clear(FeedsBatch $batch, FeedsSource $source) {
     $deleted = 0;
     $vocabulary = $this->vocabulary();
-    $result = db_query("SELECT tid FROM {term_data} WHERE vid = %d", $vocabulary->vid);
+    $result = db_query("SELECT td.tid
+                        FROM {term_data} td
+                        JOIN {feeds_term_item} ft ON td.tid = ft.tid
+                        WHERE td.vid = %d
+                        AND ft.id = '%s'
+                        AND ft.feed_nid = %d",
+                        $vocabulary->vid, $this->id, $source->feed_nid);
     while ($term = db_fetch_object($result)) {
       if (taxonomy_del_term($term->tid) == SAVED_DELETED) {
         $deleted++;
