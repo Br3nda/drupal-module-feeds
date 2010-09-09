@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.21 2010/09/08 22:02:08 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.22 2010/09/09 23:01:57 alexb Exp $
 
 /**
  * @file
@@ -72,7 +72,12 @@ class FeedsDataProcessor extends FeedsProcessor {
       'feed_nid' => $source->feed_nid,
     );
     $num = $this->handler()->delete($clause);
-    drupal_set_message('All items of this feed have been deleted.');
+    if ($num) {
+      drupal_set_message('All items have been deleted.');
+    }
+    else {
+      drupal_set_message('There were no items to delete.');
+    }
   }
 
   /**
