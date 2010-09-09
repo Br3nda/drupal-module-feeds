@@ -1,8 +1,8 @@
 <?php
-// $Id: common_syndication_parser.test,v 1.3 2010/09/07 22:18:46 alexb Exp $
+// $Id: common_syndication_parser.test,v 1.4 2010/09/09 22:44:23 alexb Exp $
 
 /**
- * Test cases for common syndication parser.
+ * Test cases for common syndication parser library.
  *
  * @todo Break out into Drupal independent test framework.
  * @todo Could I use DrupalUnitTestCase here?
