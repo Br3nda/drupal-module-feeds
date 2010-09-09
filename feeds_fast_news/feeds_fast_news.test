@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_fast_news.test,v 1.1 2010/07/27 23:01:25 alexb Exp $
+// $Id: feeds_fast_news.test,v 1.2 2010/09/09 22:31:16 alexb Exp $
 
 /**
  * @file
@@ -64,12 +64,12 @@ class FeedsExamplesFastFeedTestCase extends FeedsWebTestCase {
 
     // Delete and re import.
     $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
-    $this->assertText('Deleted 10 items.');
+    $this->assertText('All items have been deleted.');
     $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_data_feed_fast}"));
     $this->assertEqual($count, 0, 'Found correct number of items.');
 
     $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
-    $this->assertText('Deleted 0 items.');
+    $this->assertText('There were no items to delete.');
     $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_data_feed_fast}"));
     $this->assertEqual($count, 0, 'Found correct number of items.');
 
