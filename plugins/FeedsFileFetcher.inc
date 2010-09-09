@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.14 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.15 2010/09/09 23:41:24 alexb Exp $
 
 /**
  * @file
@@ -78,6 +78,7 @@ class FeedsFileFetcher extends FeedsFetcher {
       '#description' => empty($source_config['source']) ? t('Select the file to be imported from your local system.') : t('Select a different file to be imported from your local system.'),
       '#theme' => 'feeds_upload',
       '#file_info' => $info,
+      '#size' => 10,
     );
     return $form;
   }
