@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.api.php,v 1.14 2010/09/07 17:57:40 alexb Exp $
+// $Id: feeds.api.php,v 1.15 2010/09/09 16:10:41 alexb Exp $
 
 /**
  * @mainpage
@@ -82,7 +82,7 @@ function hook_feeds_plugins() {
  */
 
 /**
- * @defgroup import Import hooks
+ * @defgroup import Import and clear hooks
  * @{
  */
 
@@ -96,6 +96,17 @@ function hook_feeds_plugins() {
  */
 function hook_feeds_after_import(FeedsImporter $importer, FeedsSource $source) {
   // See geotaxonomy module's implementation for an example.
+}
+
+/**
+ * Invoked after a feed source has been cleared of its items.
+ *
+ * @param $importer
+ *   FeedsImporter object that has been used for clearing the feed.
+ * @param $source
+ *  FeedsSource object that describes the source that has been cleared.
+ */
+function hook_feeds_after_clear(FeedsImporter $importer, FeedsSource $source) {
 }
 
 /**

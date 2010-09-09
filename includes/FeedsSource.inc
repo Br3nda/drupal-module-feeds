@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.16 2010/07/27 20:27:40 alexb Exp $
+// $Id: FeedsSource.inc,v 1.17 2010/09/09 16:10:41 alexb Exp $
 
 /**
  * @file
@@ -178,6 +178,7 @@ class FeedsSource extends FeedsConfigurable {
       $result = $this->batch->getProgress();
       if ($result == FEEDS_BATCH_COMPLETE) {
         unset($this->batch);
+        module_invoke_all('feeds_after_clear', $this->importer, $this);
       }
     }
     catch (Exception $e) {
