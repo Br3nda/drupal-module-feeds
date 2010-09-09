@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.17 2010/09/09 23:06:51 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.18 2010/09/09 23:16:29 alexb Exp $
 
 /**
  * @file
@@ -50,14 +50,12 @@ class FeedsTermProcessor extends FeedsProcessor {
         $term['importer_id'] = $this->id;
         $term['feed_nid'] = $this->feed_nid;
         taxonomy_save_term($term);
-
         if ($tid) {
           $updated++;
         }
         else {
           $created++;
         }
-
       }
     }
 
@@ -103,7 +101,6 @@ class FeedsTermProcessor extends FeedsProcessor {
         $deleted++;
       }
     }
-
     // Set messages.
     if ($deleted) {
       drupal_set_message(format_plural($deleted, 'Deleted @number term from !vocabulary.', 'Deleted @number terms from !vocabulary.', array('@number' => $deleted, '!vocabulary' => $vocabulary->name)));
