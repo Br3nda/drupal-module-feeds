@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.36 2010/09/10 15:44:56 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.37 2010/09/10 16:00:46 alexb Exp $
 
 /**
  * @file
@@ -492,6 +492,7 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
 
   $form = array();
   $form['#importer'] = $importer;
+  $form['#mappings'] = $mappings = $importer->processor->getMappings();
   $form['help']['#value'] = feeds_ui_mapping_help();
 
   // Get mapping sources from parsers and targets from processor, format them
@@ -514,6 +515,7 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
     $legend['targets'][$k]['description']['#value'] = empty($target['description']) ? '' : $target['description'];
   }
 
+  // Legend explaining source and target elements.
   $form['legendset'] = array(
     '#type' => 'fieldset',
     '#title' => t('Legend'),
@@ -524,20 +526,16 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
   $form['legendset']['legend'] = $legend;
 
   // Add unique and remove forms to mappings.
-  $mappings = $importer->processor->getMappings();
   $form['unique_flags'] = $form['remove_flags'] = array(
     '#tree' => TRUE,
   );
-
   if (is_array($mappings)) {
     foreach ($mappings as $i => $mapping) {
       $param = array(
         'processor' => $importer->processor,
         'mapping' => $mapping,
       );
-
       if (isset($targets[$mapping['target']]['optional_unique']) && $targets[$mapping['target']]['optional_unique'] === TRUE) {
-
         $form['unique_flags'][$i] = array(
           '#type' => 'checkbox',
           '#default_value' => !empty($mapping['unique']),
@@ -553,9 +551,7 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
     }
   }
 
-  $form['#mappings'] = $mappings;
-  $form['#targets'] = $targets;
-  if ($sources) {
+  if ($source_options) {
     $form['source'] = array(
       '#type' => 'select',
       '#options' => array('' => t('Select a source')) + $source_options,
