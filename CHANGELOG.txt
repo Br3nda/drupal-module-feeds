@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.157 2010/09/09 23:06:51 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.158 2010/09/10 14:42:07 alexb Exp $
 
 Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
 --------------------------------
 
+- #849834 rbayliss, alex_b: Generalize feeds_config_form() to feeds_form().
 - #907064 alex_b: Track imported terms.
 - #906720 alex_b: Introduce a hook_feeds_after_clear().
 - #905820 tristan.oneil: Adjust delete message in FeedsDataProcessor to avoid

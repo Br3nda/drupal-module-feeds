@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.34 2010/07/10 23:30:19 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.35 2010/09/10 14:42:07 alexb Exp $
 
 /**
  * @file
@@ -308,13 +308,13 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
       ctools_include('dependent');
       if (empty($plugin_key)) {
         $active_container['title'] = t('Basic settings');
-        $active_container['body'] = feeds_get_config_form($importer);
+        $active_container['body'] = feeds_get_form($importer, 'configForm');
       }
       // feeds_plugin_instance() returns a correct result because feed has been
       // instantiated previously.
       elseif (in_array($plugin_key, array_keys($plugins)) && $plugin = feeds_plugin_instance($plugin_key, $importer->id)) {
         $active_container['title'] = t('Settings for !plugin', array('!plugin' => $plugins[$plugin_key]['name']));
-        $active_container['body'] = feeds_get_config_form($plugin);
+        $active_container['body'] = feeds_get_form($plugin, 'configForm');
       }
       break;
     case 'mapping':
@@ -354,7 +354,7 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
   // Fetcher.
   $fetcher = $plugins[$config['fetcher']['plugin_key']];
   $actions = array();
-  if (feeds_get_config_form($importer->fetcher)) {
+  if (feeds_get_form($importer->fetcher, 'configForm')) {
     $actions = array(l(t('Settings'), $path .'/settings/'. $config['fetcher']['plugin_key']));
   }
   $info['title'] = t('Fetcher');
@@ -371,7 +371,7 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
   // Parser.
   $parser = $plugins[$config['parser']['plugin_key']];
   $actions = array();
-  if (feeds_get_config_form($importer->parser)) {
+  if (feeds_get_form($importer->parser, 'configForm')) {
     $actions = array(l(t('Settings'), $path .'/settings/'. $config['parser']['plugin_key']));
   }
   $info['title'] = t('Parser');
@@ -388,7 +388,7 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
   // Processor.
   $processor = $plugins[$config['processor']['plugin_key']];
   $actions = array();
-  if (feeds_get_config_form($importer->processor)) {
+  if (feeds_get_form($importer->processor, 'configForm')) {
     $actions[] = l(t('Settings'), $path .'/settings/'. $config['processor']['plugin_key']);
   }
   $actions[] = l(t('Mapping'), $path .'/mapping');

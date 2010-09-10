@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.53 2010/09/09 23:06:51 alexb Exp $
+// $Id: feeds.module,v 1.54 2010/09/10 14:42:07 alexb Exp $
 
 /**
  * @file
@@ -65,10 +65,10 @@ function feeds_perm() {
  */
 function feeds_forms() {
   $forms = array();
-  $forms['FeedsImporter_feeds_config_form']['callback'] = 'feeds_config_form';
+  $forms['FeedsImporter_feeds_form']['callback'] = 'feeds_form';
   $plugins = feeds_get_plugins();
   foreach ($plugins as $plugin) {
-    $forms[$plugin['handler']['class'] .'_feeds_config_form']['callback'] = 'feeds_config_form';
+    $forms[$plugin['handler']['class'] .'_feeds_form']['callback'] = 'feeds_form';
   }
   return $forms;
 }
