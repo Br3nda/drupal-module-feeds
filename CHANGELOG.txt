@@ -1,6 +1,6 @@
-// $Id: CHANGELOG.txt,v 1.159 2010/09/10 15:44:56 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.160 2010/09/10 18:39:34 alexb Exp $
 
-Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
+Feeds 6.x 1.0 Beta 5, 2010-09-10
 --------------------------------
 
 - #849840 adityakg, rbayliss, alex_b: Submit full mapping on every submission.
