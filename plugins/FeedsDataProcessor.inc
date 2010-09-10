@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.22 2010/09/09 23:01:57 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.23 2010/09/10 15:44:56 alexb Exp $
 
 /**
  * @file
@@ -106,41 +106,6 @@ class FeedsDataProcessor extends FeedsProcessor {
    */
   public function expiryTime() {
     return $this->config['expire'];
-  }
-
-  /**
-   * Override parent::addMapping() and create a new field for new mapping
-   * targets.
-   *
-   * @see getMappingTargets().
-   */
-  public function addMapping($source, $target, $unique = FALSE) {
-    if (empty($source) || empty($target)) {
-      return;
-    }
-
-    // Create a new field with targets that start with "new:"
-    @list($new, $type) = explode(':', $target);
-
-    if ($new == 'new') {
-      // Build a field name from the source key.
-      $field_name = data_safe_name($source);
-      // Get the full schema spec from data.
-      $type = data_get_field_definition($type);
-      // Add the field to the table.
-      $schema = $this->table()->get('table_schema');
-      if (!isset($schema['fields'][$field_name])) {
-        $target = $this->table()->addField($field_name, $type);
-        // Let the user know.
-        drupal_set_message(t('Created new field "!name".', array('!name' => $field_name)));
-      }
-      else {
-        throw new Exception(t('Field !field_name already exists as a mapping target. Remove it from mapping if you would like to map another source to it. Remove it from !data_table table if you would like to change its definition.', array('!field_name' => $field_name, '!data_table' => l($this->table()->get('name'), 'admin/content/data'))));
-      }
-    }
-
-    // Let parent populate the mapping configuration.
-    parent::addMapping($source, $target, $unique);
   }
 
   /**
@@ -366,5 +331,50 @@ class FeedsDataProcessor extends FeedsProcessor {
          '0' => 'id',
        ),
     );
+  }
+
+  /**
+   * Override parent::addConfig().
+   */
+  public function addConfig($config) {
+    $this->processMappings($config);
+    return parent::addConfig($config);
+  }
+
+  /**
+   * Override parent::setConfig().
+   */
+  public function setConfig($config) {
+    $this->processMappings($config);
+    return parent::setConfig($config);
+  }
+
+  /**
+   * Create a new field for each new: mapping.
+   */
+  protected function processMappings(&$config) {
+    if (!empty($config['mappings'])) {
+      foreach ($config['mappings'] as &$mapping) {
+        @list($new, $type) = explode(':', $mapping['target']);
+
+        // Create a new field with targets that start with "new:"
+        if ($new == 'new') {
+          // Build a field name from the source key.
+          $field_name = data_safe_name($mapping['source']);
+          // Get the full schema spec from data.
+          $type = data_get_field_definition($type);
+          // Add the field to the table.
+          $schema = $this->table()->get('table_schema');
+          if (!isset($schema['fields'][$field_name])) {
+            $mapping['target'] = $this->table()->addField($field_name, $type);
+            // Let the user know.
+            drupal_set_message(t('Created new field "!name".', array('!name' => $field_name)));
+          }
+          else {
+            throw new Exception(t('Field !field_name already exists as a mapping target. Remove it from mapping if you would like to map another source to it. Remove it from !data_table table if you would like to change its definition.', array('!field_name' => $field_name, '!data_table' => l($this->table()->get('name'), 'admin/content/data'))));
+          }
+        }
+      }
+    }
   }
 }

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.35 2010/09/10 14:42:07 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.36 2010/09/10 15:44:56 alexb Exp $
 
 /**
  * @file
@@ -531,9 +531,6 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
 
   if (is_array($mappings)) {
     foreach ($mappings as $i => $mapping) {
-
-      $mappings[$i]['source'] = isset($source_options) ? $source_options[$mappings[$i]['source']] : $mappings[$i]['source'];
-      $mappings[$i]['target'] = isset($target_options[$mappings[$i]['target']]) ? $target_options[$mappings[$i]['target']] : $mappings[$i]['target'];
       $param = array(
         'processor' => $importer->processor,
         'mapping' => $mapping,
@@ -574,7 +571,7 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
   }
   $form['target'] = array(
     '#type' => 'select',
-    '#options' => array('' => t('Select a target')) + _feeds_ui_format_options($targets),
+    '#options' => array('' => t('Select a target')) + $target_options,
   );
   $form['add'] = array(
     '#type' => 'submit',
@@ -595,7 +592,13 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
 function feeds_ui_mapping_form_add_submit($form, &$form_state) {
   $importer = $form['#importer'];
   try {
-    $importer->processor->addMapping($form_state['values']['source'], $form_state['values']['target']);
+    $mappings = $form['#mappings'];
+    $mappings[] = array(
+      'source' => $form_state['values']['source'],
+      'target' => $form_state['values']['target'],
+      'unique' => FALSE,
+    );
+    $importer->processor->addConfig(array('mappings' => $mappings));
     $importer->processor->save();
     drupal_set_message(t('Mapping has been added.'));
   }
@@ -609,22 +612,25 @@ function feeds_ui_mapping_form_add_submit($form, &$form_state) {
  */
 function feeds_ui_mapping_form_submit($form, &$form_state) {
   $processor = $form['#importer']->processor;
-  $mappings = $processor->config['mappings'];
   // We may set some unique flags to mappings that we remove in the subsequent
   // step, that's fine.
+  $mappings = $form['#mappings'];
   if (isset($form_state['values']['unique_flags'])) {
     foreach ($form_state['values']['unique_flags'] as $k => $v) {
-      $processor->setUnique($mappings[$k]['source'], $mappings[$k]['target'], $v);
+      $mappings[$k]['unique'] = $v;
     }
   }
 
   foreach ($form_state['values']['remove_flags'] as $k => $v) {
     if ($v) {
-      $processor->removeMapping($mappings[$k]['source'], $mappings[$k]['target']);
+      unset($mappings[$k]);
+      // Keep our keys clean.
+      $mappings = array_values($mappings);
     }
   }
-  drupal_set_message(t('Your changes have been saved.'));
+  $processor->addConfig(array('mappings' => $mappings));
   $processor->save();
+  drupal_set_message(t('Your changes have been saved.'));
 }
 
 /**
@@ -777,9 +783,11 @@ function theme_feeds_ui_mapping_form($form) {
   $rows = array();
   if (is_array($form['#mappings'])) {
     foreach ($form['#mappings'] as $i => $mapping) {
+      // Some parsers do not define source options.
+      $source = isset($form['source']['#options'][$mapping['source']]) ? $form['source']['#options'][$mapping['source']] : $mapping['source'];
       $rows[] = array(
-        $mapping['source'],
-        $mapping['target'],
+        $source,
+        $form['target']['#options'][$mapping['target']],
         drupal_render($form['unique_flags'][$i]),
         drupal_render($form['remove_flags'][$i]),
       );

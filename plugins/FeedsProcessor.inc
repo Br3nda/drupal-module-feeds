@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.17 2010/09/07 17:57:15 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.18 2010/09/10 15:44:56 alexb Exp $
 
 
 // Update mode for existing items.
@@ -166,54 +166,6 @@ abstract class FeedsProcessor extends FeedsPlugin {
    */
   public function configDefaults() {
     return array('mappings' => array());
-  }
-
-  /**
-   * Add a mapping to existing mappings.
-   *
-   * @param $source
-   *   A string that identifies a source element.
-   * @param $target
-   *   A string that identifies a target element.
-   * @param $unique
-   *   A boolean that defines whether the target value should be unique. If
-   *   TRUE only one item with a given target value can exist on the local
-   *   system. Compare with existingItemId() and uniqueTargets().
-   */
-  public function addMapping($source, $target, $unique = FALSE) {
-    if (!empty($source) && !empty($target)) {
-      $this->config['mappings'][] = array(
-        'source' => $source,
-        'target' => $target,
-        'unique' => $unique,
-      );
-    }
-  }
-
-  /**
-   * Set unique state of a mapping target.
-   */
-  public function setUnique($source, $target, $unique) {
-    if (!empty($source) && !empty($target)) {
-      foreach ($this->config['mappings'] as $k => $mapping) {
-        if ($mapping['source'] == $source && $mapping['target'] == $target) {
-          $this->config['mappings'][$k]['unique'] = $unique;
-        }
-      }
-    }
-  }
-
-  /**
-   * Remove a mapping.
-   */
-  public function removeMapping($source, $target) {
-    foreach ($this->config['mappings'] as $k => $mapping) {
-      if ($mapping['source'] == $source && $mapping['target'] == $target) {
-        unset($this->config['mappings'][$k]);
-      }
-    }
-    // Keep or keys clean.
-    $this->config['mappings'] = array_values($this->config['mappings']);
   }
 
   /**
