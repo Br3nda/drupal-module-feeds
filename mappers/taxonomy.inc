@@ -1,5 +1,5 @@
 <?php
-// $Id: taxonomy.inc,v 1.9 2010/09/08 02:43:16 alexb Exp $
+// $Id: taxonomy.inc,v 1.10 2010/09/11 02:33:27 alexb Exp $
 
 /**
  * @file
@@ -131,7 +131,7 @@ function taxonomy_feeds_set_target(&$node, $key, $terms) {
  *   An array of matching term objects.
  */
 function taxonomy_get_term_by_name_vid($name, $vid) {
-  $db_result = db_query(db_rewrite_sql("SELECT t.tid, t.name FROM {term_data} t WHERE LOWER(t.name) = LOWER('%s') AND vid=%d", 't', 'tid'), trim($name), $vid);
+  $db_result = db_query(db_rewrite_sql("SELECT t.tid, t.name FROM {term_data} t WHERE LOWER(t.name) = LOWER('%s') AND t.vid = %d", 't', 'tid'), trim($name), $vid);
   $result = array();
   while ($term = db_fetch_object($db_result)) {
     $result[] = $term;
