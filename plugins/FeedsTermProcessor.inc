@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.18 2010/09/09 23:16:29 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.19 2010/09/11 02:24:26 alexb Exp $
 
 /**
  * @file
@@ -118,7 +118,9 @@ class FeedsTermProcessor extends FeedsProcessor {
     if (!$target_term) {
       $target_term = array();
     }
-    $vocabulary = $this->vocabulary();
+    if (!$vocabulary = $this->vocabulary()) {
+      throw new Exception(t('No vocabulary specified for term processor.'));
+    }
     $target_term['vid'] = $vocabulary->vid;
     $target_term = parent::map($batch, $target_term);
     // Taxonomy module expects synonyms to be supplied as a single string.
@@ -172,6 +174,15 @@ class FeedsTermProcessor extends FeedsProcessor {
       '#default_value' => $this->config['update_existing'],
     );
     return $form;
+  }
+
+  /**
+   * Override parent::configFormValidate().
+   */
+  public function configFormValidate(&$values) {
+    if (empty($values['vocabulary'])) {
+      form_set_error('vocabulary', t('Choose a vocabulary'));
+    }
   }
 
   /**

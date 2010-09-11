@@ -1,4 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.160 2010/09/10 18:39:34 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.161 2010/09/11 02:24:26 alexb Exp $
+
+Feeds 6.x xxxxxxxxxxxxxxxxxxxxxx
+--------------------------------
+
+- #795114 budda, alex_b: Taxonomy term processor doesn't require vocabulary to
+  be set.
 
 Feeds 6.x 1.0 Beta 5, 2010-09-10
 --------------------------------
