@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsConfigurable.inc,v 1.13 2010/09/10 14:42:07 alexb Exp $
+// $Id: FeedsConfigurable.inc,v 1.14 2010/09/12 02:16:45 alexb Exp $
 
 /**
  * @file
@@ -77,12 +77,15 @@ abstract class FeedsConfigurable {
   }
 
   /**
-   * Determine whether this object is persistent. I. e. it is defined either
-   * in code or in the database.
+   * Determine whether this object is persistent and enabled. I. e. it is
+   * defined either in code or in the database and it is enabled.
    */
   public function existing() {
     if ($this->export_type == FEEDS_EXPORT_NONE) {
       throw new FeedsNotExistingException(t('Object is not persistent.'));
+    }
+    if ($this->disabled) {
+      throw new FeedsNotExistingException(t('Object is disabled.'));
     }
     return $this;
   }
