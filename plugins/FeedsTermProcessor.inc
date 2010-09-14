@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.19 2010/09/11 02:24:26 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.20 2010/09/14 15:03:07 alexb Exp $
 
 /**
  * @file
@@ -119,7 +119,7 @@ class FeedsTermProcessor extends FeedsProcessor {
       $target_term = array();
     }
     if (!$vocabulary = $this->vocabulary()) {
-      throw new Exception(t('No vocabulary specified for term processor.'));
+      throw new Exception(t('No vocabulary specified for term processor'));
     }
     $target_term['vid'] = $vocabulary->vid;
     $target_term = parent::map($batch, $target_term);
