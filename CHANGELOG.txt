@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.162 2010/09/11 02:33:27 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.163 2010/09/14 15:00:46 alexb Exp $
 
 Feeds 6.x xxxxxxxxxxxxxxxxxxxxxx
 --------------------------------
 
+- #891982 bangpound, twistor: Support Link 2.x.
 - #870278 budda: Fix SQL query in taxonomy_get_term_by_name_vid().
 - #795114 budda, alex_b: Taxonomy term processor doesn't require vocabulary to
   be set.
