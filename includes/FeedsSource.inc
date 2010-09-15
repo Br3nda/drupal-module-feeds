@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.17 2010/09/09 16:10:41 alexb Exp $
+// $Id: FeedsSource.inc,v 1.18 2010/09/15 18:28:33 alexb Exp $
 
 /**
  * @file
@@ -120,8 +120,11 @@ class FeedsSource extends FeedsConfigurable {
    *   Throws Exception if an error occurs when fetching or parsing.
    */
   public function preview() {
-    $batch = $this->importer->fetcher->fetch($this);
-    $this->importer->parser->parse($batch, $this);
+    $this->batch = $this->importer->fetcher->fetch($this);
+    $this->importer->parser->parse($this->batch, $this);
+    module_invoke_all('feeds_after_parse', $this->importer, $this);
+    $batch = $this->batch;
+    unset($this->batch);
     return $batch;
   }
 
@@ -140,6 +143,7 @@ class FeedsSource extends FeedsConfigurable {
       if (!$this->batch || !($this->batch instanceof FeedsImportBatch)) {
         $this->batch = $this->importer->fetcher->fetch($this);
         $this->importer->parser->parse($this->batch, $this);
+        module_invoke_all('feeds_after_parse', $this->importer, $this);
       }
       $this->importer->processor->process($this->batch, $this);
       $result = $this->batch->getProgress();

@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.164 2010/09/15 16:44:50 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.165 2010/09/15 18:28:33 alexb Exp $
 
 Feeds 6.x xxxxxxxxxxxxxxxxxxxxxx
 --------------------------------
 
+- #663860 funkmasterjones, infojunkie, alex_b et. al.: hook_feeds_after_parse().
 - #755556 Monkey Master, andrewlevine, alex_b: Support saving local files in
   filefields.
 - #891982 bangpound, twistor: Support Link 2.x.
