@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.24 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.25 2010/09/15 19:40:57 alexb Exp $
 
 /**
  * @file
@@ -190,6 +190,15 @@ class FeedsHTTPFetcher extends FeedsFetcher {
   public function unsubscribe(FeedsSource $source) {
     $source_config = $source->getConfigFor($this);
     $this->subscriber($source->feed_nid)->unsubscribe($source_config['source'], url($this->path($source->feed_nid), array('absolute' => TRUE)));
+  }
+
+  /**
+   * Implement FeedsFetcher::importPeriod().
+   */
+  public function importPeriod(FeedsSource $source) {
+    if ($this->subscriber($source->feed_nid)->subscribed()) {
+      return 259200; // Delay for three days if there is a successful subscription.
+    }
   }
 
   /**

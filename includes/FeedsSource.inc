@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.19 2010/09/15 19:27:42 alexb Exp $
+// $Id: FeedsSource.inc,v 1.20 2010/09/15 19:40:56 alexb Exp $
 
 /**
  * @file
@@ -198,12 +198,18 @@ class FeedsSource extends FeedsConfigurable {
    * Schedule this source.
    */
   public function schedule() {
+    // Check whether any fetcher is overriding the import period.
+    $period = $this->importer->config['import_period'];
+    $fetcher_period = $this->importer->fetcher->importPeriod($this);
+    if (is_numeric($fetcher_period)) {
+      $period = $fetcher_period;
+    }
     $job = array(
       'callback' => 'feeds_source_import',
       'type' => $this->id,
       'id' => $this->feed_nid,
       // Schedule as soon as possible if a batch is active.
-      'period' => $this->batch ? 0 : $this->importer->config['import_period'],
+      'period' => $this->batch ? 0 : $period,
       'periodic' => TRUE,
     );
     if ($job['period'] != FEEDS_SCHEDULE_NEVER) {
