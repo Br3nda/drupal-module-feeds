@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.20 2010/09/15 19:40:56 alexb Exp $
+// $Id: FeedsSource.inc,v 1.21 2010/09/15 20:06:20 alexb Exp $
 
 /**
  * @file
@@ -287,13 +287,20 @@ class FeedsSource extends FeedsConfigurable {
   }
 
   /**
-   * Override existing, only return source if importer and source 'exist'.
+   * Only return source if configuration is persistent and valid.
    *
    * @see FeedsConfigurable::existing().
    */
   public function existing() {
-    $this->importer->existing();
-    return parent::existing();
+    // If there is no feed nid given, there must be no content type specified.
+    // If there is a feed nid given, there must be a content type specified.
+    // Ensure that importer is persistent (= defined in code or DB).
+    // Ensure that source is persistent (= defined in DB).
+    if ((empty($this->feed_nid) && empty($this->importer->config['content_type'])) ||
+        (!empty($this->feed_nid) && !empty($this->importer->config['content_type']))) {
+      $this->importer->existing();
+      return parent::existing();
+    }
   }
 
   /**

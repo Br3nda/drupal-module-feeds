@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.167 2010/09/15 19:40:56 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.168 2010/09/15 20:06:20 alexb Exp $
 
 Feeds 6.x xxxxxxxxxxxxxxxxxxxxxx
 --------------------------------
 
+- #906654 alex_b: Fix phantom subscriptions.
 - #867892 alex_b: PubSubHubbub - slow down import frequency of feeds that are
   subscribed to hub.
 - #908964 alex_b: Break out scheduler. Note: Features depends on Job Scheduler
