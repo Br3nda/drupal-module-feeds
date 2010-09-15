@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.163 2010/09/14 15:00:46 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.164 2010/09/15 16:44:50 alexb Exp $
 
 Feeds 6.x xxxxxxxxxxxxxxxxxxxxxx
 --------------------------------
 
+- #755556 Monkey Master, andrewlevine, alex_b: Support saving local files in
+  filefields.
 - #891982 bangpound, twistor: Support Link 2.x.
 - #870278 budda: Fix SQL query in taxonomy_get_term_by_name_vid().
 - #795114 budda, alex_b: Taxonomy term processor doesn't require vocabulary to
