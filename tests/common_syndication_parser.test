@@ -1,5 +1,5 @@
 <?php
-// $Id: common_syndication_parser.test,v 1.4 2010/09/09 22:44:23 alexb Exp $
+// $Id: common_syndication_parser.test,v 1.5 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * Test cases for common syndication parser library.
@@ -23,7 +23,7 @@ class CommonSyndicationParserTestCase extends DrupalWebTestCase {
    * Set up.
    */
   public function setUp() {
-    parent::setUp('feeds', 'feeds_ui', 'ctools');
+    parent::setUp('feeds', 'feeds_ui', 'ctools', 'job_scheduler');
     feeds_include_library('common_syndication_parser.inc', 'common_syndication_parser');
   }
 

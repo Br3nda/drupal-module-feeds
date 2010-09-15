@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.50 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.51 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -218,6 +218,16 @@ class FeedsNodeProcessor extends FeedsProcessor {
     else {
       $values['author'] = 0;
     }
+  }
+
+  /**
+   * Reschedule if expiry time changes.
+   */
+  public function configFormSubmit(&$values) {
+    if ($this->config['expire'] != $values['expire']) {
+      feeds_reschedule($this->id);
+    }
+    parent::configFormSubmit(&$values);
   }
 
   /**

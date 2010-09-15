@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.14 2010/09/07 17:55:03 alexb Exp $
+// $Id: feeds.test.inc,v 1.15 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -176,12 +176,6 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $source = db_fetch_object(db_query("SELECT * FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $id, $nid));
     $config = unserialize($source->config);
     $this->assertEqual($config['FeedsHTTPFetcher']['source'], $feed_url, t('URL in DB correct.'));
-
-    // Check whether feed got properly added to scheduler.
-    $this->assertEqual(1, db_result(db_query("SELECT COUNT(*) FROM {feeds_schedule} WHERE id = '%s' AND feed_nid = %d AND callback = 'import' AND last_executed_time = 0 AND scheduled = 0", $id, $nid)));
-    // There must be only one entry for 'expire' - no matter how many actual feed nodes exist.
-    $this->assertEqual(1, db_result(db_query("SELECT COUNT(*) FROM {feeds_schedule} WHERE id = '%s' AND callback = 'expire' AND last_executed_time = 0 AND scheduled = 0", $id)));
-
     return $nid;
   }
 
@@ -244,9 +238,9 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $this->assertEqual($config['FeedsHTTPFetcher']['source'], $feed_url, t('URL in DB correct.'));
 
     // Check whether feed got properly added to scheduler.
-    $this->assertEqual(1, db_result(db_query("SELECT COUNT(*) FROM {feeds_schedule} WHERE id = '%s' AND feed_nid = 0 AND callback = 'import' AND last_executed_time = 0 AND scheduled = 0", $id)));
+    $this->assertEqual(1, db_result(db_query("SELECT COUNT(*) FROM {job_schedule} WHERE type = '%s' AND id = 0 AND callback = 'feeds_source_import' AND last <> 0 AND scheduled = 0", $id)));
     // There must be only one entry for callback 'expire' - no matter what the feed_nid is.
-    $this->assertEqual(1, db_result(db_query("SELECT COUNT(*) FROM {feeds_schedule} WHERE id = '%s' AND callback = 'expire' AND last_executed_time = 0 AND scheduled = 0", $id)));
+    $this->assertEqual(0, db_result(db_query("SELECT COUNT(*) FROM {job_schedule} WHERE type = '%s' AND callback = 'feeds_importer_expire' AND last <> 0 AND scheduled = 0", $id)));
   }
 
   /**

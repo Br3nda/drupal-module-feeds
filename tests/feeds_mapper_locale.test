@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_locale.test,v 1.3 2010/09/07 17:55:03 alexb Exp $
+// $Id: feeds_mapper_locale.test,v 1.4 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -26,7 +26,7 @@ class FeedsMapperLocaleTestCase extends FeedsMapperTestCase {
    */
   function setUp() {
     // Call parent setup with required modules.
-    parent::setUp('feeds', 'feeds_ui', 'ctools', 'locale');
+    parent::setUp('feeds', 'feeds_ui', 'ctools', 'job_scheduler', 'locale');
 
     // Create user and login.
     $this->drupalLogin($this->drupalCreateUser(

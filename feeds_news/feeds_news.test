@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_news.test,v 1.1 2010/07/27 23:01:25 alexb Exp $
+// $Id: feeds_news.test,v 1.2 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -18,7 +18,7 @@ class FeedsExamplesFeedTestCase extends FeedsWebTestCase {
    * Set up test.
    */
   public function setUp() {
-    parent::setUp('feeds', 'feeds_ui', 'ctools', 'features', 'feeds_news');
+    parent::setUp('feeds', 'feeds_ui', 'ctools', 'job_scheduler', 'features', 'feeds_news');
 
     $this->drupalLogin(
       $this->drupalCreateUser(
@@ -106,7 +106,7 @@ class FeedsExamplesOPMLTestCase extends FeedsWebTestCase {
    * Set up test.
    */
   public function setUp() {
-    parent::setUp('feeds', 'feeds_ui', 'ctools', 'feeds_news');
+    parent::setUp('feeds', 'feeds_ui', 'ctools', 'job_scheduler', 'feeds_news');
 
     $this->drupalLogin(
       $this->drupalCreateUser(

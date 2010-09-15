@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.18 2010/09/15 18:28:33 alexb Exp $
+// $Id: FeedsSource.inc,v 1.19 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -195,6 +195,26 @@ class FeedsSource extends FeedsConfigurable {
   }
 
   /**
+   * Schedule this source.
+   */
+  public function schedule() {
+    $job = array(
+      'callback' => 'feeds_source_import',
+      'type' => $this->id,
+      'id' => $this->feed_nid,
+      // Schedule as soon as possible if a batch is active.
+      'period' => $this->batch ? 0 : $this->importer->config['import_period'],
+      'periodic' => TRUE,
+    );
+    if ($job['period'] != FEEDS_SCHEDULE_NEVER) {
+      job_scheduler()->set($job);
+    }
+    else {
+      job_scheduler()->remove($job);
+    }
+  }
+
+  /**
    * Save configuration.
    */
   public function save() {
@@ -251,6 +271,23 @@ class FeedsSource extends FeedsConfigurable {
       $this->importer->$type->sourceDelete($this);
     }
     db_query("DELETE FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $this->id, $this->feed_nid);
+    // Remove from schedule.
+    $job = array(
+      'callback' => 'feeds_source_import',
+      'type' => $this->id,
+      'id' => $this->feed_nid,
+    );
+    job_scheduler()->remove($job);
+  }
+
+  /**
+   * Override existing, only return source if importer and source 'exist'.
+   *
+   * @see FeedsConfigurable::existing().
+   */
+  public function existing() {
+    $this->importer->existing();
+    return parent::existing();
   }
 
   /**

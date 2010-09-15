@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_parser_sitemap.test,v 1.1 2010/09/09 22:44:23 alexb Exp $
+// $Id: feeds_parser_sitemap.test,v 1.2 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -29,7 +29,7 @@ class FeedsSitemapParserTestCase extends FeedsWebTestCase {
    * Set up test.
    */
   public function setUp() {
-    parent::setUp('feeds', 'feeds_ui', 'ctools');
+    parent::setUp('feeds', 'feeds_ui', 'ctools', 'job_scheduler');
 
     $this->drupalLogin(
       $this->drupalCreateUser(

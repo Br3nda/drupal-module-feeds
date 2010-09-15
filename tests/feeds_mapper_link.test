@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_link.test,v 1.4 2010/09/07 17:55:03 alexb Exp $
+// $Id: feeds_mapper_link.test,v 1.5 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -27,7 +27,7 @@ class FeedsMapperLinkTestCase extends FeedsMapperTestCase {
   public function setUp() {
     // Call parent setup with the required module
     parent::setUp(
-      'feeds', 'feeds_ui', 'ctools', 'content', 'link'
+      'feeds', 'feeds_ui', 'ctools', 'job_scheduler', 'content', 'link'
     );
 
     // Create user and login

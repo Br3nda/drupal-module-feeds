@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.33 2010/09/08 14:54:36 alexb Exp $
+$Id: README.txt,v 1.34 2010/09/15 19:27:42 alexb Exp $
 
 
 "It feeds"
@@ -175,26 +175,10 @@ Name:        feeds_source_class
 Default:     'FeedsSource'
 Description: The class to use for handling feed sources.
 
-Name:        feeds_scheduler_class
-Default:     'FeedsScheduler'
-Description: The class to use for scheduling feed refreshing.
-
 Name:        feeds_worker_time
 Default:     15
 Description: Execution time for a queue worker, only effective if used with
              drupal_queue.
-
-Name:        feeds_schedule_num
-Default:     5
-Description: The number of feeds to import on cron time.
-             Only has an effect if Drupal Queue is *not* enabled.
-             http://drupal.org/project/drupal_queue
-
-Name:        feeds_schedule_queue_num
-Default:     200
-Description: The number of feeds to queue on cron time. Only has an effect if
-             Drupal Queue is enabled.
-             http://drupal.org/project/drupal_queue
 
 Name:        feeds_data_$importer_id
 Default:     feeds_data_$importer_id

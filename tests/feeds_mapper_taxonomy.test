@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_taxonomy.test,v 1.5 2010/09/07 17:55:03 alexb Exp $
+// $Id: feeds_mapper_taxonomy.test,v 1.6 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -26,7 +26,7 @@ class FeedsMapperTaxonomyTestCase extends FeedsMapperTestCase {
    */
   function setUp() {
     // Call parent setup with required modules.
-    parent::setUp('feeds', 'feeds_ui', 'ctools', 'taxonomy');
+    parent::setUp('feeds', 'feeds_ui', 'ctools', 'job_scheduler', 'taxonomy');
 
     // Create user and login.
     $this->drupalLogin($this->drupalCreateUser(

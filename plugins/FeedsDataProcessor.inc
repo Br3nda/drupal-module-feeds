@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsDataProcessor.inc,v 1.23 2010/09/10 15:44:56 alexb Exp $
+// $Id: FeedsDataProcessor.inc,v 1.24 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -257,6 +257,16 @@ class FeedsDataProcessor extends FeedsProcessor {
       '#default_value' => $this->config['update_existing'],
     );
     return $form;
+  }
+
+  /**
+   * Reschedule if expiry time changes.
+   */
+  public function configFormSubmit(&$values) {
+    if ($this->config['expire'] != $values['expire']) {
+      feeds_reschedule($this->id);
+    }
+    parent::configFormSubmit(&$values);
   }
 
   /**

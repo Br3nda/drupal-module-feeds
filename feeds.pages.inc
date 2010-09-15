@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.20 2010/09/03 21:03:48 alexb Exp $
+// $Id: feeds.pages.inc,v 1.21 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -85,9 +85,9 @@ function feeds_import_form_submit($form, &$form_state) {
     feeds_batch_set(t('Importing'), 'import', $form['#importer_id']);
   }
 
-  // Add importer to schedule.
-  feeds_scheduler()->add($form['#importer_id'], 'import');
-  feeds_scheduler()->add($form['#importer_id'], 'expire');
+  // Add to schedule, make sure importer is scheduled, too.
+  $source->schedule();
+  $source->importer->schedule();
 }
 
 /**
@@ -133,14 +133,11 @@ function feeds_delete_tab_form(&$form_state, $importer_id, $node = NULL) {
 
 /**
  * Submit handler for feeds_delete_tab_form().
- *
- * Reset import schedule of given subscription to expedite refresh.
  */
 function feeds_delete_tab_form_submit($form, &$form_state) {
   $form_state['redirect'] = $form['#redirect'];
   $feed_nid = empty($form['#feed_nid']) ? 0 : $form['#feed_nid'];
   feeds_batch_set(t('Deleting'), 'clear', $form['#importer_id'], $feed_nid);
-  feeds_scheduler()->add($form['#importer_id'], 'import', $feed_nid);
 }
 
 /**

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_fast_news.test,v 1.2 2010/09/09 22:31:16 alexb Exp $
+// $Id: feeds_fast_news.test,v 1.3 2010/09/15 19:27:42 alexb Exp $
 
 /**
  * @file
@@ -18,7 +18,7 @@ class FeedsExamplesFastFeedTestCase extends FeedsWebTestCase {
    * Set up test.
    */
   public function setUp() {
-    parent::setUp('feeds', 'feeds_ui', 'ctools', 'features', 'feeds_fast_news', 'data', 'data_ui', 'views', 'views_ui');
+    parent::setUp('feeds', 'feeds_ui', 'ctools', 'job_scheduler', 'features', 'feeds_fast_news', 'data', 'data_ui', 'views', 'views_ui');
 
     $this->drupalLogin(
       $this->drupalCreateUser(
