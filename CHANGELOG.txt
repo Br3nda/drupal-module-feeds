@@ -1,6 +1,6 @@
-// $Id: CHANGELOG.txt,v 1.173.2.1 2010/09/16 19:32:09 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.173.2.2 2010/09/16 19:32:43 alexb Exp $
 
-Feeds 6.x xxxxxxxxxxxxxxxxxxxxxx
+Feeds 6.x 1.0 Beta 6, 2010-09-16
 --------------------------------
 
 - Branched to DRUPAL-6--1.
