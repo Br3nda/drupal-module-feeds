@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.15 2010/09/16 19:01:04 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.16 2010/09/16 19:03:27 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
@@ -19,25 +19,53 @@ class FeedsCSVParser extends FeedsParser {
     $delimiter = $source_config['delimiter'] == 'TAB' ? "\t" : $source_config['delimiter'];
     $parser->setDelimiter($delimiter);
 
-    // Get first line and use it for column names, convert them to lower case.
+    $header = $this->parseHeader($parser, $iterator);
+    if (!header) {
+      return;
+    }
+    $parser->setColumnNames($header);
+
+    // Populate batch.
+    $batch->setItems($this->parseItems($parser, $iterator));
+  }
+
+  /**
+   * Get first line and use it for column names, convert them to lower case.
+   * Be aware that the $parser and iterator objects can be modified in this
+   * function since they are passed in by reference
+   * 
+   * @param ParserCSV $parser
+   * @param ParserCSVIterator $iterator
+   * @return
+   *   An array of lower-cased column names to use as keys for the parsed items.
+   */
+  protected function parseHeader(ParserCSV $parser, ParserCSVIterator $iterator) {
     $parser->setLineLimit(1);
     $rows = $parser->parse($iterator);
     if (!count($rows)) {
-      return;
+      return FALSE;
     }
     $header = array_shift($rows);
     foreach ($header as $i => $title) {
       $header[$i] = trim(drupal_strtolower($title));
     }
-    $parser->setColumnNames($header);
+    return $header;
+  }
 
+  /**
+   * Parse all of the items from the CSV.
+   *
+   * @param ParserCSV $parser
+   * @param ParserCSVIterator $iterator
+   * @return
+   *   An array of rows of the CSV keyed by the column names previously set
+   */
+  protected function parseItems(ParserCSV $parser, ParserCSVIterator $iterator) {
     // Set line limit to 0 and start byte to last position and parse rest.
     $parser->setLineLimit(0);
     $parser->setStartByte($parser->lastLinePos());
     $rows = $parser->parse($iterator);
-
-    // Populate batch.
-    $batch->setItems($rows);
+    return $rows;
   }
 
   /**
