@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.14 2010/09/16 18:31:50 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.15 2010/09/16 22:30:18 alexb Exp $
 
 /**
  * Adapter to present SimplePie_Enclosure as FeedsEnclosure object.
@@ -85,10 +85,10 @@ class FeedsSimplePieParser extends FeedsParser {
       $item['title'] = html_entity_decode(($title = $simplepie_item->get_title()) ? $title : $this->createTitle($simplepie_item->get_content()));
       $item['description'] = $simplepie_item->get_content();
       $item['url'] = html_entity_decode($simplepie_item->get_link());
-      // Use UNIX time. If no date is defined, fall back to FEEDS_REQUEST_TIME.
+      // Use UNIX time. If no date is defined, fall back to REQUEST_TIME.
       $item['timestamp'] = $simplepie_item->get_date("U");
       if (empty($item['timestamp'])) {
-        $item['timestamp'] = FEEDS_REQUEST_TIME;
+        $item['timestamp'] = REQUEST_TIME;
       }
       $item['guid'] = $simplepie_item->get_id();
       // Use URL as GUID if there is no GUID.

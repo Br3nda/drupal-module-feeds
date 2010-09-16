@@ -1,15 +1,10 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.23 2010/09/16 18:41:47 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.24 2010/09/16 22:30:18 alexb Exp $
 
 /**
  * @file
  * FeedsImporter class and related.
  */
-
-// Including FeedsImporter.inc automatically includes dependencies.
-require_once(dirname(__FILE__) .'/FeedsConfigurable.inc');
-require_once(dirname(__FILE__) .'/FeedsSource.inc');
-require_once(dirname(__FILE__) .'/FeedsBatch.inc');
 
 /**
  * A FeedsImporter object describes how an external source should be fetched,
@@ -64,7 +59,7 @@ class FeedsImporter extends FeedsConfigurable {
    * Remove items older than $time.
    *
    * @param $time
-   *   All items older than FEEDS_REQUEST_TIME - $time will be deleted. If not
+   *   All items older than REQUEST_TIME - $time will be deleted. If not
    *   given, internal processor settings will be used.
    *
    * @return

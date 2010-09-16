@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.51 2010/09/15 19:27:42 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.52 2010/09/16 22:30:18 alexb Exp $
 
 /**
  * @file
@@ -120,11 +120,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
     if ($time == FEEDS_EXPIRE_NEVER) {
       return;
     }
-    $result = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = '%s' AND n.created < %d", $this->id, FEEDS_REQUEST_TIME - $time, 0, variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE));
+    $result = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = '%s' AND n.created < %d", $this->id, REQUEST_TIME - $time, 0, variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE));
     while ($node = db_fetch_object($result)) {
       _feeds_node_delete($node->nid);
     }
-    if (db_result(db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = '%s' AND n.created < %d", $this->id, FEEDS_REQUEST_TIME - $time, 0, 1))) {
+    if (db_result(db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = '%s' AND n.created < %d", $this->id, REQUEST_TIME - $time, 0, 1))) {
       return FEEDS_BATCH_ACTIVE;
     }
     return FEEDS_BATCH_COMPLETE;
@@ -335,7 +335,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
   protected function buildNode($nid, $feed_nid) {
     $node = new stdClass();
     if (empty($nid)) {
-      $node->created = FEEDS_REQUEST_TIME;
+      $node->created = REQUEST_TIME;
       $populate = TRUE;
     }
     else {
@@ -350,11 +350,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
     }
     if ($populate) {
       $node->type = $this->config['content_type'];
-      $node->changed = FEEDS_REQUEST_TIME;
+      $node->changed = REQUEST_TIME;
       $node->format = $this->config['input_format'];
       $node->feeds_node_item = new stdClass();
       $node->feeds_node_item->id = $this->id;
-      $node->feeds_node_item->imported = FEEDS_REQUEST_TIME;
+      $node->feeds_node_item->imported = REQUEST_TIME;
       $node->feeds_node_item->feed_nid = $feed_nid;
       $node->feeds_node_item->url = '';
       $node->feeds_node_item->guid = '';

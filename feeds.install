@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.install,v 1.13 2010/09/16 18:46:38 alexb Exp $
+// $Id: feeds.install,v 1.14 2010/09/16 22:30:18 alexb Exp $
 
 /**
  * @file
@@ -68,13 +68,13 @@ function feeds_schema() {
       'source' => array(
         'type' => 'text',
         'not null' => TRUE,
-        'description' => t('Main source resource identifier. E. g. a path or a URL.'),
+        'description' => 'Main source resource identifier. E. g. a path or a URL.',
       ),
       'batch' => array(
         'type' => 'text',
         'size' => 'big',
         'not null' => FALSE,
-        'description' => t('Cache for batching.'),
+        'description' => 'Cache for batching.',
         'serialize' => TRUE,
       ),
     ),
@@ -86,13 +86,13 @@ function feeds_schema() {
     ),
   );
   $schema['feeds_node_item'] = array(
-    'description' => t('Stores additional information about feed item nodes. Used by FeedsNodeProcessor.'),
+    'description' => 'Stores additional information about feed item nodes. Used by FeedsNodeProcessor.',
     'fields' => array(
       'nid' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => t("Primary Key: The feed item node's nid."),
+        'description' => 'Primary Key: The feed item node\'s nid.',
       ),
       'id' => array(
         'type' => 'varchar',
@@ -105,30 +105,30 @@ function feeds_schema() {
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => t("Node id of the owner feed, if available."),
+        'description' => 'Node id of the owner feed, if available.',
       ),
       'imported' => array(
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
-        'description' => t('Import date of the feed item, as a Unix timestamp.'),
+        'description' => 'Import date of the feed item, as a Unix timestamp.',
       ),
       'url' => array(
         'type' => 'text',
         'not null' => TRUE,
-        'description' => t('Link to the feed item.'),
+        'description' => 'Link to the feed item.',
       ),
       'guid' => array(
         'type' => 'text',
         'not null' => TRUE,
-        'description' => t('Unique identifier for the feed item.'),
+        'description' => 'Unique identifier for the feed item.'
       ),
       'hash' => array(
         'type' => 'varchar',
         'length' => 32, // The length of an MD5 hash.
         'not null' => TRUE,
         'default' => '',
-        'description' => t('The hash of the item.'),
+        'description' => 'The hash of the item.',
       ),
     ),
     'primary key' => array('nid'),
@@ -161,7 +161,7 @@ function feeds_schema() {
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => t("Node id of the owner feed, if available."),
+        'description' => 'Node id of the owner feed, if available.',
       ),
     ),
     'primary key' => array('tid'),
@@ -197,12 +197,12 @@ function feeds_schema() {
       'hub' => array(
         'type' => 'text',
         'not null' => TRUE,
-        'description' => t('The URL of the hub endpoint of this subscription.'),
+        'description' => 'The URL of the hub endpoint of this subscription.',
       ),
       'topic' => array(
         'type' => 'text',
         'not null' => TRUE,
-        'description' => t('The topic URL (feed URL) of this subscription.'),
+        'description' => 'The topic URL (feed URL) of this subscription.',
       ),
       'secret' => array(
         'type' => 'varchar',
@@ -231,22 +231,6 @@ function feeds_schema() {
     ),
   );
   return $schema;
-}
-
-/**
- * Implementation of hook_install().
- */
-function feeds_install() {
-  // Create tables.
-  drupal_install_schema('feeds');
-}
-
-/**
- * Implementation of hook_uninstall().
- */
-function feeds_uninstall() {
-  // Remove tables.
-  drupal_uninstall_schema('feeds');
 }
 
 /**
@@ -287,7 +271,7 @@ function feeds_update_6004() {
   $spec = array(
     'type' => 'text',
     'not null' => TRUE,
-    'description' => t('Main source resource identifier. E. g. a path or a URL.'),
+    'description' => 'Main source resource identifier. E. g. a path or a URL.',
   );
   db_add_field($ret, 'feeds_source', 'source', $spec);
   db_add_index($ret, 'feeds_source', 'id_source', array('id', array('source', 255)));
@@ -360,7 +344,7 @@ function feeds_update_6007() {
     'length' => 32,
     'not null' => TRUE,
     'default' => '',
-    'description' => t('The hash of the item.'),
+    'description' => 'The hash of the item.',
   );
   db_add_field($ret, 'feeds_node_item', 'hash', $spec);
 
@@ -377,7 +361,7 @@ function feeds_update_6008() {
     'type' => 'text',
     'size' => 'big',
     'not null' => FALSE,
-    'description' => t('Cache for batching.'),
+    'description' => 'Cache for batching.',
     'serialize' => TRUE,
   );
   db_add_field($ret, 'feeds_source', 'batch', $spec);
@@ -439,12 +423,12 @@ function feeds_update_6009() {
       'hub' => array(
         'type' => 'text',
         'not null' => TRUE,
-        'description' => t('The URL of the hub endpoint of this subscription.'),
+        'description' => 'The URL of the hub endpoint of this subscription.',
       ),
       'topic' => array(
         'type' => 'text',
         'not null' => TRUE,
-        'description' => t('The topic URL (feed URL) of this subscription.'),
+        'description' => 'The topic URL (feed URL) of this subscription.',
       ),
       'secret' => array(
         'type' => 'varchar',
@@ -523,7 +507,7 @@ function feeds_update_6011() {
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => t("Node id of the owner feed, if available."),
+        'description' => "Node id of the owner feed, if available.",
       ),
     ),
     'primary key' => array('tid'),
