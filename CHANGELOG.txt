@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.172 2010/09/16 19:03:27 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.173 2010/09/16 19:20:04 alexb Exp $
 
 Feeds 6.x xxxxxxxxxxxxxxxxxxxxxx
 --------------------------------
 
+- #623432 Alex UA, dixon_, pvhee, cglusky, alex_b et al.: Mapper for emfield.
 - #913672 andrewlevine: Break out CSV Parser into submethods so it is more
   easily overridable
 - #853974 snoldak924, alex_b: Fix XSS vulnerabilities in module.
