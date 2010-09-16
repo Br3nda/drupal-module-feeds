@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.170 2010/09/16 18:31:50 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.171 2010/09/16 19:01:04 alexb Exp $
 
 Feeds 6.x xxxxxxxxxxxxxxxxxxxxxx
 --------------------------------
 
+- #853974 snoldak924, alex_b: Fix XSS vulnerabilities in module.
 - #887846 ekes: Make FeedsSimplePieEnclosure (un)serialization safe.
 - #908582 XiaN Vizjereij, alex_b: Fix "Cannot use object of type stdClass as
   array" error in mappers/taxonomy.inc.

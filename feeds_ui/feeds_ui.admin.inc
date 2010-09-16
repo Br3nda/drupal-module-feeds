@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.38 2010/09/15 19:27:42 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.39 2010/09/16 19:01:04 alexb Exp $
 
 /**
  * @file
@@ -63,8 +63,8 @@ function feeds_ui_overview_form(&$form_status) {
   );
   foreach (feeds_importer_load_all(TRUE) as $importer) {
     $importer_form = array();
-    $importer_form['name']['#value'] = $importer->config['name'];
-    $importer_form['description']['#value'] = $importer->config['description'];
+    $importer_form['name']['#value'] = check_plain($importer->config['name']);
+    $importer_form['description']['#value'] = check_plain($importer->config['description']);
     if (empty($importer->config['content_type'])) {
       $importer_form['attached']['#value'] = '[none]';
     }
@@ -774,8 +774,8 @@ function theme_feeds_ui_mapping_form($form) {
       // Some parsers do not define source options.
       $source = isset($form['source']['#options'][$mapping['source']]) ? $form['source']['#options'][$mapping['source']] : $mapping['source'];
       $rows[] = array(
-        $source,
-        $form['target']['#options'][$mapping['target']],
+        check_plain($source),
+        check_plain($form['target']['#options'][$mapping['target']]),
         drupal_render($form['unique_flags'][$i]),
         drupal_render($form['remove_flags'][$i]),
       );
@@ -803,8 +803,8 @@ function theme_feeds_ui_mapping_form($form) {
   $rows = array();
   foreach (element_children($form['legendset']['legend']['sources']) as $k) {
     $rows[] = array(
-      drupal_render($form['legendset']['legend']['sources'][$k]['name']),
-      drupal_render($form['legendset']['legend']['sources'][$k]['description']),
+      check_plain(drupal_render($form['legendset']['legend']['sources'][$k]['name'])),
+      check_plain(drupal_render($form['legendset']['legend']['sources'][$k]['description'])),
     );
   }
   if (count($rows)) {
@@ -816,8 +816,8 @@ function theme_feeds_ui_mapping_form($form) {
   $rows = array();
   foreach (element_children($form['legendset']['legend']['targets']) as $k) {
     $rows[] = array(
-      drupal_render($form['legendset']['legend']['targets'][$k]['name']),
-      drupal_render($form['legendset']['legend']['targets'][$k]['description']),
+      check_plain(drupal_render($form['legendset']['legend']['targets'][$k]['name'])),
+      check_plain(drupal_render($form['legendset']['legend']['targets'][$k]['description'])),
     );
   }
   $legend .= '<h4>'. t('Targets') .'</h4>';

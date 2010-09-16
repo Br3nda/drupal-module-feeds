@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.14 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.15 2010/09/16 19:01:04 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
@@ -75,9 +75,9 @@ class FeedsCSVParser extends FeedsParser {
     $mappings = feeds_importer($this->id)->processor->config['mappings'];
     $sources = $uniques = array();
     foreach ($mappings as $mapping) {
-      $sources[] = $mapping['source'];
+      $sources[] = check_plain($mapping['source']);
       if ($mapping['unique']) {
-        $uniques[] = $mapping['source'];
+        $uniques[] = check_plain($mapping['source']);
       }
     }
 

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.21 2010/09/15 19:27:42 alexb Exp $
+// $Id: feeds.pages.inc,v 1.22 2010/09/16 19:01:04 alexb Exp $
 
 /**
  * @file
@@ -29,7 +29,7 @@ function feeds_page() {
       }
       $rows[] = array(
         l($title, $link),
-        $importer->config['description'],
+        check_plain($importer->config['description']),
       );
     }
   }
