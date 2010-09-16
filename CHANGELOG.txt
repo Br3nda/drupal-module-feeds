@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.173 2010/09/16 19:20:04 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.173.2.1 2010/09/16 19:32:09 alexb Exp $
 
 Feeds 6.x xxxxxxxxxxxxxxxxxxxxxx
 --------------------------------
 
+- Branched to DRUPAL-6--1.
 - #623432 Alex UA, dixon_, pvhee, cglusky, alex_b et al.: Mapper for emfield.
 - #913672 andrewlevine: Break out CSV Parser into submethods so it is more
   easily overridable
