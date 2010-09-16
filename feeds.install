@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.install,v 1.12 2010/09/15 19:27:42 alexb Exp $
+// $Id: feeds.install,v 1.13 2010/09/16 18:46:38 alexb Exp $
 
 /**
  * @file
@@ -483,16 +483,16 @@ function feeds_update_6010() {
   drupal_install_modules(array('feeds_news', 'feeds_import'));
   if (module_exists('data')) {
     drupal_install_modules(array('feeds_fast_news'));
-    drupal_set_message(t('Installed Feeds News, Feeds Fast News and Feeds Import as replacement for Feeds Defaults module.'));
+    drupal_set_message(t('Installed Feeds News, Feeds Fast News and Feeds Import as replacement for Feeds Defaults module. If you were not using Feeds Defaults then you can safely disable Feeds News and Feeds Import.'));
   }
   else {
-    drupal_set_message(t('Installed Feeds News and Feeds Import as replacement for Feeds Defaults module.'));
+    drupal_set_message(t('Installed Feeds News and Feeds Import as replacement for Feeds Defaults module. If you were not using Feeds Defaults then you can safely disable Feeds News and Feeds Import.'));
   }
   if (module_exists('features')) {
-    drupal_set_message(t('Replacement features have been installed. <strong>Review enabled state of importer configurations on admin/build/feeds and features on admin/build/features.</strong>'));
+    drupal_set_message(t('<strong>Review enabled state of importer configurations on admin/build/feeds and features on admin/build/features.</strong>'));
   }
   else {
-    drupal_set_message(t('Replacement modules have been installed. <strong>Review enabled state of importer configurations on admin/build/feeds and Feeds modules on admin/build/modules.</strong>'));
+    drupal_set_message(t('<strong>Review enabled state of importer configurations on admin/build/feeds and Feeds modules on admin/build/modules.</strong>'));
   }
   return array();
 }
