@@ -1,17 +1,38 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.13 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.14 2010/09/16 18:31:50 alexb Exp $
 
 /**
  * Adapter to present SimplePie_Enclosure as FeedsEnclosure object.
  */
 class FeedsSimplePieEnclosure extends FeedsEnclosure {
   protected $simplepie_enclosure;
+  private $_serialized_simplepie_enclosure;
 
   /**
    * Constructor requires SimplePie enclosure object.
    */
   function __construct(SimplePie_Enclosure $enclosure) {
     $this->simplepie_enclosure = $enclosure;
+  }
+
+  /**
+   * Serialization helper.
+   *
+   * Handle the simplepie enclosure class seperately ourselves.
+   */
+  public function __sleep() {
+    $this->_serialized_simplepie_enclosure = serialize($this->simplepie_enclosure);
+    return array('_serialized_simplepie_enclosure');
+  }
+
+  /**
+   * Unserialization helper.
+   *
+   * Ensure that the simplepie class definitions are loaded for the enclosure when unserializing.
+   */
+   public function __wakeup() {
+    feeds_include_library('simplepie.inc', 'simplepie');
+    $this->simplepie_enclosure = unserialize($this->_serialized_simplepie_enclosure);
   }
 
   /**
