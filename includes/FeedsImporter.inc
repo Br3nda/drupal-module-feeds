@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.22 2010/09/15 19:27:42 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.23 2010/09/16 18:41:47 alexb Exp $
 
 /**
  * @file
@@ -258,7 +258,7 @@ class FeedsImporter extends FeedsConfigurable {
     );
     $form['import_on_create'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Import on create'),
+      '#title' => t('Import on submission'),
       '#description' => t('Check if content should be imported at the moment of feed submission.'),
       '#default_value' => $this->config['import_on_create'],
     );
