@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.15 2010/09/15 19:27:42 alexb Exp $
+// $Id: feeds.test.inc,v 1.16 2010/09/16 23:28:45 alexb Exp $
 
 /**
  * @file
@@ -117,7 +117,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
       $this->drupalPost("admin/build/feeds/edit/$id/$type", $edit, 'Save');
 
       // Assert actual configuration.
-      $config = unserialize(db_result(db_query("SELECT config FROM {feeds_importer} WHERE id = '%s'", $id)));
+      $config = unserialize(db_query("SELECT config FROM {feeds_importer} WHERE id = :id", array(':id' => $id))->fetchField());
       $this->assertEqual($config[$type]['plugin_key'], $plugin_key, 'Verified correct '. $type .' ('. $plugin_key .').');
     }
   }
@@ -155,7 +155,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     }
     // If content type not given, retrieve it.
     if (!$content_type) {
-      $config = unserialize(db_result(db_query("SELECT config FROM {feeds_importer} WHERE id = '%s'", $id)));
+      $config = unserialize(db_query("SELECT config FROM {feeds_importer} WHERE id = :id", array(':id' => $id))->fetchField());
       $content_type = $config['content_type'];
       $this->assertFalse(empty($content_type), 'Valid content type found: '. $content_type);
     }
@@ -172,8 +172,8 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $nid = $this->getNid($this->getUrl());
 
     // Check whether feed got recorded in feeds_source table.
-    $this->assertEqual(1, db_result(db_query("SELECT COUNT(*) FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $id, $nid)));
-    $source = db_fetch_object(db_query("SELECT * FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $id, $nid));
+    $this->assertEqual(1, db_query("SELECT COUNT(*) FROM {feeds_source} WHERE id = :id AND feed_nid = :feed_nid", array(':id'=> $id, ':feed_nid' => $nid))->fetchField());
+    $source = db_query("SELECT * FROM {feeds_source} WHERE id = :id AND feed_nid = :feed_nid", array(':id'=> $id, ':feed_nid' => $nid))->fetch();
     $config = unserialize($source->config);
     $this->assertEqual($config['FeedsHTTPFetcher']['source'], $feed_url, t('URL in DB correct.'));
     return $nid;
@@ -199,7 +199,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $this->assertText('has been updated.');
 
     // Check that the URL was updated in the feeds_source table.
-    $source = db_fetch_object(db_query("SELECT * FROM {feeds_source} WHERE feed_nid = %d", $nid));
+    $source = db_query("SELECT * FROM {feeds_source} WHERE feed_nid = :nid", array(':nid' => $nid))->fetch();
     $config = unserialize($source->config);
     $this->assertEqual($config['FeedsHTTPFetcher']['source'], $feed_url, t('URL in DB correct.'));
   }
@@ -232,15 +232,15 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $nid = $this->drupalPost('import/'. $id, $edit, 'Import');
 
     // Check whether feed got recorded in feeds_source table.
-    $this->assertEqual(1, db_result(db_query("SELECT COUNT(*) FROM {feeds_source} WHERE id = '%s' AND feed_nid = 0", $id)));
-    $source = db_fetch_object(db_query("SELECT * FROM {feeds_source} WHERE id = '%s' AND feed_nid = 0", $id));
+    $this->assertEqual(1, db_query("SELECT COUNT(*) FROM {feeds_source} WHERE id = :id AND feed_nid = 0", array(':id' => $id))->fetchField());
+    $source = db_query("SELECT * FROM {feeds_source} WHERE id = :id AND feed_nid = 0",  array(':id' => $id))->fetch();
     $config = unserialize($source->config);
     $this->assertEqual($config['FeedsHTTPFetcher']['source'], $feed_url, t('URL in DB correct.'));
 
     // Check whether feed got properly added to scheduler.
-    $this->assertEqual(1, db_result(db_query("SELECT COUNT(*) FROM {job_schedule} WHERE type = '%s' AND id = 0 AND callback = 'feeds_source_import' AND last <> 0 AND scheduled = 0", $id)));
+    $this->assertEqual(1, db_query("SELECT COUNT(*) FROM {job_schedule} WHERE type = :id AND id = 0 AND callback = 'feeds_source_import' AND last <> 0 AND scheduled = 0", array(':id' => $id))->fetchField());
     // There must be only one entry for callback 'expire' - no matter what the feed_nid is.
-    $this->assertEqual(0, db_result(db_query("SELECT COUNT(*) FROM {job_schedule} WHERE type = '%s' AND callback = 'feeds_importer_expire' AND last <> 0 AND scheduled = 0", $id)));
+    $this->assertEqual(0, db_query("SELECT COUNT(*) FROM {job_schedule} WHERE type = :id AND callback = 'feeds_importer_expire' AND last <> 0 AND scheduled = 0", array(':id' => $id))->fetchField());
   }
 
   /**
@@ -265,7 +265,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    */
   public function assertPlugins($id, $fetcher, $parser, $processor) {
     // Assert actual configuration.
-    $config = unserialize(db_result(db_query("SELECT config FROM {feeds_importer} WHERE id = '%s'", $id)));
+    $config = unserialize(db_query("SELECT config FROM {feeds_importer} WHERE id = :id", array(':id' => $id))->fetchField());
 
     $this->assertEqual($config['fetcher']['plugin_key'], $fetcher, 'Correct fetcher');
     $this->assertEqual($config['parser']['plugin_key'], $parser, 'Correct parser');

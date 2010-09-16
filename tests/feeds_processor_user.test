@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_processor_user.test,v 1.2 2010/09/15 19:27:42 alexb Exp $
+// $Id: feeds_processor_user.test,v 1.3 2010/09/16 23:28:45 alexb Exp $
 
 /**
  * @file
@@ -101,9 +101,9 @@ class FeedsCSVtoUsersTest extends FeedsWebTestCase {
     $this->assertText('Fester');
     $this->assertText('Gomez');
     $this->assertText('Pugsley');
-    $count = db_result(db_query("SELECT count(*) FROM {users_roles} WHERE rid = %d", $manager_rid));
+    $count = db_query("SELECT count(*) FROM {users_roles} WHERE rid = :rid", array(':rid' => $manager_rid))->fetchField();
     $this->assertEqual($count, 4, t('All imported users were assigned the manager role.'));
-    $count = db_result(db_query("SELECT count(*) FROM {users_roles} WHERE rid = %d", $admin_rid));
+    $count = db_query("SELECT count(*) FROM {users_roles} WHERE rid = :rid", array(':rid' => $admin_rid))->fetchField();
     $this->assertEqual($count, 0, t('No imported user was assigned the administrator role.'));
 
     // @todo Test status setting, update existing and role settings.

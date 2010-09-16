@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_locale.test,v 1.4 2010/09/15 19:27:42 alexb Exp $
+// $Id: feeds_mapper_locale.test,v 1.5 2010/09/16 23:28:45 alexb Exp $
 
 /**
  * @file
@@ -110,7 +110,7 @@ class FeedsMapperLocaleTestCase extends FeedsMapperTestCase {
     );
     $this->drupalPost("node/$nid/edit", $edit, t('Save'));
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $count = db_result(db_query("SELECT COUNT(*) FROM {node} WHERE language = 'zh-hans'", $nid));
+    $count = db_query("SELECT COUNT(*) FROM {node} WHERE language = 'zh-hans'")->fetchField();
     $this->assertEqual(11, $count, 'Found correct number of nodes.');
   }
 }

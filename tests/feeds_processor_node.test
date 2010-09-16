@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_processor_node.test,v 1.2 2010/09/15 19:27:42 alexb Exp $
+// $Id: feeds_processor_node.test,v 1.3 2010/09/16 23:28:45 alexb Exp $
 
 /**
  * @file
@@ -92,11 +92,11 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertRaw('node/'. $nid .'/delete-items');
 
     // Navigate to a non-feed node, there should be no Feeds tabs visible.
-    $story_nid = db_result(db_query_range('SELECT nid FROM {node} WHERE type = "story"', 0, 1));
+    $story_nid = db_query_range('SELECT nid FROM {node} WHERE type = "story"', 0, 1)->fetchField();
     $this->drupalGet('node/'. $story_nid);
     $this->assertNoRaw('node/'. $story_nid .'/import');
     $this->assertNoRaw('node/'. $story_nid .'/delete-items');
-    $this->assertEqual("Created/updated by FeedsNodeProcessor", db_result(db_query("SELECT nr.log FROM {node} n JOIN {node_revisions} nr ON n.vid = nr.vid WHERE n.nid = %d", $story_nid)));
+    $this->assertEqual("Created/updated by FeedsNodeProcessor", db_query("SELECT nr.log FROM {node} n JOIN {node_revisions} nr ON n.vid = nr.vid WHERE n.nid = :nid", array(':nid' => $story_nid))->fetchField());
 
     // Assert accuracy of aggregated information.
     $this->drupalGet('node');
@@ -133,11 +133,11 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('The first major change is switching');
 
     // Assert DB status.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid"));
+    $count = db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid")->fetchField();
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
     // Assert default input format on first imported feed node.
-    $format = db_result(db_query_range("SELECT nr.format FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid JOIN {node_revisions} nr ON n.vid = nr.vid", 0, 1));
+    $format = db_query_range("SELECT nr.format FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid JOIN {node_revisions} nr ON n.vid = nr.vid", 0, 1)->fetchField();
     $this->assertEqual($format, FILTER_FORMAT_DEFAULT, 'Using default Input format.');
 
     // Import again.
@@ -145,12 +145,12 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('There is no new content.');
 
     // Assert DB status, there still shouldn't be more than 10 items.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid"));
+    $count = db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid")->fetchField();
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
     // All of the above tests should have produced published nodes, set default
     // to unpublished, import again.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE n.status = 1"));
+    $count = db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE n.status = 1")->fetchField();
     $this->assertEqual($count, 10, 'All items are published.');
     $edit = array(
       'node_options[status]' => FALSE,
@@ -158,7 +158,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->drupalPost('admin/content/node-type/story', $edit, t('Save content type'));
     $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $count = db_result(db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE n.status = 0"));
+    $count = db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE n.status = 0")->fetchField();
     $this->assertEqual($count, 10, 'No items are published.');
     $edit = array(
       'node_options[status]' => TRUE,
@@ -185,7 +185,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('There is no new content.');
 
     // Assert DB status, there still shouldn't be more than 10 items.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
+    $count = db_query("SELECT COUNT(*) FROM {feeds_node_item}")->fetchField();
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
     // Now delete all items.
@@ -193,7 +193,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('Deleted 10 nodes.');
 
     // Assert DB status, now there should be no items.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
+    $count = db_query("SELECT COUNT(*) FROM {feeds_node_item}")->fetchField();
     $this->assertEqual($count, 0, 'Accurate number of items in database.');
 
     // Change author.
@@ -210,11 +210,11 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     // Assert author.
     $this->drupalGet('node');
     $this->assertPattern('/<span class="submitted">(.*?)'. check_plain($author->name) .'<\/span>/');
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid WHERE n.uid = %d", $author->uid));
+    $count = db_query("SELECT COUNT(*) FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid WHERE n.uid = :uid", array(':uid' => $author->uid))->fetchField();
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
     // Assert input format.
-    $format = db_result(db_query_range("SELECT nr.format FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid JOIN {node_revisions} nr ON n.vid = nr.vid", 0, 1));
+    $format = db_query_range("SELECT nr.format FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid JOIN {node_revisions} nr ON n.vid = nr.vid", 0, 1)->fetchField();
     $this->assertEqual($format, FILTER_FORMAT_DEFAULT + 1, 'Set non-default Input format.');
 
     // Set to update existing, remove authorship of above nodes and import again.
@@ -223,7 +223,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
     $this->drupalGet('node');
     $this->assertNoPattern('/<span class="submitted">(.*?)'. check_plain($author->name) .'<\/span>/');
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid WHERE n.uid = %d", $author->uid));
+    $count = db_query("SELECT COUNT(*) FROM {feeds_node_item} fi JOIN {node} n ON fi.nid = n.nid WHERE n.uid = :uid", array(':uid' => $author->uid))->fetchField();
     $this->assertEqual($count, 0, 'Accurate number of items in database.');
 
     // Map feed node's author to feed item author, update - feed node's items
@@ -239,8 +239,8 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
     $this->drupalGet('node');
     $this->assertNoPattern('/<span class="submitted">(.*?)'. check_plain($author->name) .'<\/span>/');
-    $uid = db_result(db_query("SELECT uid FROM {node} WHERE nid = %d", $nid));
-    $count = db_result(db_query("SELECT COUNT(*) FROM {node} WHERE uid = %d", $uid));
+    $uid = db_query("SELECT uid FROM {node} WHERE nid = :nid", array(':nid' => $nid))->fetchField();
+    $count = db_query("SELECT COUNT(*) FROM {node} WHERE uid = :uid", array(':uid' =>$uid))->fetchField();
     $this->assertEqual($count, 11, 'All feed item nodes are assigned to feed node author.');
 
     // Login with new user with only access content permissions.
@@ -336,7 +336,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('The first major change is switching');
 
     // Assert DB status.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
+    $count = db_query("SELECT COUNT(*) FROM {feeds_node_item}")->fetchField();
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
     // Import again.
@@ -344,7 +344,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('There is no new content.');
 
     // Assert DB status, there still shouldn't be more than 10 items.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
+    $count = db_query("SELECT COUNT(*) FROM {feeds_node_item}")->fetchField();
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
     // Enable replace existing and import updated feed file.
@@ -364,7 +364,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('There is no new content.');
 
     // Assert DB status, there still shouldn't be more than 10 items.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
+    $count = db_query("SELECT COUNT(*) FROM {feeds_node_item}")->fetchField();
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
     // Now delete all items.
@@ -372,7 +372,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('Deleted 10 nodes.');
 
     // Assert DB status, now there should be no items.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
+    $count = db_query("SELECT COUNT(*) FROM {feeds_node_item}")->fetchField();
     $this->assertEqual($count, 0, 'Accurate number of items in database.');
 
     // Import again, we should find new content.
@@ -380,7 +380,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $this->assertText('Created 10 Story nodes.');
 
     // Assert DB status, there should be 10 again.
-    $count = db_result(db_query("SELECT COUNT(*) FROM {feeds_node_item}"));
+    $count = db_query("SELECT COUNT(*) FROM {feeds_node_item}")->fetchField();
     $this->assertEqual($count, 10, 'Accurate number of items in database.');
 
     // Login with new user with only access content permissions.
