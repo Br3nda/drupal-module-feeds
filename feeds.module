@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.55 2010/09/15 19:27:42 alexb Exp $
+// $Id: feeds.module,v 1.56 2010/09/16 22:45:04 alexb Exp $
 
 /**
  * @file
@@ -30,8 +30,11 @@ function feeds_cron() {
   if ($importers = feeds_reschedule()) {
     foreach ($importers as $id) {
       feeds_importer($id)->schedule();
-      $result = db_query("SELECT feed_nid FROM {feeds_source} WHERE id = '%s'", $id);
-      while ($row = db_fetch_object($result)) {
+      $rows = db_select('feeds_source')
+        ->fields('feed_nid')
+        ->condition('id', $id)
+        ->execute();
+      foreach ($rows as $row) {
         feeds_source($id, $row->feed_nid)->schedule();
       }
     }
@@ -396,7 +399,7 @@ function feeds_nodeapi(&$node, $op, $form) {
 function _feeds_nodeapi_node_processor($node, $op) {
   switch ($op) {
     case 'load':
-      if ($result = db_fetch_object(db_query("SELECT imported, guid, url, feed_nid FROM {feeds_node_item} WHERE nid = %d", $node->nid))) {
+      if ($result = db_query("SELECT imported, guid, url, feed_nid FROM {feeds_node_item} WHERE nid = :nid", array(':nid' => $node->nid))->fetch()) {
         $node->feeds_node_item = $result;
       }
       break;
@@ -414,7 +417,9 @@ function _feeds_nodeapi_node_processor($node, $op) {
       break;
     case 'delete':
       if (isset($node->feeds_node_item)) {
-        db_query("DELETE FROM {feeds_node_item} WHERE nid = %d", $node->nid);
+        db_delete('feeds_node_item')
+          ->condition('nid', $node->nid)
+          ->execute();
       }
       break;
   }
@@ -427,11 +432,15 @@ function feeds_taxonomy($op = NULL, $type = NULL, $term = NULL) {
   if ($type =='term' && $term['tid']) {
     switch ($op) {
       case 'delete':
-        db_query("DELETE FROM {feeds_term_item} WHERE tid = %d", $term['tid']);
+        db_delete('feeds_term_item')
+          ->condition('tid', $term['tid'])
+          ->execute();
         break;
       case 'update':
         if (isset($term['importer_id'])) {
-          db_query("DELETE FROM {feeds_term_item} WHERE tid = %d", $term['tid']);
+          db_delete('feeds_term_item')
+            ->condition('tid', $term['tid'])
+            ->execute();
         }
       case 'insert':
         if (isset($term['importer_id'])) {

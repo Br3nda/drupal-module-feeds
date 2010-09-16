@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.21 2010/09/15 20:06:20 alexb Exp $
+// $Id: FeedsSource.inc,v 1.22 2010/09/16 22:45:04 alexb Exp $
 
 /**
  * @file
@@ -276,7 +276,10 @@ class FeedsSource extends FeedsConfigurable {
     foreach ($this->importer->plugin_types as $type) {
       $this->importer->$type->sourceDelete($this);
     }
-    db_query("DELETE FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $this->id, $this->feed_nid);
+    db_delete('feeds_source')
+      ->condition('id', $this->id)
+      ->condition('feed_nid', $this->feed_nid)
+      ->execute();
     // Remove from schedule.
     $job = array(
       'callback' => 'feeds_source_import',

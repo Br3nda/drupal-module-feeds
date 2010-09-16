@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.25 2010/09/15 19:40:57 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.26 2010/09/16 22:45:04 alexb Exp $
 
 /**
  * @file
@@ -258,7 +258,10 @@ class PuSHSubscription implements PuSHSubscriptionInterface {
    * Delete a subscription.
    */
   public function delete() {
-    db_query("DELETE FROM {feeds_push_subscriptions} WHERE domain = '%s' AND subscriber_id = %d", $this->domain, $this->subscriber_id);
+    db_delete('feeds_push_subscriptions')
+      ->condition('domain', $this->domain)
+      ->condition('subscriber_id', $this->subscriber_id)
+      ->execute();
   }
 }
 
