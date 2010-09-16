@@ -1,5 +1,5 @@
 <?php
-// $Id: taxonomy.inc,v 1.10 2010/09/11 02:33:27 alexb Exp $
+// $Id: taxonomy.inc,v 1.11 2010/09/16 18:28:24 alexb Exp $
 
 /**
  * @file
@@ -95,13 +95,13 @@ function taxonomy_feeds_set_target(&$node, $key, $terms) {
   else {
     foreach ($terms as $term) {
       if ($term instanceof FeedsTermElement) {
-        $node->taxonomy[$vocabulary->vid][$term->tid] = $term->tid;
+        $node->taxonomy[$term->tid] = (object)$term;
       }
       // Check if a term already exists.
       elseif ($terms_found = taxonomy_get_term_by_name_vid($term, $vocabulary->vid)) {
         // If any terms are found add them to the node's taxonomy by found tid.
         foreach ($terms_found AS $term_found) {
-          $node->taxonomy[$vocabulary->vid][$term_found->tid] = $term_found->tid;
+          $node->taxonomy[$term_found->tid] = $term_found;
           if (!$vocabulary->multiple) {
             break;
           }
