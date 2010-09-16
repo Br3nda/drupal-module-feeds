@@ -1,6 +1,11 @@
-// $Id: CHANGELOG.txt,v 1.173 2010/09/16 19:20:04 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.174 2010/09/16 22:18:29 alexb Exp $
 
-Feeds 6.x xxxxxxxxxxxxxxxxxxxxxx
+Feeds 7.x XXXXXXXXXXXXXXXXXXXXXX
+--------------------------------
+
+
+
+Feeds 6.x 1.0 Beta 6, 2010-09-16
 --------------------------------
 
 - #623432 Alex UA, dixon_, pvhee, cglusky, alex_b et al.: Mapper for emfield.
