@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.56 2010/09/16 22:45:04 alexb Exp $
+// $Id: feeds.module,v 1.57 2010/09/16 22:55:19 alexb Exp $
 
 /**
  * @file
@@ -292,14 +292,15 @@ function feeds_ctools_plugin_api($owner, $api) {
 }
 
 /**
- * Implementation of hook_ctools_plugin_plugins().
- *
- * Psuedo hook defintion plugin system options and defaults.
+ * Implementation of hook_ctools_plugin_type().
  */
-function feeds_ctools_plugin_plugins() {
+function feeds_ctools_plugin_type() {
   return array(
-    'cache' => TRUE,
-    'use hooks' => TRUE,
+    'plugins' => array(
+      'cache' => TRUE,
+      'use hooks' => TRUE,
+      'classes' => array('handler'),
+    ),
   );
 }
 
