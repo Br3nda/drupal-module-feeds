@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.65 2010/09/17 21:29:12 alexb Exp $
+// $Id: feeds.module,v 1.66 2010/09/17 21:30:49 alexb Exp $
 
 /**
  * @file
@@ -464,33 +464,6 @@ function _feeds_node_processor_node_delete($node) {
 }
 
 /**
- * Implements hook_taxonomy().
- */
-function feeds_taxonomy($op = NULL, $type = NULL, $term = NULL) {
-  if ($type =='term' && $term['tid']) {
-    switch ($op) {
-      case 'delete':
-        db_delete('feeds_term_item')
-          ->condition('tid', $term['tid'])
-          ->execute();
-        break;
-      case 'update':
-        if (isset($term['importer_id'])) {
-          db_delete('feeds_term_item')
-            ->condition('tid', $term['tid'])
-            ->execute();
-        }
-      case 'insert':
-        if (isset($term['importer_id'])) {
-          $term['id'] = $term['importer_id'];
-          drupal_write_record('feeds_term_item', $term);
-        }
-        break;
-    }
-  }
-}
-
-/**
  * Implements hook_taxonomy_term_update().
  */
 function feeds_taxonomy_term_update($term) {
@@ -505,7 +478,7 @@ function feeds_taxonomy_term_update($term) {
  * Implements hook_taxonomy_term_insert().
  */
 function feeds_taxonomy_term_insert($term) {
-  if ($term->feeds_importer_id) {
+  if (isset($term->feeds_importer_id)) {
     $record = array(
       'id' => $term->feeds_importer_id,
       'tid' => $term->tid,
