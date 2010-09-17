@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.22 2010/09/16 22:45:04 alexb Exp $
+// $Id: FeedsSource.inc,v 1.23 2010/09/17 00:04:18 alexb Exp $
 
 /**
  * @file
@@ -242,7 +242,7 @@ class FeedsSource extends FeedsConfigurable {
       'source' => $source,
       'batch' => isset($this->batch) ? $this->batch : FALSE,
     );
-    if (db_result(db_query_range("SELECT 1 FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $this->id, $this->feed_nid, 0, 1))) {
+    if (db_query_range("SELECT 1 FROM {feeds_source} WHERE id = :id AND feed_nid = :nid", array(':id' => $this->id, ':nid' => $this->feed_nid), 0, 1)->fetchField()) {
       drupal_write_record('feeds_source', $object, array('id', 'feed_nid'));
     }
     else {
@@ -256,7 +256,7 @@ class FeedsSource extends FeedsConfigurable {
    * @todo Patch CTools to move constants from export.inc to ctools.module.
    */
   public function load() {
-    if ($record = db_fetch_object(db_query("SELECT config, batch FROM {feeds_source} WHERE id = '%s' AND feed_nid = %d", $this->id, $this->feed_nid))) {
+    if ($record = db_query("SELECT config, batch FROM {feeds_source} WHERE id = :id AND feed_nid = :nid", array(':id' => $this->id, ':nid' => $this->feed_nid))->fetch()) {
       // While FeedsSource cannot be exported, we still use CTool's export.inc
       // export definitions.
       ctools_include('export');

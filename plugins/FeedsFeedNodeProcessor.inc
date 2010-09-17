@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFeedNodeProcessor.inc,v 1.15 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsFeedNodeProcessor.inc,v 1.16 2010/09/17 00:04:18 alexb Exp $
 
 /**
  * @file
@@ -28,7 +28,7 @@ class FeedsFeedNodeProcessor extends FeedsProcessor {
         // If updating populate nid and vid avoiding an expensive node_load().
         if (!empty($nid)) {
           $node->nid = $nid;
-          $node->vid = db_result(db_query("SELECT vid FROM {node} WHERE nid = %d", $nid));
+          $node->vid = db_query("SELECT vid FROM {node} WHERE nid = :nid", array(':nid' => $nid))->fetchField();
         }
 
         // Save the node.
@@ -202,7 +202,7 @@ class FeedsFeedNodeProcessor extends FeedsProcessor {
     // We only support one unique target: source
     foreach ($this->uniqueTargets($batch) as $target => $value) {
       if ($target == 'source') {
-        return db_result(db_query("SELECT fs.feed_nid FROM {node} n JOIN {feeds_source} fs ON n.nid = fs.feed_nid WHERE fs.id = '%s' AND fs.source = '%s'", $this->feedNodeImporter()->id, $value));
+        return db_query("SELECT fs.feed_nid FROM {node} n JOIN {feeds_source} fs ON n.nid = fs.feed_nid WHERE fs.id = :id AND fs.source = :source", array(':id' => $this->feedNodeImporter()->id, ':source' => $value))->fetchField();
       }
     }
     return 0;
