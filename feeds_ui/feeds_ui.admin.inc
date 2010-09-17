@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.41 2010/09/17 00:47:23 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.42 2010/09/17 00:53:34 alexb Exp $
 
 /**
  * @file
@@ -69,10 +69,10 @@ function feeds_ui_overview_form(&$form_status) {
     }
     else {
       if (!$importer->disabled) {
-        $importer_form['attached']['#value'] = l(node_get_types('name', $importer->config['content_type']), 'node/add/'. str_replace('_', '-', $importer->config['content_type']));
+        $importer_form['attached']['#value'] = l(node_type_get_name($importer->config['content_type']), 'node/add/'. str_replace('_', '-', $importer->config['content_type']));
       }
       else {
-        $importer_form['attached']['#value'] = node_get_types('name', $importer->config['content_type']);
+        $importer_form['attached']['#value'] = node_type_get_name($importer->config['content_type']);
       }
     }
 
@@ -320,7 +320,7 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
 
   // Basic information.
   $items = array();
-  $items[] = t('Attached to: !type', array('!type' => $importer->config['content_type'] ? node_get_types('name', $importer->config['content_type']) : t('[none]')));
+  $items[] = t('Attached to: @type', array('@type' => $importer->config['content_type'] ? node_type_get_name($importer->config['content_type']) : t('[none]')));
   if ($importer->config['import_period'] == FEEDS_SCHEDULE_NEVER) {
     $import_period = t('never');
   }

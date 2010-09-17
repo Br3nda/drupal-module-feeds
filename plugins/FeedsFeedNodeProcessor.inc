@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFeedNodeProcessor.inc,v 1.16 2010/09/17 00:04:18 alexb Exp $
+// $Id: FeedsFeedNodeProcessor.inc,v 1.17 2010/09/17 00:53:34 alexb Exp $
 
 /**
  * @file
@@ -116,7 +116,7 @@ class FeedsFeedNodeProcessor extends FeedsProcessor {
     $types = array();
     foreach ($feeds as $feed) {
       if ($feed->id != $this->id && !empty($feed->config['content_type'])) {
-        $types[$feed->config['content_type']] = node_get_types('name', $feed->config['content_type']);
+        $types[$feed->config['content_type']] = check_plain(node_type_get_name($feed->config['content_type']));
       }
     }
     if (empty($types)) {
