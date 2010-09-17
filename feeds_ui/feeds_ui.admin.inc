@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.40 2010/09/17 00:37:55 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.41 2010/09/17 00:47:23 alexb Exp $
 
 /**
  * @file
@@ -160,7 +160,7 @@ function feeds_ui_create_form(&$form_state, $from_importer = NULL) {
     '#description' => t('A natural name for this configuration. Example: RSS Feed. You can always change this name later.'),
     '#required' => TRUE,
     '#maxlength' => 128,
-    '#attributes' => array('class' => 'feed-name'),
+    '#attributes' => array('class' => array('feed-name')),
   );
   $form['id'] = array(
     '#type' => 'textfield',
@@ -168,7 +168,7 @@ function feeds_ui_create_form(&$form_state, $from_importer = NULL) {
     '#description' => t('A unique identifier for this configuration. Example: rss_feed. Must only contain lower case characters, numbers and underscores.'),
     '#required' => TRUE,
     '#maxlength' => 128,
-    '#attributes' => array('class' => 'feed-id'),
+    '#attributes' => array('class' => array('feed-id')),
   );
   $form['description'] = array(
     '#type' => 'textfield',
@@ -279,7 +279,7 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
   $path = 'admin/build/feeds/edit/'. $importer->id;
 
   $active_container = array(
-    'class' => 'active-container',
+    'class' => array('active-container'),
     'actions' => array(l(t('Help'), $path)),
   );
   switch ($active) {
@@ -316,7 +316,7 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
 
   // Build config info.
   $config_info = $info = array();
-  $info['class'] = 'config-set';
+  $info['class'] = array('config-set');
 
   // Basic information.
   $items = array();
@@ -430,7 +430,7 @@ function feeds_ui_plugin_form(&$form_state, $importer, $type) {
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
-    '#attributes' => array('class' => 'feeds-ui-hidden-submit'),
+    '#attributes' => array('class' => array('feeds-ui-hidden-submit')),
   );
   return $form;
 }
@@ -460,7 +460,7 @@ function theme_feeds_ui_plugin_form($form) {
       'body' => $form['plugin_key'][$key]['#description'],
     );
     $form['plugin_key'][$key]['#title'] = t('Select');
-    $form['plugin_key'][$key]['#attributes']['class'] = 'feeds-ui-radio-link';
+    $form['plugin_key'][$key]['#attributes']['class'] = array('feeds-ui-radio-link');
     unset($form['plugin_key'][$key]['#description']);
     $container['actions'] = array(drupal_render($form['plugin_key'][$key]));
 
@@ -530,7 +530,7 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
         $form['unique_flags'][$i] = array(
           '#type' => 'checkbox',
           '#default_value' => !empty($mapping['unique']),
-          '#attributes' => array('class' => 'feeds-ui-trigger-submit'),
+          '#attributes' => array('class' => array('feeds-ui-trigger-submit')),
         );
       }
       $form['remove_flags'][$i] = array(
@@ -553,7 +553,7 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
       '#type' => 'textfield',
       '#size' => 20,
       '#default_value' => t('Name of source field'),
-      '#attributes' => array('class' => 'hide-text-on-focus'),
+      '#attributes' => array('class' => array('hide-text-on-focus')),
     );
   }
   $form['target'] = array(
@@ -568,7 +568,7 @@ function feeds_ui_mapping_form(&$form_state, $importer) {
   $form['save'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
-    '#attributes' => array('class' => 'feeds-ui-hidden-submit'),
+    '#attributes' => array('class' => array('feeds-ui-hidden-submit')),
   );
   return $form;
 }
@@ -715,15 +715,15 @@ function theme_feeds_ui_edit_page($config_info, $active_container) {
  *     'title' => 'the title',
  *     'body' => 'the body of the container, may also be an array of more
  *                containers.',
- *     'class' => 'the class of the container.',
+ *     'class' => array('the class of the container.'),
  *     'id' => 'the id of the container',
  *   );
  */
 function theme_feeds_ui_container($container) {
 
-  $class = empty($container['class']) ? ' plain': " {$container['class']}";
+  $class = empty($container['class']) ? array('plain') : $container['class'];
   $id = empty($container['id']) ? '': ' id="'. $container['id'] .'"';
-  $output = '<div class="feeds-container'. $class .'"'. $id .'>';
+  $output = '<div class="feeds-container'. explode(' ', $class) .'"'. $id .'>';
 
   if (isset($container['actions']) && count($container['actions'])) {
     $output .= '<ul class="container-actions">';
