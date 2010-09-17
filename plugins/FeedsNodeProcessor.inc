@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.51 2010/09/15 19:27:42 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.51.2.1 2010/09/17 13:46:30 alexb Exp $
 
 /**
  * @file
@@ -227,7 +227,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     if ($this->config['expire'] != $values['expire']) {
       feeds_reschedule($this->id);
     }
-    parent::configFormSubmit(&$values);
+    parent::configFormSubmit($values);
   }
 
   /**
