@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.39 2010/09/16 19:01:04 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.40 2010/09/17 00:37:55 alexb Exp $
 
 /**
  * @file
@@ -50,7 +50,6 @@ function feeds_ui_mapping_help() {
  * Build overview of available configurations.
  */
 function feeds_ui_overview_form(&$form_status) {
-
   $form = $form['enabled'] = $form['disabled'] = array();
 
   $form['#header'] = array(
@@ -111,7 +110,7 @@ function feeds_ui_overview_form(&$form_status) {
     $importer_form[$importer->id] = array(
       '#type' => 'checkbox',
       '#default_value' => !$importer->disabled,
-      '#attributes' => array('class' => 'feeds-ui-trigger-submit'),
+      '#attributes' => array('class' => array('feeds-ui-trigger-submit')),
     );
 
     if ($importer->disabled) {
@@ -124,7 +123,7 @@ function feeds_ui_overview_form(&$form_status) {
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
-    '#attributes' => array('class' => 'feeds-ui-hidden-submit'),
+    '#attributes' => array('class' => array('feeds-ui-hidden-submit')),
   );
   return $form;
 }
@@ -645,7 +644,8 @@ function _feeds_ui_format_options($options) {
 /**
  * Theme feeds_ui_overview_form().
  */
-function theme_feeds_ui_overview_form($form) {
+function theme_feeds_ui_overview_form($variables) {
+  $form = $variables['form'];
   drupal_add_js(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.js');
   drupal_add_css(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.css');
   // Iterate through all importers and build a table.
@@ -657,21 +657,21 @@ function theme_feeds_ui_overview_form($form) {
         foreach (element_children($form[$type][$id]) as $col) {
           $row[$col] = array(
             'data' => drupal_render($form[$type][$id][$col]),
-            'class' => $type,
+            'class' => array($type),
           );
         }
         $rows[] = array(
           'data' => $row,
-          'class' => $type,
+          'class' => array($type),
         );
       }
     }
   }
   $output = '';
   if (count($rows)) {
-    $output .= theme('table', $form['#header'], $rows, array('class' => 'feeds-admin-importers'));
+    $output .= theme('table', array('header' => $form['#header'], 'rows' => $rows, 'attributes' => array('class' => array('feeds-admin-importers'))));
   }
-  $output .= drupal_render($form);
+  $output .= drupal_render_children($form);
   return $output;
 }
 
