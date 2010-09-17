@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.module,v 1.15 2010/09/17 23:50:09 alexb Exp $
+// $Id: feeds_ui.module,v 1.16 2010/09/17 23:55:35 alexb Exp $
 /**
  * @file
  */
@@ -20,7 +20,7 @@ function feeds_ui_help($path, $arg) {
  */
 function feeds_ui_menu() {
   $items = array();
-  $items['admin/structure/import'] = array(
+  $items['admin/structure/feeds'] = array(
     'title' => 'Feeds',
     'description' => 'Configure one or more Feeds importers to aggregate RSS and Atom feeds, import CSV files or more.',
     'page callback' => 'drupal_get_form',

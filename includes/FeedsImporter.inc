@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.27 2010/09/17 00:59:04 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.28 2010/09/17 23:55:35 alexb Exp $
 
 /**
  * @file
@@ -99,7 +99,7 @@ class FeedsImporter extends FeedsConfigurable {
     $save = new stdClass();
     $save->id = $this->id;
     $save->config = $this->getConfig();
-    if (db_query_range("SELECT 1 FROM {feeds_importer} WHERE id = '%s'", array(':id' => $this->id), 0, 1)->fetchField()) {
+    if (db_query_range("SELECT 1 FROM {feeds_importer} WHERE id = '%s'", 0, 1, array(':id' => $this->id))->fetchField()) {
       drupal_write_record('feeds_importer', $save, 'id');
     }
     else {

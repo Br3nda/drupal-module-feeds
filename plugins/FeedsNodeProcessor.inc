@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.59 2010/09/17 22:30:10 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.60 2010/09/17 23:55:35 alexb Exp $
 
 /**
  * @file
@@ -92,12 +92,13 @@ class FeedsNodeProcessor extends FeedsProcessor {
       $total = db_query("SELECT COUNT(nid) FROM {feeds_node_item} WHERE id = :id AND feed_nid =:nid", array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField();
       $batch->setTotal(FEEDS_CLEARING, $total);
     }
-    $nodes = db_query_range("SELECT nid FROM {feeds_node_item} WHERE id = :id AND feed_nid =:nid", array(':id' => $source->id, ':nid' => $source->feed_nid), variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE));
+    $count = variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE);
+    $nodes = db_query_range("SELECT nid FROM {feeds_node_item} WHERE id = :id AND feed_nid =:nid", 0, $count, array(':id' => $source->id, ':nid' => $source->feed_nid));
     foreach ($nodes as $node) {
       node_delete($node->nid);
       $batch->deleted++;
     }
-    if (db_query_range("SELECT 1 FROM {feeds_node_item} WHERE id = :id AND feed_nid =:nid", array(':id' => $source->id, ':nid' => $source->feed_nid), 0, 1)->fetchField()) {
+    if (db_query_range("SELECT 1 FROM {feeds_node_item} WHERE id = :id AND feed_nid =:nid", 0, 1, array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField()) {
       $batch->setProgress(FEEDS_CLEARING, $batch->deleted);
       return;
     }
@@ -123,11 +124,12 @@ class FeedsNodeProcessor extends FeedsProcessor {
     if ($time == FEEDS_EXPIRE_NEVER) {
       return;
     }
-    $nodes = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = :id AND n.created < :created", array(':id' => $this->id, ':created' => REQUEST_TIME - $time), 0, variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE));
+    $count = variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE);
+    $nodes = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = :id AND n.created < :created", 0, $count, array(':id' => $this->id, ':created' => REQUEST_TIME - $time));
     foreach ($nodes as $node) {
       _feeds_node_delete($node->nid);
     }
-    if (db_query_range("SELECT 1 FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = :id AND n.created < :created", array(':id' => $this->id, ':created' => REQUEST_TIME - $time), 0, 1)->fetchField()) {
+    if (db_query_range("SELECT 1 FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = :id AND n.created < :created", 0, 1, array(':id' => $this->id, ':created' => REQUEST_TIME - $time))->fetchField()) {
       return FEEDS_BATCH_ACTIVE;
     }
     return FEEDS_BATCH_COMPLETE;
