@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.44 2010/09/17 22:46:26 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.45 2010/09/17 22:59:55 alexb Exp $
 
 /**
  * @file
@@ -49,7 +49,7 @@ function feeds_ui_mapping_help() {
 /**
  * Build overview of available configurations.
  */
-function feeds_ui_overview_form(&$form_status) {
+function feeds_ui_overview_form($form, &$form_status) {
   $form = $form['enabled'] = $form['disabled'] = array();
 
   $form['#header'] = array(
@@ -150,7 +150,7 @@ function feeds_ui_overview_form_submit($form, &$form_state) {
  *   FeedsImporter object. If given, form will create a new importer as a copy
  *   of $from_importer.
  */
-function feeds_ui_create_form(&$form_state, $from_importer = NULL) {
+function feeds_ui_create_form($form, &$form_state, $from_importer = NULL) {
   drupal_add_js(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.js');
   $form = array();
   $form['#from_importer'] = $from_importer;
@@ -222,7 +222,7 @@ function feeds_ui_create_form_submit($form, &$form_state) {
 /**
  * Delete configuration form.
  */
-function feeds_ui_delete_form(&$form_state, $importer) {
+function feeds_ui_delete_form($form, &$form_state, $importer) {
   $form['#redirect'] = 'admin/build/feeds';
   $form['#importer'] = $importer;
   if ($importer->export_type & EXPORT_IN_CODE) {
@@ -255,7 +255,7 @@ function feeds_ui_delete_form_submit($form, &$form_state) {
 /**
  * Export a feed configuration.
  */
-function feeds_ui_export_form(&$form_state, $importer) {
+function feeds_ui_export_form($form, &$form_state, $importer) {
   $code = feeds_export($importer->id);
 
   $form['export'] = array(
@@ -413,7 +413,7 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
  * @return
  *   A Form API form definition.
  */
-function feeds_ui_plugin_form(&$form_state, $importer, $type) {
+function feeds_ui_plugin_form($form, &$form_state, $importer, $type) {
   $plugins = feeds_get_plugins_by_type($type);
 
   $form = array();
@@ -451,7 +451,8 @@ function feeds_ui_plugin_form_submit($form, &$form_state) {
 /**
  * Theme feeds_ui_plugin_form().
  */
-function theme_feeds_ui_plugin_form($form) {
+function theme_feeds_ui_plugin_form($variables) {
+  $form = $variables['form'];
   drupal_add_js(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.js');
   $output = '';
 
@@ -481,7 +482,7 @@ function theme_feeds_ui_plugin_form($form) {
  *   shared form of configuration, most of the common functionality can live in
  *   FeedsProcessor, a flag can tell whether mapping is supported or not.
  */
-function feeds_ui_mapping_form(&$form_state, $importer) {
+function feeds_ui_mapping_form($form, &$form_state, $importer) {
   drupal_add_js(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.js');
 
   $form = array();
@@ -766,7 +767,8 @@ function theme_feeds_ui_container($variables) {
 /**
  * Theme function for feeds_ui_mapping_form().
  */
-function theme_feeds_ui_mapping_form($form) {
+function theme_feeds_ui_mapping_form($variables) {
+  $form = $variables['form'];
 
   // Build the actual mapping table.
   $header = array(
