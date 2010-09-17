@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.67 2010/09/17 22:52:13 alexb Exp $
+// $Id: feeds.module,v 1.68 2010/09/17 23:11:49 alexb Exp $
 
 /**
  * @file
@@ -486,15 +486,6 @@ function feeds_taxonomy_term_insert($term) {
     );
     drupal_write_record('feeds_term_item', $record);
   }
-}
-
-/**
- * Implements hook_taxonomy_term_delete().
- */
-function feeds_taxonomy_term_delete($term) {
-  db_delete('feeds_term_item')
-    ->condition('tid', $term->tid)
-    ->execute();
 }
 
 /**
