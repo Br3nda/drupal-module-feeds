@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.24 2010/09/17 00:59:04 alexb Exp $
+// $Id: feeds.pages.inc,v 1.25 2010/09/17 01:01:17 alexb Exp $
 
 /**
  * @file
@@ -37,7 +37,7 @@ function feeds_page() {
     t('Import'),
     t('Description'),
   );
-  return theme('table', $header, $rows);
+  return theme('table', array('header' => $header, 'rows' => $rows));
 }
 
 /**
