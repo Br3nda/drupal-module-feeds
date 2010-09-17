@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.68 2010/09/17 23:11:49 alexb Exp $
+// $Id: feeds.module,v 1.69 2010/09/17 23:13:42 alexb Exp $
 
 /**
  * @file
@@ -125,7 +125,7 @@ function feeds_permission() {
   $perms = array(
     'administer feeds' => array(
       'title' => t('Administer Feeds'),
-      'description' => t('Create, update, delete importers, execute import and delte tasks on feeds.')
+      'description' => t('Create, update, delete importers, execute import and delete tasks on any importer.')
     ),
   );
   foreach (feeds_importer_load_all() as $importer) {
