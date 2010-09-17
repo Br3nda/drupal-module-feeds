@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.26 2010/09/16 22:45:04 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.27 2010/09/17 00:12:48 alexb Exp $
 
 /**
  * @file
@@ -226,7 +226,7 @@ class PuSHSubscription implements PuSHSubscriptionInterface {
    * Load a subscription.
    */
   public static function load($domain, $subscriber_id) {
-    if ($v = db_fetch_array(db_query("SELECT * FROM {feeds_push_subscriptions} WHERE domain = '%s' AND subscriber_id = %d", $domain, $subscriber_id))) {
+    if ($v = db_query("SELECT * FROM {feeds_push_subscriptions} WHERE domain = :domain AND subscriber_id = :sid", array(':domain' => $domain, ':sid' => $subscriber_id))->fetchAssoc()) {
       $v['post_fields'] = unserialize($v['post_fields']);
       return new PuSHSubscription($v['domain'], $v['subscriber_id'], $v['hub'], $v['topic'], $v['secret'], $v['status'], $v['post_fields'], $v['timestamp']);
     }
