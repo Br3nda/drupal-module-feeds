@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsConfigurable.inc,v 1.16 2010/09/17 22:16:15 alexb Exp $
+// $Id: FeedsConfigurable.inc,v 1.17 2010/09/17 22:59:55 alexb Exp $
 
 /**
  * @file
@@ -227,7 +227,7 @@ function feeds_get_form($configurable, $form_method) {
  * @param $form_method
  *   The $form_method that should be rendered.
  */
-function feeds_form(&$form_state, $configurable, $form_method) {
+function feeds_form($form, &$form_state, $configurable, $form_method) {
   $form = $configurable->$form_method($form_state);
   $form['#configurable'] = $configurable;
   $form['#feeds_form_method'] = $form_method;
