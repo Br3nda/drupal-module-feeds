@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.module,v 1.13 2010/09/17 17:25:19 alexb Exp $
+// $Id: feeds_ui.module,v 1.14 2010/09/17 22:46:26 alexb Exp $
 /**
  * @file
  */
@@ -92,15 +92,19 @@ function feeds_ui_theme() {
       'file' => 'feeds_ui.admin.inc',
     ),
     'feeds_ui_mapping_form' => array(
+      'render element' => 'form',
       'file' => 'feeds_ui.admin.inc',
     ),
     'feeds_ui_edit_page' => array(
+      'variables' => array('info' => NULL, 'active' => NULL),
       'file' => 'feeds_ui.admin.inc',
     ),
     'feeds_ui_plugin_form' => array(
+      'render element' => 'form',
       'file' => 'feeds_ui.admin.inc',
     ),
     'feeds_ui_container' => array(
+      'variables' => array('container' => NULL),
       'file' => 'feeds_ui.admin.inc',
     ),
   );

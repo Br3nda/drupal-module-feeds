@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.43 2010/09/17 01:01:17 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.44 2010/09/17 22:46:26 alexb Exp $
 
 /**
  * @file
@@ -336,7 +336,7 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
   $info['title'] = t('Basic settings');
   $info['body'] = array(
     array(
-      'body' => theme('item_list', $items),
+      'body' => theme('item_list', array('items' => $items)),
       'actions' => array(l(t('Settings'), $path .'/settings')),
     ),
   );
@@ -394,7 +394,10 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
   $info['actions'] = array(l(t('Change'), $path .'/processor'));
   $config_info[] = $info;
 
-  return theme('feeds_ui_edit_page', $config_info, $active_container);
+  return theme('feeds_ui_edit_page', array(
+    'info' => $config_info,
+    'active' => $active_container,
+  ));
 }
 
 /**
@@ -678,7 +681,9 @@ function theme_feeds_ui_overview_form($variables) {
 /**
  * Theme feeds_ui_edit_page().
  */
-function theme_feeds_ui_edit_page($config_info, $active_container) {
+function theme_feeds_ui_edit_page($variables) {
+  $config_info = $variables['info'];
+  $active_container = $variables['active'];
   drupal_add_css(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.css');
 
   // Outer wrapper.
@@ -687,14 +692,14 @@ function theme_feeds_ui_edit_page($config_info, $active_container) {
   // Build left bar.
   $output .= '<div class="left-bar">';
   foreach ($config_info as $info) {
-    $output .= theme('feeds_ui_container', $info);
+    $output .= theme('feeds_ui_container', array('container' => $info));
   }
   $output .= '</div>';
 
   // Build configuration space.
   $output .= '<div class="configuration">';
   $output .= '<div class="configuration-squeeze">';
-  $output .= theme('feeds_ui_container', $active_container);
+  $output .= theme('feeds_ui_container', array('container' => $active_container));
   $output .= '</div>';
   $output .= '</div>';
 
@@ -709,8 +714,9 @@ function theme_feeds_ui_edit_page($config_info, $active_container) {
  *
  * @todo Replace with theme_fieldset or a wrapper to theme_fieldset?
  *
- * @param $container
- *   An array that describes the container. All elements are optional:
+ * @param $variables
+ *   An array containing an array at 'container'.
+ *   A 'container' array may contain one or more of the following keys:
  *   array(
  *     'title' => 'the title',
  *     'body' => 'the body of the container, may also be an array of more
@@ -719,7 +725,8 @@ function theme_feeds_ui_edit_page($config_info, $active_container) {
  *     'id' => 'the id of the container',
  *   );
  */
-function theme_feeds_ui_container($container) {
+function theme_feeds_ui_container($variables) {
+  $container = $variables['container'];
 
   $class = empty($container['class']) ? array('plain') : $container['class'];
   $id = empty($container['id']) ? '': ' id="'. $container['id'] .'"';
@@ -743,7 +750,7 @@ function theme_feeds_ui_container($container) {
     $output .= '<div class="feeds-container-body">';
     if (is_array($container['body'])) {
       foreach ($container['body'] as $c) {
-        $output .= theme('feeds_ui_container', $c);
+        $output .= theme('feeds_ui_container', array('container' => $c));
       }
     }
     else {

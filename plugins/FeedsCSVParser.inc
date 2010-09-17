@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.17 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.18 2010/09/17 22:46:26 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
@@ -33,7 +33,7 @@ class FeedsCSVParser extends FeedsParser {
    * Get first line and use it for column names, convert them to lower case.
    * Be aware that the $parser and iterator objects can be modified in this
    * function since they are passed in by reference
-   * 
+   *
    * @param ParserCSV $parser
    * @param ParserCSVIterator $iterator
    * @return
@@ -113,7 +113,7 @@ class FeedsCSVParser extends FeedsParser {
       t('Import !csv_files with one or more of these columns: !columns.', array('!csv_files' => l(t('CSV files'), 'http://en.wikipedia.org/wiki/Comma-separated_values'), '!columns' => implode(', ', $sources))),
       format_plural(count($uniques), t('Column <strong>!column</strong> is mandatory and considered unique: only one item per !column value will be created.', array('!column' => implode(', ', $uniques))), t('Columns <strong>!columns</strong> are mandatory and values in these columns are considered unique: only one entry per value in one of these column will be created.', array('!columns' => implode(', ', $uniques)))),
     );
-    $form['help']['#value'] = '<div class="help">'. theme('item_list', $items) .'</div>';
+    $form['help']['#value'] = '<div class="help">'. theme('item_list', array('items' => $items)) .'</div>';
 
     $form['delimiter'] = array(
       '#type' => 'select',

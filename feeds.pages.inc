@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.25 2010/09/17 01:01:17 alexb Exp $
+// $Id: feeds.pages.inc,v 1.26 2010/09/17 22:46:26 alexb Exp $
 
 /**
  * @file
@@ -156,25 +156,26 @@ function feeds_fetcher_callback($importer, $feed_nid = 0) {
 function theme_feeds_upload($element) {
   drupal_add_css(drupal_get_path('module', 'feeds') .'/feeds.css');
   _form_set_class($element, array('form-file'));
-  $output = '';
+  $description = '';
   if (!empty($element['#file_info'])) {
     $info = $element['#file_info'];
-    $output .= '<div class="file-info">';
-    $output .= '<div class="file-name">';
-    $output .= l(basename($info['path']), $info['path']);
-    $output .= '</div>';
-    $output .= '<div class="file-size">';
-    $output .= format_size($info['size']);
-    $output .= '</div>';
+    $description .= '<div class="file-info">';
+    $description .= '<div class="file-name">';
+    $description .= l(basename($info['path']), $info['path']);
+    $description .= '</div>';
+    $description .= '<div class="file-size">';
+    $description .= format_size($info['size']);
+    $description .= '</div>';
     if (isset($info['mime'])) {
-      $output .= '<div class="file-mime">';
-      $output .= check_plain($info['mime']);
-      $output .= '</div>';
+      $description .= '<div class="file-mime">';
+      $description .= check_plain($info['mime']);
+      $description .= '</div>';
     }
-    $output .= '</div>';
+    $description .= '</div>';
   }
-  $output .= '<div class="file-upload">';
-  $output .= '<input type="file" name="'. $element['#name'] .'"'. ($element['#attributes'] ? ' '. drupal_attributes($element['#attributes']) : '') .' id="'. $element['#id'] .'" size="'. $element['#size'] ."\" />\n";
-  $output .= '</div>';
-  return theme('form_element', $element, $output);
+  $description .= '<div class="file-upload">';
+  $description .= '<input type="file" name="'. $element['#name'] .'"'. ($element['#attributes'] ? ' '. drupal_attributes($element['#attributes']) : '') .' id="'. $element['#id'] .'" size="'. $element['#size'] ."\" />\n";
+  $description .= '</div>';
+  $element['#description'] = $description;
+  return theme('form_element', $element);
 }
