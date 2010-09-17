@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.70 2010/09/17 23:50:09 alexb Exp $
+// $Id: feeds.module,v 1.71 2010/09/17 23:58:18 alexb Exp $
 
 /**
  * @file
@@ -818,7 +818,7 @@ function feeds_plugin_instance($plugin, $id) {
   }
   $args = array( '%plugin' => $plugin);
   if (user_access('administer feeds')) {
-    $args['!link'] = l($id, 'admin/build/feeds/edit/' . $id);
+    $args['!link'] = l($id, 'admin/structure/feeds/edit/' . $id);
     drupal_set_message(t('Missing Feeds plugin %plugin. See !link. Check whether all required libraries and modules are installed properly.', $args), 'warning');
   }
   else {

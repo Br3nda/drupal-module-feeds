@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_profile.test,v 1.4 2010/09/15 19:27:42 alexb Exp $
+// $Id: feeds_mapper_profile.test,v 1.5 2010/09/17 23:58:18 alexb Exp $
 
 /**
  * @file
@@ -96,7 +96,7 @@ class FeedsMapperProfileTestCase extends FeedsMapperTestCase {
       'content_type' => '',
       'import_period' => FEEDS_SCHEDULE_NEVER,
     );
-    $this->drupalPost('admin/build/feeds/edit/profile_import/settings', $edit, 'Save');
+    $this->drupalPost('admin/structure/feeds/edit/profile_import/settings', $edit, 'Save');
 
     // Import CSV file.
     $this->importFile('profile_import', $this->absolutePath() .'/tests/feeds/profile.csv');

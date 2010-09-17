@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.17 2010/09/16 23:37:06 alexb Exp $
+// $Id: feeds.test.inc,v 1.18 2010/09/17 23:58:18 alexb Exp $
 
 /**
  * @file
@@ -93,13 +93,13 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    */
   public function createImporterConfiguration($name = 'Syndication', $id = 'syndication') {
     // Create new feed configuration.
-    $this->drupalGet('admin/build/feeds');
+    $this->drupalGet('admin/structure/feeds');
     $this->clickLink('New importer');
     $edit = array(
       'name' => $name,
       'id' => $id,
     );
-    $this->drupalPost('admin/build/feeds/create', $edit, 'Create');
+    $this->drupalPost('admin/structure/feeds/create', $edit, 'Create');
 
     // Assert message and presence of default plugins.
     $this->assertText('Your configuration has been created with default settings.');
@@ -122,7 +122,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
       $edit = array(
         'plugin_key' => $plugin_key,
       );
-      $this->drupalPost("admin/build/feeds/edit/$id/$type", $edit, 'Save');
+      $this->drupalPost("admin/structure/feeds/edit/$id/$type", $edit, 'Save');
 
       // Assert actual configuration.
       $config = unserialize(db_query("SELECT config FROM {feeds_importer} WHERE id = :id", array(':id' => $id))->fetchField());
@@ -141,7 +141,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    *   The settings to set.
    */
   public function setSettings($id, $plugin, $settings) {
-    $this->drupalPost('admin/build/feeds/edit/'. $id .'/settings/'. $plugin, $settings, 'Save');
+    $this->drupalPost('admin/structure/feeds/edit/'. $id .'/settings/'. $plugin, $settings, 'Save');
     $this->assertText('Your changes have been saved.');
   }
 
@@ -291,7 +291,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    */
   public function addMappings($id, $mappings) {
 
-    $path = 'admin/build/feeds/edit/'. $id .'/mapping';
+    $path = 'admin/structure/feeds/edit/'. $id .'/mapping';
 
     // Iterate through all mappings and add the via the form.
     foreach ($mappings as $i => $mapping) {

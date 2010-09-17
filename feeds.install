@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.install,v 1.15 2010/09/17 17:25:19 alexb Exp $
+// $Id: feeds.install,v 1.16 2010/09/17 23:58:18 alexb Exp $
 
 /**
  * @file
@@ -473,10 +473,10 @@ function feeds_update_6010() {
     drupal_set_message(t('Installed Feeds News and Feeds Import as replacement for Feeds Defaults module. If you were not using Feeds Defaults then you can safely disable Feeds News and Feeds Import.'));
   }
   if (module_exists('features')) {
-    drupal_set_message(t('<strong>Review enabled state of importer configurations on admin/build/feeds and features on admin/build/features.</strong>'));
+    drupal_set_message(t('<strong>Review enabled state of importer configurations on admin/structure/feeds and features on admin/build/features.</strong>'));
   }
   else {
-    drupal_set_message(t('<strong>Review enabled state of importer configurations on admin/build/feeds and Feeds modules on admin/build/modules.</strong>'));
+    drupal_set_message(t('<strong>Review enabled state of importer configurations on admin/structure/feeds and Feeds modules on admin/build/modules.</strong>'));
   }
   return array();
 }
