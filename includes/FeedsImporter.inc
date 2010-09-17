@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.26 2010/09/17 00:04:17 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.27 2010/09/17 00:59:04 alexb Exp $
 
 /**
  * @file
@@ -236,11 +236,13 @@ class FeedsImporter extends FeedsConfigurable {
       '#description' => t('A description of this configuration.'),
       '#default_value' => $this->config['description'],
     );
+    $node_types = node_type_get_names();
+    array_walk($node_types, 'check_plain');
     $form['content_type'] = array(
       '#type' => 'select',
       '#title' => t('Attach to content type'),
       '#description' => t('If an importer is attached to a content type, content is imported by creating a node. If the standalone form is selected, content is imported by using the standalone form under http://example.com/import.'),
-      '#options' => array('' => t('Use standalone form')) + node_get_types('names'),
+      '#options' => array('' => t('Use standalone form')) + $node_types,
       '#default_value' => $this->config['content_type'],
     );
     $period = drupal_map_assoc(array(0, 900, 1800, 3600, 10800, 21600, 43200, 86400, 259200, 604800, 2419200), 'format_interval');

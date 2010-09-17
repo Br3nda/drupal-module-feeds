@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.55 2010/09/17 00:53:34 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.56 2010/09/17 00:59:04 alexb Exp $
 
 /**
  * @file
@@ -141,7 +141,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
    * Override parent::configDefaults().
    */
   public function configDefaults() {
-    $types = node_get_types('names');
+    $types = node_type_get_names();
     $type = isset($types['story']) ? 'story' : key($types);
     return array(
       'content_type' => $type,
@@ -157,7 +157,8 @@ class FeedsNodeProcessor extends FeedsProcessor {
    * Override parent::configForm().
    */
   public function configForm(&$form_state) {
-    $types = node_get_types('names');
+    $types = node_type_get_names();
+    array_walk($types, 'check_plain');
     $form = array();
     $form['content_type'] = array(
       '#type' => 'select',
@@ -257,7 +258,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
        ),
      );
     // Include body field only if available.
-    $type = node_get_types('type',  $this->config['content_type']);
+    $type = node_type_get_type($this->config['content_type']);
     if ($type->has_body) {
       // Using 'teaser' instead of 'body' forces entire content above the break.
       $targets['body'] = array(

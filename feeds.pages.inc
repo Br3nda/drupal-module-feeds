@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.23 2010/09/17 00:53:34 alexb Exp $
+// $Id: feeds.pages.inc,v 1.24 2010/09/17 00:59:04 alexb Exp $
 
 /**
  * @file
@@ -25,7 +25,7 @@ function feeds_page() {
       }
       elseif (user_access('create '. $importer->config['content_type'] .' content')) {
         $link = 'node/add/'. str_replace('_', '-', $importer->config['content_type']);
-        $title = node_types_get('name', $importer->config['content_type']);
+        $title = node_type_get_name($importer->config['content_type']);
       }
       $rows[] = array(
         l($title, $link),
