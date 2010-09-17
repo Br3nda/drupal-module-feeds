@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.63 2010/09/17 20:59:59 alexb Exp $
+// $Id: feeds.module,v 1.64 2010/09/17 21:07:26 alexb Exp $
 
 /**
  * @file
@@ -708,7 +708,6 @@ function feeds_dbg($msg) {
  *   per $id system-wide.
  */
 function feeds_importer($id) {
-  feeds_include('FeedsImporter');
   return FeedsConfigurable::instance(variable_get('feeds_importer_class', 'FeedsImporter'), $id);
 }
 
@@ -725,7 +724,6 @@ function feeds_importer($id) {
  *   variable 'source_class'.
  */
 function feeds_source($importer_id, $feed_nid = 0) {
-  feeds_include('FeedsImporter');
   return FeedsSource::instance($importer_id, $feed_nid);
 }
 
@@ -805,7 +803,6 @@ function feeds_get_plugins_by_type($type) {
  *   If plugin can't be instantiated.
  */
 function feeds_plugin_instance($plugin, $id) {
-  feeds_include('FeedsImporter');
   ctools_include('plugins');
   if ($class = ctools_plugin_load_class('feeds', 'plugins', $plugin, 'handler')) {
     return FeedsConfigurable::instance($class, $id);
@@ -886,23 +883,6 @@ function feeds_plugin_type($plugin_key) {
  */
 
 /**
- * Includes a feeds module include file.
- *
- * @param $file
- *   The filename without the .inc extension.
- * @param $directory
- *   The directory to include the file from. Do not include files from libraries
- *   directory. Use feeds_include_library() instead
- */
-function feeds_include($file, $directory = 'includes') {
-  static $included = array();
-  if (!isset($included[$file])) {
-    require './'. drupal_get_path('module', 'feeds') ."/$directory/$file.inc";
-  }
-  $included[$file] = TRUE;
-}
-
-/**
  * Includes a library file.
  *
  * @param $file
@@ -917,11 +897,11 @@ function feeds_include_library($file, $library) {
   if (!isset($included[$file])) {
     // Try first whether libraries module is present and load the file from
     // there. If this fails, require the library from the local path.
-    if (module_exists('libraries') && file_exists(libraries_get_path($library) ."/$file")) {
+    if (module_exists('libraries') && file_exists(libraries_get_path($library) . "/$file")) {
       require libraries_get_path($library) ."/$file";
     }
     else {
-      require './'. drupal_get_path('module', 'feeds') ."/libraries/$file";
+      require DRUPAL_ROOT . '/' . drupal_get_path('module', 'feeds') . "/libraries/$file";
     }
   }
   $included[$file] = TRUE;
@@ -938,10 +918,10 @@ function feeds_include_library($file, $library) {
  *   libraries module.
  */
 function feeds_library_exists($file, $library) {
-  if (module_exists('libraries') && file_exists(libraries_get_path($library) ."/$file")) {
+  if (module_exists('libraries') && file_exists(libraries_get_path($library) . "/$file")) {
     return TRUE;
   }
-  elseif (file_exists(drupal_get_path('module', 'feeds') ."/libraries/$file")) {
+  elseif (file_exists(DRUPAL_ROOT . '/' . drupal_get_path('module', 'feeds') . "/libraries/$file")) {
     return TRUE;
   }
   return FALSE;
