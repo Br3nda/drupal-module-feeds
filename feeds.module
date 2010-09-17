@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.57 2010/09/16 22:55:19 alexb Exp $
+// $Id: feeds.module,v 1.58 2010/09/17 00:06:22 alexb Exp $
 
 /**
  * @file
@@ -30,10 +30,7 @@ function feeds_cron() {
   if ($importers = feeds_reschedule()) {
     foreach ($importers as $id) {
       feeds_importer($id)->schedule();
-      $rows = db_select('feeds_source')
-        ->fields('feed_nid')
-        ->condition('id', $id)
-        ->execute();
+      $rows = db_query("SELECT feed_nid FROM {feeds_source} WHERE id = :id", array(':id' => $id));
       foreach ($rows as $row) {
         feeds_source($id, $row->feed_nid)->schedule();
       }
