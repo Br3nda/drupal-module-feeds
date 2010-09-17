@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.64 2010/09/17 21:07:26 alexb Exp $
+// $Id: feeds.module,v 1.65 2010/09/17 21:29:12 alexb Exp $
 
 /**
  * @file
@@ -325,8 +325,8 @@ function feeds_feeds_plugins() {
 /**
  * Implements hook_node_load().
  */
-function feeds_node_load($node) {
-  _feeds_node_processor_node_load($node);
+function feeds_node_load($nodes) {
+  _feeds_node_processor_node_load($nodes);
 }
 
 /**
@@ -424,9 +424,11 @@ function feeds_node_delete($node) {
 /**
  * FeedsNodeProcessor's hook_node_load().
  */
-function _feeds_node_processor_node_load($node) {
-  if ($result = db_query("SELECT imported, guid, url, feed_nid FROM {feeds_node_item} WHERE nid = :nid", array(':nid' => $node->nid))->fetch()) {
-    $node->feeds_node_item = $result;
+function _feeds_node_processor_node_load($nodes) {
+  if ($items = db_query("SELECT nid, imported, guid, url, feed_nid FROM {feeds_node_item} WHERE nid IN nids(:nids)", array(':nids' => array_keys($nodes)))) {
+    foreach ($items as $item) {
+      $node->{$item->nid} = $item;
+    }
   }
 }
 
@@ -486,6 +488,48 @@ function feeds_taxonomy($op = NULL, $type = NULL, $term = NULL) {
         break;
     }
   }
+}
+
+/**
+ * Implements hook_taxonomy_term_update().
+ */
+function feeds_taxonomy_term_update($term) {
+  if (isset($term->feeds_importer_id)) {
+    db_delete('feeds_term_item')
+      ->condition('tid', $term->tid)
+      ->execute();
+  }
+}
+
+/**
+ * Implements hook_taxonomy_term_insert().
+ */
+function feeds_taxonomy_term_insert($term) {
+  if ($term->feeds_importer_id) {
+    $record = array(
+      'id' => $term->feeds_importer_id,
+      'tid' => $term->tid,
+    );
+    drupal_write_record('feeds_term_item', $record);
+  }
+}
+
+/**
+ * Implements hook_taxonomy_term_delete().
+ */
+function feeds_taxonomy_term_delete($term) {
+  db_delete('feeds_term_item')
+    ->condition('tid', $term->tid)
+    ->execute();
+}
+
+/**
+ * Implements hook_taxonomy_delete().
+ */
+function feeds_taxonomy_term_delete($term) {
+  db_delete('feeds_term_item')
+    ->condition('tid', $term->tid)
+    ->execute();
 }
 
 /**

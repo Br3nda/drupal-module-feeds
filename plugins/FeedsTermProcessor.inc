@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.23 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.24 2010/09/17 21:29:12 alexb Exp $
 
 /**
  * @file
@@ -47,7 +47,7 @@ class FeedsTermProcessor extends FeedsProcessor {
         }
 
         // Save the term.
-        $term['importer_id'] = $this->id;
+        $term['feeds_importer_id'] = $this->id;
         $term['feed_nid'] = $this->feed_nid;
         taxonomy_save_term($term);
         if ($tid) {
