@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.16 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.17 2010/09/17 22:25:07 alexb Exp $
 
 /**
  * @file
@@ -88,7 +88,7 @@ class FeedsFileFetcher extends FeedsFetcher {
    */
   public function sourceFormValidate(&$values) {
     $feed_dir = file_directory_path() .'/feeds';
-    file_check_directory($feed_dir, TRUE);
+    file_prepare_directory($dir, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
 
     // If there is a file uploaded, save it, otherwise validate input on
     // file.

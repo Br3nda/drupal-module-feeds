@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsBatch.inc,v 1.15 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsBatch.inc,v 1.16 2010/09/17 22:25:07 alexb Exp $
 
 // Batch stages.
 define('FEEDS_FETCHING', 'fetching');
@@ -190,7 +190,7 @@ class FeedsImportBatch extends FeedsBatch {
   public function getFilePath() {
     if (!isset($this->file_path)) {
       $dir = file_directory_path() .'/feeds';
-      if (!file_check_directory($dir, TRUE)) {
+      if (!file_prepare_directory($dir, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
         throw new Exception(t('Feeds directory either cannot be created or is not writable.'));
       }
       $dest = file_destination($dir . '/' . get_class($this) .'_'. drupal_get_token($this->url) .'_'. time(), FILE_EXISTS_RENAME);

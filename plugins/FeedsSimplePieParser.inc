@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.16 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.17 2010/09/17 22:25:07 alexb Exp $
 
 /**
  * Adapter to present SimplePie_Enclosure as FeedsEnclosure object.
@@ -212,7 +212,7 @@ class FeedsSimplePieParser extends FeedsParser {
    */
   protected function cacheDirectory() {
     $directory = file_directory_path() .'/simplepie';
-    file_check_directory($directory, TRUE);
+    file_prepare_directory($dir, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
     return $directory;
   }
 
