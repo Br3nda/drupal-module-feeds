@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.69 2010/09/17 23:13:42 alexb Exp $
+// $Id: feeds.module,v 1.70 2010/09/17 23:50:09 alexb Exp $
 
 /**
  * @file
@@ -640,7 +640,7 @@ function feeds_get_importer_id($content_type) {
  * Helper function for feeds_get_importer_id() and feeds_enabled_importers().
  */
 function _feeds_importer_digest() {
-  $importers = &ctools_static(__FUNCTION__);
+  $importers = &drupal_static(__FUNCTION__);
   if ($importers === NULL) {
     if ($cache = cache_get(__FUNCTION__)) {
       $importers = $cache->data;
@@ -661,7 +661,7 @@ function _feeds_importer_digest() {
  */
 function feeds_cache_clear($rebuild_menu = TRUE) {
   cache_clear_all('_feeds_importer_digest', 'cache');
-  ctools_static_reset('_feeds_importer_digest');
+  drupal_static_reset('_feeds_importer_digest');
   ctools_include('export');
   ctools_export_load_object_reset('feeds_importer');
   drupal_static_reset('_node_types_build');
