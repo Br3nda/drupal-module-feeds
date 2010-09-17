@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.66 2010/09/17 21:30:49 alexb Exp $
+// $Id: feeds.module,v 1.67 2010/09/17 22:52:13 alexb Exp $
 
 /**
  * @file
@@ -238,6 +238,7 @@ function feeds_theme() {
   return array(
     'feeds_upload' => array(
       'file' => 'feeds.pages.inc',
+      'render element' => 'element',
     ),
   );
 }
