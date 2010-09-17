@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.59 2010/09/17 00:53:34 alexb Exp $
+// $Id: feeds.module,v 1.60 2010/09/17 15:28:19 alexb Exp $
 
 /**
  * @file
@@ -119,13 +119,19 @@ function feeds_reschedule($importer_id = NULL) {
 }
 
 /**
- * Implementation of hook_perm().
+ * Implementation of feeds_permission().
  */
-function feeds_perm() {
-  $perms = array('administer feeds');
+function feeds_permission() {
+  $perms = array(
+    'administer feeds' => t('Administer Feeds'),
+  );
   foreach (feeds_importer_load_all() as $importer) {
-    $perms[] = 'import '. $importer->id .' feeds';
-    $perms[] = 'clear '. $importer->id .' feeds';
+    $perms[] = array(
+      "import $importer->id feeds" => t('Import @name feeds', array('@name' => $importer->config['name'])),
+    );
+    $perms[] = array(
+      "clear $importer->id feeds" => t('Delete items from @name feeds', array('@name' => $importer->config['name'])),
+    );
   }
   return $perms;
 }
