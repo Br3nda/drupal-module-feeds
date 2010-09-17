@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.57 2010/09/17 14:57:55 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.58 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -24,7 +24,7 @@ define('FEEDS_NODE_DEFAULT_FORMAT', -1);
 class FeedsNodeProcessor extends FeedsProcessor {
 
   /**
-   * Implementation of FeedsProcessor::process().
+   * Implements FeedsProcessor::process().
    */
   public function process(FeedsImportBatch $batch, FeedsSource $source) {
 
@@ -85,7 +85,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
   }
 
   /**
-   * Implementation of FeedsProcessor::clear().
+   * Implements FeedsProcessor::clear().
    */
   public function clear(FeedsBatch $batch, FeedsSource $source) {
     if (!$batch->getTotal(FEEDS_CLEARING)) {

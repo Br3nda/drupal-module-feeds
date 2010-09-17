@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsConfigurable.inc,v 1.14 2010/09/12 02:16:45 alexb Exp $
+// $Id: FeedsConfigurable.inc,v 1.15 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -141,7 +141,7 @@ abstract class FeedsConfigurable {
   }
 
   /**
-   * Implementation of getConfig().
+   * Implements getConfig().
    */
   public function getConfig() {
     return $this->config;

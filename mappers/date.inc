@@ -1,5 +1,5 @@
 <?php
-// $Id: date.inc,v 1.3 2010/07/08 17:19:16 alexb Exp $
+// $Id: date.inc,v 1.4 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -7,7 +7,7 @@
  */
 
 /**
- * Implementation of hook_feeds_node_processor_targets_alter().
+ * Implements hook_feeds_node_processor_targets_alter().
  *
  * @see FeedsNodeProcessor::getMappingTargets().
  *
@@ -37,7 +37,7 @@ function date_feeds_node_processor_targets_alter(&$targets, $content_type) {
 }
 
 /**
- * Implementation of hook_feeds_set_target().
+ * Implements hook_feeds_set_target().
  *
  * @param $node
  *   The target node.

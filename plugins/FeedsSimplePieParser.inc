@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.15 2010/09/16 22:30:18 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.16 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * Adapter to present SimplePie_Enclosure as FeedsEnclosure object.
@@ -58,7 +58,7 @@ class FeedsSimplePieEnclosure extends FeedsEnclosure {
 class FeedsSimplePieParser extends FeedsParser {
 
   /**
-   * Implementation of FeedsParser::parse().
+   * Implements FeedsParser::parse().
    */
   public function parse(FeedsImportBatch $batch, FeedsSource $source) {
     feeds_include_library('simplepie.inc', 'simplepie');

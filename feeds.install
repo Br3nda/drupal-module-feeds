@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.install,v 1.14 2010/09/16 22:30:18 alexb Exp $
+// $Id: feeds.install,v 1.15 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -7,7 +7,7 @@
  */
 
 /**
- * Implementation of hook_schema().
+ * Implements hook_schema().
  */
 function feeds_schema() {
   $schema = array();

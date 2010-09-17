@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.20 2010/09/17 00:04:18 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.21 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -12,7 +12,7 @@
 class FeedsUserProcessor extends FeedsProcessor {
 
   /**
-   * Implementation of FeedsProcessor::process().
+   * Implements FeedsProcessor::process().
    */
   public function process(FeedsImportBatch $batch, FeedsSource $source) {
 
@@ -83,7 +83,7 @@ class FeedsUserProcessor extends FeedsProcessor {
   }
 
   /**
-   * Implementation of FeedsProcessor::clear().
+   * Implements FeedsProcessor::clear().
    */
   public function clear(FeedsBatch $batch, FeedsSource $source) {
     // Do not support deleting users as we have no way of knowing which ones we

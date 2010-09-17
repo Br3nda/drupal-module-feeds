@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.27 2010/09/17 00:12:48 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.28 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -25,7 +25,7 @@ class FeedsHTTPBatch extends FeedsImportBatch {
   }
 
   /**
-   * Implementation of FeedsImportBatch::getRaw();
+   * Implements FeedsImportBatch::getRaw();
    */
   public function getRaw() {
     feeds_include_library('http_request.inc', 'http_request');
@@ -43,7 +43,7 @@ class FeedsHTTPBatch extends FeedsImportBatch {
 class FeedsHTTPFetcher extends FeedsFetcher {
 
   /**
-   * Implementation of FeedsFetcher::fetch().
+   * Implements FeedsFetcher::fetch().
    */
   public function fetch(FeedsSource $source) {
     $source_config = $source->getConfigFor($this);
@@ -64,7 +64,7 @@ class FeedsHTTPFetcher extends FeedsFetcher {
   }
 
   /**
-   * Implementation of FeedsFetcher::request().
+   * Implements FeedsFetcher::request().
    */
   public function request($feed_nid = 0) {
     feeds_dbg($_GET);
@@ -281,14 +281,14 @@ class PuSHEnvironment implements PuSHSubscriberEnvironmentInterface {
   }
 
   /**
-   * Implementation of PuSHSubscriberEnvironmentInterface::msg().
+   * Implements PuSHSubscriberEnvironmentInterface::msg().
    */
   public function msg($msg, $level = 'status') {
     drupal_set_message($msg, $level);
   }
 
   /**
-   * Implementation of PuSHSubscriberEnvironmentInterface::log().
+   * Implements PuSHSubscriberEnvironmentInterface::log().
    */
   public function log($msg, $level = 'status') {
     switch ($level) {

@@ -1,5 +1,5 @@
 <?php
-// $Id: filefield.inc,v 1.5 2010/07/18 18:42:31 alexb Exp $
+// $Id: filefield.inc,v 1.6 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -10,7 +10,7 @@
  */
 
 /**
- * Implementation of hook_feeds_node_processor_targets_alter()
+ * Implements hook_feeds_node_processor_targets_alter()
  */
 function filefield_feeds_node_processor_targets_alter(&$targets, $content_type) {
   $info = content_types($content_type);
@@ -30,7 +30,7 @@ function filefield_feeds_node_processor_targets_alter(&$targets, $content_type) 
 }
 
 /**
- * Implementation of hook_feeds_set_target().
+ * Implements hook_feeds_set_target().
  *
  * @param $node
  *   The target node.

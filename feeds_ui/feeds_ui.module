@@ -1,11 +1,11 @@
 <?php
-// $Id: feeds_ui.module,v 1.12 2010/09/17 00:37:55 alexb Exp $
+// $Id: feeds_ui.module,v 1.13 2010/09/17 17:25:19 alexb Exp $
 /**
  * @file
  */
 
 /**
- * Implementation of hook_help().
+ * Implements hook_help().
  */
 function feeds_ui_help($path, $arg) {
   switch ($path) {
@@ -19,7 +19,7 @@ function feeds_ui_help($path, $arg) {
 }
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function feeds_ui_menu() {
   $items = array();
@@ -83,7 +83,7 @@ function feeds_ui_menu() {
 }
 
 /**
- * Implementation of hook_theme().
+ * Implements hook_theme().
  */
 function feeds_ui_theme() {
   return array(

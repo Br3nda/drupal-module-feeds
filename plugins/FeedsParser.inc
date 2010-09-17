@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.22 2010/09/15 16:44:50 alexb Exp $
+// $Id: FeedsParser.inc,v 1.23 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -307,7 +307,7 @@ class FeedsDateTimeElement extends FeedsElement {
   }
 
   /**
-   * Implementation of toString magic php method.
+   * Implements toString magic php method.
    */
   public function __toString() {
     $val = $this->getValue();

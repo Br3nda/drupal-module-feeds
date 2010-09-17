@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.60 2010/09/17 15:28:19 alexb Exp $
+// $Id: feeds.module,v 1.61 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -24,7 +24,7 @@ define('FEEDS_BATCH_ACTIVE', 0);
  */
 
 /**
- * Implementation of hook_cron().
+ * Implements hook_cron().
  */
 function feeds_cron() {
   if ($importers = feeds_reschedule()) {
@@ -41,7 +41,7 @@ function feeds_cron() {
 }
 
 /**
- * Implementation of hook_cron_queue_info().
+ * Implements hook_cron_queue_info().
  *
  * Invoked by drupal_queue module if present.
  */
@@ -119,7 +119,7 @@ function feeds_reschedule($importer_id = NULL) {
 }
 
 /**
- * Implementation of feeds_permission().
+ * Implements feeds_permission().
  */
 function feeds_permission() {
   $perms = array(
@@ -137,7 +137,7 @@ function feeds_permission() {
 }
 
 /**
- * Implementation of hook_forms().
+ * Implements hook_forms().
  *
  * Declare form callbacks for all known classes derived from FeedsConfigurable.
  */
@@ -152,7 +152,7 @@ function feeds_forms() {
 }
 
 /**
- * Implementation of hook_menu().
+ * Implements hook_menu().
  */
 function feeds_menu() {
   // Register a callback for all feed configurations that are not attached to a content type.
@@ -225,7 +225,7 @@ function feeds_importer_load($id) {
 }
 
 /**
- * Implementation of hook_theme().
+ * Implements hook_theme().
  */
 function feeds_theme() {
   return array(
@@ -276,7 +276,7 @@ function feeds_page_access() {
 }
 
 /**
- * Implementation of hook_views_api().
+ * Implements hook_views_api().
  */
 function feeds_views_api() {
   return array(
@@ -286,7 +286,7 @@ function feeds_views_api() {
 }
 
 /**
- * Implementation of hook_ctools_plugin_api().
+ * Implements hook_ctools_plugin_api().
  */
 function feeds_ctools_plugin_api($owner, $api) {
   if ($owner == 'feeds' && $api == 'plugins') {
@@ -295,7 +295,7 @@ function feeds_ctools_plugin_api($owner, $api) {
 }
 
 /**
- * Implementation of hook_ctools_plugin_type().
+ * Implements hook_ctools_plugin_type().
  */
 function feeds_ctools_plugin_type() {
   return array(
@@ -308,7 +308,7 @@ function feeds_ctools_plugin_type() {
 }
 
 /**
- * Implementation of hook_feeds_plugins().
+ * Implements hook_feeds_plugins().
  */
 function feeds_feeds_plugins() {
   module_load_include('inc', 'feeds', 'feeds.plugins');
@@ -316,7 +316,7 @@ function feeds_feeds_plugins() {
 }
 
 /**
- * Implementation of hook_nodeapi().
+ * Implements hook_nodeapi().
  *
  * @todo For Drupal 7, revisit static cache based shuttling of values between
  *   'validate' and 'update'/'insert'.
@@ -430,7 +430,7 @@ function _feeds_nodeapi_node_processor($node, $op) {
 }
 
 /**
- * Implementation of hook_taxonomy().
+ * Implements hook_taxonomy().
  */
 function feeds_taxonomy($op = NULL, $type = NULL, $term = NULL) {
   if ($type =='term' && $term['tid']) {
@@ -457,7 +457,7 @@ function feeds_taxonomy($op = NULL, $type = NULL, $term = NULL) {
 }
 
 /**
- * Implementation of hook_form_alter().
+ * Implements hook_form_alter().
  */
 function feeds_form_alter(&$form, $form_state, $form_id) {
   if ($form['#id'] == 'node-form') {

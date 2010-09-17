@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsPlugin.inc,v 1.6 2010/09/07 17:29:36 alexb Exp $
+// $Id: FeedsPlugin.inc,v 1.7 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -43,7 +43,7 @@ abstract class FeedsPlugin extends FeedsConfigurable implements FeedsSourceInter
   }
 
   /**
-   * Implementation of FeedsSourceInterface::sourceDefaults().
+   * Implements FeedsSourceInterface::sourceDefaults().
    */
   public function sourceDefaults() {
     $values = array_flip(array_keys($this->sourceForm(array())));

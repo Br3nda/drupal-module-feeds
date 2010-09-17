@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.22 2010/09/17 00:12:48 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.23 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -12,7 +12,7 @@
 class FeedsTermProcessor extends FeedsProcessor {
 
   /**
-   * Implementation of FeedsProcessor::process().
+   * Implements FeedsProcessor::process().
    */
   public function process(FeedsImportBatch $batch, FeedsSource $source) {
 
@@ -84,7 +84,7 @@ class FeedsTermProcessor extends FeedsProcessor {
   }
 
   /**
-   * Implementation of FeedsProcessor::clear().
+   * Implements FeedsProcessor::clear().
    */
   public function clear(FeedsBatch $batch, FeedsSource $source) {
     $deleted = 0;

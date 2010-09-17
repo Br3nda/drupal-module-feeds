@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.16 2010/09/16 19:03:27 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.17 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
@@ -7,7 +7,7 @@
 class FeedsCSVParser extends FeedsParser {
 
   /**
-   * Implementation of FeedsParser::parse().
+   * Implements FeedsParser::parse().
    */
   public function parse(FeedsImportBatch $batch, FeedsSource $source) {
 

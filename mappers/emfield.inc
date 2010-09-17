@@ -1,5 +1,5 @@
 <?php
-// $Id: emfield.inc,v 1.1 2010/09/16 19:20:04 alexb Exp $
+// $Id: emfield.inc,v 1.2 2010/09/17 17:25:19 alexb Exp $
 
 /**
  * @file
@@ -8,7 +8,7 @@
  */
 
 /**
- * Implementation of hook_feeds_node_processor_targets_alter().
+ * Implements hook_feeds_node_processor_targets_alter().
  *
  * @see FeedsNodeProcessor::getMappingTargets().
  */
