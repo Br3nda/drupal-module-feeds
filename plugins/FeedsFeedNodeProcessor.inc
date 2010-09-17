@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFeedNodeProcessor.inc,v 1.18 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsFeedNodeProcessor.inc,v 1.19 2010/09/17 21:00:47 alexb Exp $
 
 /**
  * @file
@@ -151,7 +151,7 @@ class FeedsFeedNodeProcessor extends FeedsProcessor {
   public function setTargetElement($target_node, $target_element, $value) {
     if ($target_element == 'source') {
       // Get the class of the feed node importer's fetcher and set the source
-      // property. See feeds_nodeapi() how $node->feeds gets stored.
+      // property. See feeds_node_update() how $node->feeds gets stored.
       $class = get_class($this->feedNodeImporter()->fetcher);
       $target_node->feeds[$class]['source'] = $value;
     }
