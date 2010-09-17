@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.56 2010/09/17 00:59:04 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.57 2010/09/17 14:57:55 alexb Exp $
 
 /**
  * @file
@@ -14,6 +14,9 @@ define('FEEDS_NODE_BATCH_SIZE', 50);
 define('FEEDS_NODE_SKIP_EXISTING', 0);
 define('FEEDS_NODE_REPLACE_EXISTING', 1);
 define('FEEDS_NODE_UPDATE_EXISTING', 2);
+
+// "Use the present default format"
+define('FEEDS_NODE_DEFAULT_FORMAT', -1);
 
 /**
  * Creates nodes from feed items.
@@ -145,7 +148,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $type = isset($types['story']) ? 'story' : key($types);
     return array(
       'content_type' => $type,
-      'input_format' => FILTER_FORMAT_DEFAULT,
+      'input_format' => FEEDS_NODE_DEFAULT_FORMAT,
       'update_existing' => FEEDS_SKIP_EXISTING,
       'expire' => FEEDS_EXPIRE_NEVER,
       'mappings' => array(),
@@ -167,10 +170,10 @@ class FeedsNodeProcessor extends FeedsProcessor {
       '#options' => $types,
       '#default_value' => $this->config['content_type'],
     );
-    $format_options = array(FILTER_FORMAT_DEFAULT => t('Default format'));
+    $format_options = array(FEEDS_NODE_DEFAULT_FORMAT => t('Default format'));
     $formats = filter_formats();
       foreach ($formats as $format) {
-        $format_options[$format->format] = $format->name;
+        $format_options[$format->format] = check_plain($format->name);
       }
     $form['input_format'] = array(
       '#type' => 'select',
@@ -352,7 +355,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     if ($populate) {
       $node->type = $this->config['content_type'];
       $node->changed = REQUEST_TIME;
-      $node->format = $this->config['input_format'];
+      $node->format = ($this->config['input_format'] == FEEDS_NODE_DEFAULT_FORMAT) ? filter_fallback_format() : $this->config['input_format'];
       $node->feeds_node_item = new stdClass();
       $node->feeds_node_item->id = $this->id;
       $node->feeds_node_item->imported = REQUEST_TIME;
