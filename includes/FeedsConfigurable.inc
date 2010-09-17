@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsConfigurable.inc,v 1.15 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsConfigurable.inc,v 1.16 2010/09/17 22:16:15 alexb Exp $
 
 /**
  * @file
@@ -205,14 +205,13 @@ abstract class FeedsConfigurable {
  *   The form method that should be rendered.
  *
  * @return
- *   Rendered config form, if available. Empty string otherwise.
+ *   Config form array if available. NULL otherwise.
  */
 function feeds_get_form($configurable, $form_method) {
   $form_state = array();
   if (method_exists($configurable, $form_method)) {
     return drupal_get_form(get_class($configurable) .'_feeds_form', $configurable, $form_method);
   }
-  return '';
 }
 
 /**
