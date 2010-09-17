@@ -1,4 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.173.2.2 2010/09/16 19:32:43 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.173.2.3 2010/09/17 19:36:44 alexb Exp $
+
+Feeds 6.x 1.0 Beta 7, 2010-09-17
+--------------------------------
+
+- #914692: Fix calltime pass-by-reference errors.
 
 Feeds 6.x 1.0 Beta 6, 2010-09-16
 --------------------------------
