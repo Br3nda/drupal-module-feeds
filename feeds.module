@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.62 2010/09/17 17:57:18 alexb Exp $
+// $Id: feeds.module,v 1.63 2010/09/17 20:59:59 alexb Exp $
 
 /**
  * @file
@@ -323,116 +323,141 @@ function feeds_feeds_plugins() {
 }
 
 /**
- * Implements hook_nodeapi().
- *
- * @todo For Drupal 7, revisit static cache based shuttling of values between
- *   'validate' and 'update'/'insert'.
+ * Implements hook_node_load().
  */
-function feeds_nodeapi(&$node, $op, $form) {
+function feeds_node_load($node) {
+  _feeds_node_processor_node_load($node);
+}
 
-  // $node looses any changes after 'validate' stage (see node_form_validate()).
-  // Keep a copy of title and feeds array between 'validate' and subsequent
-  // stages. This allows for automatically populating the title of the node form
-  // and modifying the $form['feeds'] array on node validation just like on the
-  // standalone form.
-  static $last_title;
-  static $node_feeds;
+/**
+ * Implements hook_node_validate().
+ */
+function feeds_node_validate($node, $form, &$form_state) {
+  if (!$importer_id = feeds_get_importer_id($node->type)) {
+    return;
+  }
+  // Keep a copy of the title for subsequent node creation stages.
+  // @todo: revisit whether $node still looses all of its properties
+  // between validate and insert stage.
+  $last_title = &drupal_static('feeds_node_last_title');
+  $last_feeds = &drupal_static('feeds_node_last_feeds');
 
-  // Break out node processor related nodeapi functionality.
-  _feeds_nodeapi_node_processor($node, $op);
+  // On validation stage we are working with a FeedsSource object that is
+  // not tied to a nid - when creating a new node there is no
+  // $node->nid at this stage.
+  $source = feeds_source($importer_id);
 
-  if ($importer_id = feeds_get_importer_id($node->type)) {
-    switch ($op) {
-      case 'validate':
-        // On validation stage we are working with a FeedsSource object that is
-        // not tied to a nid - when creating a new node there is no
-        // $node->nid at this stage.
-        $source = feeds_source($importer_id);
+  // Node module magically moved $form['feeds'] to $node->feeds :P
+  $last_feeds = $node->feeds;
+  $source->configFormValidate($last_feeds);
 
-        // Node module magically moved $form['feeds'] to $node->feeds :P
-        $node_feeds = $node->feeds;
-        $source->configFormValidate($node_feeds);
-
-        // If node title is empty, try to retrieve title from feed.
-        if (trim($node->title) == '') {
-          try {
-            $source->addConfig($node_feeds);
-            if (!$last_title = $source->preview()->getTitle()) {
-              throw new Exception();
-            }
-          }
-          catch (Exception $e) {
-            drupal_set_message($e->getMessage(), 'error');
-            form_set_error('title', t('Could not retrieve title from feed.'), 'error');
-          }
-        }
-        break;
-      case 'presave':
-        if (!empty($last_title)) {
-          $node->title = $last_title;
-        }
-        $last_title = NULL;
-        break;
-      case 'insert':
-      case 'update':
-        // A node may not have been validated, make sure $node_feeds is present.
-        if (empty($node_feeds)) {
-          $node_feeds = $node->feeds;
-        }
-        // Add configuration to feed source and save.
-        $source = feeds_source($importer_id, $node->nid);
-        $source->addConfig($node_feeds);
-        $source->save();
-
-        // Refresh feed if import on create is selected and suppress_import is
-        // not set.
-        if ($op == 'insert' && feeds_importer($importer_id)->config['import_on_create'] && !isset($node_feeds['suppress_import'])) {
-          feeds_batch_set(t('Importing'), 'import', $importer_id, $node->nid);
-        }
-        // Add source to schedule, make sure importer is scheduled, too.
-        if ($op == 'insert') {
-          $source->schedule();
-          $source->importer->schedule();
-        }
-        $node_feeds = NULL;
-        break;
-      case 'delete':
-        // Remove attached source.
-        feeds_source($importer_id, $node->nid)->delete();
-        break;
+  // If node title is empty, try to retrieve title from feed.
+  if (trim($node->title) == '') {
+    try {
+      $source->addConfig($last_feeds);
+      if (!$last_title = $source->preview()->getTitle()) {
+        throw new Exception();
+      }
+    }
+    catch (Exception $e) {
+      drupal_set_message($e->getMessage(), 'error');
+      form_set_error('title', t('Could not retrieve title from feed.'), 'error');
     }
   }
 }
 
 /**
- * Handles FeedsNodeProcessor specific nodeapi operations.
+ * Implements hook_node_insert().
  */
-function _feeds_nodeapi_node_processor($node, $op) {
-  switch ($op) {
-    case 'load':
-      if ($result = db_query("SELECT imported, guid, url, feed_nid FROM {feeds_node_item} WHERE nid = :nid", array(':nid' => $node->nid))->fetch()) {
-        $node->feeds_node_item = $result;
-      }
-      break;
-    case 'insert':
-      if (isset($node->feeds_node_item)) {
-        $node->feeds_node_item->nid = $node->nid;
-        drupal_write_record('feeds_node_item', $node->feeds_node_item);
-      }
-      break;
-    case 'update':
-      if (isset($node->feeds_node_item)) {
-        $node->feeds_node_item->nid = $node->nid;
-        drupal_write_record('feeds_node_item', $node->feeds_node_item, 'nid');
-      }
-      break;
-    case 'delete':
-      if (isset($node->feeds_node_item)) {
-        db_delete('feeds_node_item')
-          ->condition('nid', $node->nid)
-          ->execute();
-      }
-      break;
+function feeds_node_insert($node) {
+  _feeds_node_processor_node_insert($node);
+  feeds_node_update($node);
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function feeds_node_update($node) {
+  _feeds_node_processor_node_update($node);
+  if (!$importer_id = feeds_get_importer_id($node->type)) {
+    return;
+  }
+  $last_title = &drupal_static('feeds_node_last_title');
+  $last_feeds = &drupal_static('feeds_node_last_feeds');
+  // Populate title from result of validation phase.
+  if (!empty($last_title)) {
+    $node->title = $last_title;
+  }
+  $last_title = NULL;
+  // A node may not have been validated, make sure $last_feeds is present.
+  if (empty($last_feeds)) {
+    $last_feeds = $node->feeds;
+  }
+  // Add configuration to feed source and save.
+  $source = feeds_source($importer_id, $node->nid);
+  $source->addConfig($last_feeds);
+  $source->save();
+
+  // Refresh feed if import on create is selected and suppress_import is
+  // not set.
+  if ($op == 'insert' && feeds_importer($importer_id)->config['import_on_create'] && !isset($last_feeds['suppress_import'])) {
+    feeds_batch_set(t('Importing'), 'import', $importer_id, $node->nid);
+  }
+  // Add source to schedule, make sure importer is scheduled, too.
+  if ($op == 'insert') {
+    $source->schedule();
+    $source->importer->schedule();
+  }
+  $last_feeds = NULL;
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function feeds_node_delete($node) {
+  _feeds_node_processor_node_delete($node);
+  if ($importer_id = feeds_get_importer_id($node->type)) {
+    feeds_source($importer_id, $node->nid)->delete();
+  }
+}
+
+/**
+ * FeedsNodeProcessor's hook_node_load().
+ */
+function _feeds_node_processor_node_load($node) {
+  if ($result = db_query("SELECT imported, guid, url, feed_nid FROM {feeds_node_item} WHERE nid = :nid", array(':nid' => $node->nid))->fetch()) {
+    $node->feeds_node_item = $result;
+  }
+}
+
+/**
+ * FeedsNodeProcessor's hook_node_insert().
+ */
+function _feeds_node_processor_node_insert($node) {
+  if (isset($node->feeds_node_item)) {
+    $node->feeds_node_item->nid = $node->nid;
+    drupal_write_record('feeds_node_item', $node->feeds_node_item);
+  }
+}
+
+/**
+ * FeedsNodeProcessor's hook_node_update().
+ */
+function _feeds_node_processor_node_update($node) {
+  if (isset($node->feeds_node_item)) {
+    $node->feeds_node_item->nid = $node->nid;
+    drupal_write_record('feeds_node_item', $node->feeds_node_item, 'nid');
+  }
+}
+
+/**
+ * FeedsNodeProcessor's hook_node_delete().
+ */
+function _feeds_node_processor_node_delete($node) {
+  if (isset($node->feeds_node_item)) {
+    db_delete('feeds_node_item')
+      ->condition('nid', $node->nid)
+      ->execute();
   }
 }
 
