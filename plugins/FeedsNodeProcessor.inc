@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.61 2010/09/18 00:15:41 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.62 2010/09/18 00:36:57 alexb Exp $
 
 /**
  * @file
@@ -185,7 +185,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
       '#options' => $format_options,
       '#default_value' => $this->config['input_format'],
     );
-    $author = user_load(array('uid' => $this->config['author']));
+    $author = user_load($this->config['author']);
     $form['author'] = array(
       '#type' => 'textfield',
       '#title' => t('Author'),
@@ -219,7 +219,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
    * Override parent::configFormValidate().
    */
   public function configFormValidate(&$values) {
-    if ($author = user_load(array('name' => $values['author']))) {
+    if ($author = user_load_by_name($values['author'])) {
       $values['author'] = $author->uid;
     }
     else {
