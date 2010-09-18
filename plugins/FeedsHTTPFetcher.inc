@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsHTTPFetcher.inc,v 1.28 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsHTTPFetcher.inc,v 1.29 2010/09/18 00:06:39 alexb Exp $
 
 /**
  * @file
@@ -122,7 +122,7 @@ class FeedsHTTPFetcher extends FeedsFetcher {
       '#title' => t('Designated hub'),
       '#description' => t('Enter the URL of a designated PubSubHubbub hub (e. g. superfeedr.com). If given, this hub will be used instead of the hub specified in the actual feed.'),
       '#default_value' => $this->config['designated_hub'],
-      '#process' => array('ctools_dependent_process'),
+//      '#process' => array('ctools_dependent_process'),
       '#dependency' => array(
         'edit-use-pubsubhubbub' => array(1),
       ),
