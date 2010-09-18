@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.52 2010/09/18 00:40:00 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.53 2010/09/18 00:51:07 alexb Exp $
 
 /**
  * @file
@@ -651,7 +651,7 @@ function _feeds_ui_format_options($options) {
 function theme_feeds_ui_overview_form($variables) {
   $form = $variables['form'];
   drupal_add_js(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.js');
-  drupal_add_css(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.css');
+  drupal_add_css(array('file' => drupal_get_path('module', 'feeds_ui') .'/feeds_ui.css'));
 
   // Iterate through all importers and build a table.
   $rows = array();
@@ -686,7 +686,7 @@ function theme_feeds_ui_overview_form($variables) {
 function theme_feeds_ui_edit_page($variables) {
   $config_info = $variables['info'];
   $active_container = $variables['active'];
-  drupal_add_css(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.css');
+  drupal_add_css(array('file' => drupal_get_path('module', 'feeds_ui') .'/feeds_ui.css'));
 
   // Outer wrapper.
   $output = '<div class="feeds-settings clear-block">';
