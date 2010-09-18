@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.63 2010/09/18 00:46:21 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.64 2010/09/18 00:48:49 alexb Exp $
 
 /**
  * @file
@@ -317,7 +317,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     foreach ($this->uniqueTargets($batch) as $target => $value) {
       switch ($target) {
         case 'nid':
-          $nid = db_query("SELECT nid FROM {node} WHERE nid = %d", array(':nid' => $value))->fetchField();
+          $nid = db_query("SELECT nid FROM {node} WHERE nid = :nid", array(':nid' => $value))->fetchField();
           break;
         case 'url':
           $nid = db_query("SELECT nid FROM {feeds_node_item} WHERE feed_nid = :nid AND id = :id AND url = :url", array(':nid' => $source->feed_nid, ':id' => $source->id, ':url' => $value))->fetchField();
