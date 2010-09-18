@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsPlugin.inc,v 1.7 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsPlugin.inc,v 1.8 2010/09/18 00:44:58 alexb Exp $
 
 /**
  * @file
@@ -88,7 +88,7 @@ abstract class FeedsPlugin extends FeedsConfigurable implements FeedsSourceInter
     static $loaded = FALSE;
     if (!$loaded) {
       $path = drupal_get_path('module', 'feeds') .'/mappers';
-      $files = drupal_system_listing('.*\.inc$', $path, 'name', 0);
+      $files = drupal_system_listing('/.*\.inc$/', $path, 'name', 0);
       foreach ($files as $file) {
         if (strstr($file->filename, '/mappers/')) {
           require_once("./$file->filename");
