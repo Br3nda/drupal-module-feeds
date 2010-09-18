@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.64 2010/09/18 00:48:49 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.65 2010/09/18 01:44:47 alexb Exp $
 
 /**
  * @file
@@ -147,7 +147,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
    */
   public function configDefaults() {
     $types = node_type_get_names();
-    $type = isset($types['story']) ? 'story' : key($types);
+    $type = isset($types['article']) ? 'article' : key($types);
     return array(
       'content_type' => $type,
       'input_format' => FEEDS_NODE_DEFAULT_FORMAT,

@@ -1,4 +1,4 @@
-/* $Id: feeds_ui.css,v 1.7 2010/09/18 01:02:49 alexb Exp $ */
+/* $Id: feeds_ui.css,v 1.8 2010/09/18 01:44:46 alexb Exp $ */
 
 /* Feeds admin overview form. */
 table.feeds-admin-importers thead th {
@@ -49,6 +49,8 @@ div.feeds-container.plain {
   }
   div.feeds-container.plain h4 {
     font-size: 1.0em;
+    margin: 0;
+    padding: 0;
     }
   div.feeds-container-body p {
     padding: 5px 0;

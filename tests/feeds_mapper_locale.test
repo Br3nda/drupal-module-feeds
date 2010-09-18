@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_locale.test,v 1.6 2010/09/17 23:58:18 alexb Exp $
+// $Id: feeds_mapper_locale.test,v 1.7 2010/09/18 01:44:47 alexb Exp $
 
 /**
  * @file
@@ -39,7 +39,7 @@ class FeedsMapperLocaleTestCase extends FeedsMapperTestCase {
         )
     ));
 
-    // Add an additional language and enable it for page and story.
+    // Add an additional language and enable it for page and article.
     $edit = array(
       'langcode' => 'zh-hans',
     );
@@ -48,7 +48,7 @@ class FeedsMapperLocaleTestCase extends FeedsMapperTestCase {
     $edit = array(
       'language_content_type' => TRUE,
     );
-    foreach (array('story', 'page') as $type) {
+    foreach (array('article', 'page') as $type) {
       $this->drupalPost("admin/content/node-type/$type", $edit, t('Save content type'));
     }
 
