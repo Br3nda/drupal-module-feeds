@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.50 2010/09/18 00:31:56 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.51 2010/09/18 00:33:04 alexb Exp $
 
 /**
  * @file
@@ -461,7 +461,7 @@ function theme_feeds_ui_plugin_form($variables) {
     // Assemble container, render form elements.
     $container = array(
       'title' => $form['plugin_key'][$key]['#title'],
-      'body' => $form['plugin_key'][$key]['#description'],
+      'body' => isset($form['plugin_key'][$key]['#description']) ? $form['plugin_key'][$key]['#description'] : '',
     );
     $form['plugin_key'][$key]['#title'] = t('Select');
     $form['plugin_key'][$key]['#attributes']['class'] = array('feeds-ui-radio-link');
