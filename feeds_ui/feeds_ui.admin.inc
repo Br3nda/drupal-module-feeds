@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.46 2010/09/17 23:58:18 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.47 2010/09/18 00:05:30 alexb Exp $
 
 /**
  * @file
@@ -62,17 +62,17 @@ function feeds_ui_overview_form($form, &$form_status) {
   );
   foreach (feeds_importer_load_all(TRUE) as $importer) {
     $importer_form = array();
-    $importer_form['name']['#value'] = check_plain($importer->config['name']);
-    $importer_form['description']['#value'] = check_plain($importer->config['description']);
+    $importer_form['name']['#markup'] = check_plain($importer->config['name']);
+    $importer_form['description']['#markup'] = check_plain($importer->config['description']);
     if (empty($importer->config['content_type'])) {
-      $importer_form['attached']['#value'] = '[none]';
+      $importer_form['attached']['#markup'] = '[none]';
     }
     else {
       if (!$importer->disabled) {
-        $importer_form['attached']['#value'] = l(node_type_get_name($importer->config['content_type']), 'node/add/'. str_replace('_', '-', $importer->config['content_type']));
+        $importer_form['attached']['#markup'] = l(node_type_get_name($importer->config['content_type']), 'node/add/'. str_replace('_', '-', $importer->config['content_type']));
       }
       else {
-        $importer_form['attached']['#value'] = node_type_get_name($importer->config['content_type']);
+        $importer_form['attached']['#markup'] = node_type_get_name($importer->config['content_type']);
       }
     }
 
@@ -92,11 +92,11 @@ function feeds_ui_overview_form($form, &$form_status) {
       $delete = t('Revert');
     }
     $importer_form['status'] = array(
-      '#value' => $status,
+      '#markup' => $status,
     );
     if (!$importer->disabled) {
       $importer_form['operations'] = array(
-        '#value' =>
+        '#markup' =>
           l($edit, 'admin/structure/feeds/edit/'. $importer->id) .' | '.
           l(t('Export'), 'admin/structure/feeds/export/'. $importer->id) .' | '.
           l(t('Clone'), 'admin/structure/feeds/clone/'. $importer->id) .
@@ -104,7 +104,7 @@ function feeds_ui_overview_form($form, &$form_status) {
       );
     }
     else {
-      $importer_form['operations']['#value'] = '&nbsp;';
+      $importer_form['operations']['#markup'] = '&nbsp;';
     }
 
     $importer_form[$importer->id] = array(
@@ -652,6 +652,7 @@ function theme_feeds_ui_overview_form($variables) {
   $form = $variables['form'];
   drupal_add_js(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.js');
   drupal_add_css(drupal_get_path('module', 'feeds_ui') .'/feeds_ui.css');
+
   // Iterate through all importers and build a table.
   $rows = array();
   foreach (array('enabled', 'disabled') as $type) {
