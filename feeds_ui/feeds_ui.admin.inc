@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.55 2010/09/18 00:54:13 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.56 2010/09/18 01:01:00 alexb Exp $
 
 /**
  * @file
@@ -730,9 +730,9 @@ function theme_feeds_ui_edit_page($variables) {
 function theme_feeds_ui_container($variables) {
   $container = $variables['container'];
 
-  $class = empty($container['class']) ? array('plain') : $container['class'];
+  $class = array_merge(array('feeds-container'), empty($container['class']) ? array('plain') : $container['class']);
   $id = empty($container['id']) ? '': ' id="'. $container['id'] .'"';
-  $output = '<div class="feeds-container'. implode(' ', $class) .'"'. $id .'>';
+  $output = '<div class="'. implode(' ', $class) .'"'. $id .'>';
 
   if (isset($container['actions']) && count($container['actions'])) {
     $output .= '<ul class="container-actions">';
