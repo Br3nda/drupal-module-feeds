@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.56 2010/09/18 01:01:00 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.57 2010/09/18 01:03:43 alexb Exp $
 
 /**
  * @file
@@ -546,7 +546,7 @@ function feeds_ui_mapping_form($form, &$form_state, $importer) {
     }
   }
 
-  if ($source_options) {
+  if (isset($source_options)) {
     $form['source'] = array(
       '#type' => 'select',
       '#options' => array('' => t('Select a source')) + $source_options,
