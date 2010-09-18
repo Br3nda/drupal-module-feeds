@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.62 2010/09/18 00:36:57 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.63 2010/09/18 00:46:21 alexb Exp $
 
 /**
  * @file
@@ -265,13 +265,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
      );
     // Include body field only if available.
     $type = node_type_get_type($this->config['content_type']);
-    if ($type->has_body) {
-      // Using 'teaser' instead of 'body' forces entire content above the break.
-      $targets['body'] = array(
-        'name' => t('Body'),
-        'description' => t('The body of the node. The teaser will be the same as the entire body.'),
-      );
-    }
+    // Using 'teaser' instead of 'body' forces entire content above the break.
+    $targets['body'] = array(
+      'name' => t('Body'),
+      'description' => t('The body of the node. The teaser will be the same as the entire body.'),
+    );
     $targets += array(
       'nid' => array(
         'name' => t('Node ID'),
