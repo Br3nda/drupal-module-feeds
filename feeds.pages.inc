@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.30 2010/09/18 00:51:07 alexb Exp $
+// $Id: feeds.pages.inc,v 1.31 2010/09/18 00:52:43 alexb Exp $
 
 /**
  * @file
@@ -155,7 +155,7 @@ function feeds_fetcher_callback($importer, $feed_nid = 0) {
  */
 function theme_feeds_upload($variables) {
   $element = $variables['element'];
-  drupal_add_css(array('file' => drupal_get_path('module', 'feeds') .'/feeds.css'));
+  drupal_add_css('file' => drupal_get_path('module', 'feeds') .'/feeds.css');
   _form_set_class($element, array('form-file'));
   $description = '';
   if (!empty($element['#file_info'])) {
