@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.49 2010/09/18 00:20:44 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.50 2010/09/18 00:31:56 alexb Exp $
 
 /**
  * @file
@@ -722,7 +722,7 @@ function theme_feeds_ui_edit_page($variables) {
  *   array(
  *     'title' => 'the title',
  *     'body' => 'the body of the container, may also be an array of more
- *                containers.',
+ *                containers or a renderable array.',
  *     'class' => array('the class of the container.'),
  *     'id' => 'the id of the container',
  *   );
@@ -751,8 +751,13 @@ function theme_feeds_ui_container($variables) {
   if (!empty($container['body'])) {
     $output .= '<div class="feeds-container-body">';
     if (is_array($container['body'])) {
-      foreach ($container['body'] as $c) {
-        $output .= theme('feeds_ui_container', array('container' => $c));
+      if (isset($container['body']['#type'])) {
+        $output .= drupal_render($container['body']);
+      }
+      else {
+        foreach ($container['body'] as $c) {
+          $output .= theme('feeds_ui_container', array('container' => $c));
+        }
       }
     }
     else {
