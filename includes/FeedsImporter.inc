@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.28 2010/09/17 23:55:35 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.29 2010/09/18 00:15:41 alexb Exp $
 
 /**
  * @file
@@ -271,7 +271,7 @@ class FeedsImporter extends FeedsConfigurable {
     if ($this->config['import_period'] != $values['import_period']) {
       feeds_reschedule($this->id);
     }
-    parent::configFormSubmit(&$values);
+    parent::configFormSubmit($values);
   }
 }
 
