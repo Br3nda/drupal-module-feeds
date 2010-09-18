@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.57 2010/09/18 01:03:43 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.58 2010/09/18 01:09:57 alexb Exp $
 
 /**
  * @file
@@ -488,7 +488,7 @@ function feeds_ui_mapping_form($form, &$form_state, $importer) {
   $form = array();
   $form['#importer'] = $importer;
   $form['#mappings'] = $mappings = $importer->processor->getMappings();
-  $form['help']['#value'] = feeds_ui_mapping_help();
+  $form['help']['#markup'] = feeds_ui_mapping_help();
 
   // Get mapping sources from parsers and targets from processor, format them
   // for output.
@@ -496,18 +496,18 @@ function feeds_ui_mapping_form($form, &$form_state, $importer) {
   if ($sources = $importer->parser->getMappingSources()) {
     $source_options = _feeds_ui_format_options($sources);
     foreach ($sources as $k => $source) {
-      $legend['sources'][$k]['name']['#value'] = empty($source['name']) ? $k : $source['name'];
-      $legend['sources'][$k]['description']['#value'] = empty($source['description']) ? '' : $source['description'];
+      $legend['sources'][$k]['name']['#markup'] = empty($source['name']) ? $k : $source['name'];
+      $legend['sources'][$k]['description']['#markup'] = empty($source['description']) ? '' : $source['description'];
     }
   }
   else {
-    $legend['sources']['#value'] = t('This parser supports free source definitions. Enter the name of the source field in lower case into the Source text field above.');
+    $legend['sources']['#markup'] = t('This parser supports free source definitions. Enter the name of the source field in lower case into the Source text field above.');
   }
   $targets = $importer->processor->getMappingTargets();
   $target_options = _feeds_ui_format_options($targets);
   foreach ($targets as $k => $target) {
-    $legend['targets'][$k]['name']['#value'] = empty($target['name']) ? $k : $target['name'];
-    $legend['targets'][$k]['description']['#value'] = empty($target['description']) ? '' : $target['description'];
+    $legend['targets'][$k]['name']['#markup'] = empty($target['name']) ? $k : $target['name'];
+    $legend['targets'][$k]['description']['#markup'] = empty($target['description']) ? '' : $target['description'];
   }
 
   // Legend explaining source and target elements.
@@ -840,7 +840,7 @@ function theme_feeds_ui_mapping_form($variables) {
 
   // Stick tables into collapsible fieldset.
   $form['legendset']['legend'] = array(
-    '#value' => '<div>'. $legend .'</div>',
+    '#markup' => '<div>'. $legend .'</div>',
   );
 
   $output .= drupal_render($form['legendset']);
