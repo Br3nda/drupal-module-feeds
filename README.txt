@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.34 2010/09/15 19:27:42 alexb Exp $
+$Id: README.txt,v 1.35 2010/09/18 00:40:43 alexb Exp $
 
 
 "It feeds"
@@ -35,11 +35,12 @@ Requirements
 
 - CTools 1.x
   http://drupal.org/project/ctools
-- Drupal 6.x
+- Job Scheduler
+  http://drupal.org/project/job_scheduler
+- Drupal 7.x
   http://drupal.org/project/drupal
 - PHP safe mode is not supported, depending on your Feeds Importer configuration
   safe mode may cause no problems though.
-- PHP 5.2.x recommended
 
 Installation
 ============
