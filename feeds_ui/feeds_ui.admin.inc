@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.51 2010/09/18 00:33:04 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.52 2010/09/18 00:40:00 alexb Exp $
 
 /**
  * @file
@@ -471,7 +471,7 @@ function theme_feeds_ui_plugin_form($variables) {
     $output .= theme('feeds_ui_container', array('container' => $container));
   }
 
-  $output .= drupal_render($form);
+  $output .= drupal_render_children($form);
   return $output;
 }
 
@@ -845,6 +845,6 @@ function theme_feeds_ui_mapping_form($variables) {
 
   $output .= drupal_render($form['legendset']);
 
-  $output .= drupal_render($form);
+  $output .= drupal_render_children($form);
   return $output;
 }
