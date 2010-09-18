@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.71 2010/09/17 23:58:18 alexb Exp $
+// $Id: feeds.module,v 1.72 2010/09/18 00:32:07 alexb Exp $
 
 /**
  * @file
@@ -799,6 +799,8 @@ function feeds_get_plugins_by_type($type) {
 
 /**
  * Gets an instance of a class for a given plugin and id.
+ *
+ * @todo Collapse into FeedsPlugin::instance().
  *
  * @param $plugin
  *   A string that is the key of the plugin to load.
