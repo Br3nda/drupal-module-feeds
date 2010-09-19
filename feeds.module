@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.72 2010/09/18 00:32:07 alexb Exp $
+// $Id: feeds.module,v 1.73 2010/09/19 01:11:24 alexb Exp $
 
 /**
  * @file
@@ -426,7 +426,7 @@ function feeds_node_delete($node) {
  * FeedsNodeProcessor's hook_node_load().
  */
 function _feeds_node_processor_node_load($nodes) {
-  if ($items = db_query("SELECT nid, imported, guid, url, feed_nid FROM {feeds_node_item} WHERE nid IN nids(:nids)", array(':nids' => array_keys($nodes)))) {
+  if ($items = db_query("SELECT nid, imported, guid, url, feed_nid FROM {feeds_node_item} WHERE nid IN (:nids)", array(':nids' => array_keys($nodes)))) {
     foreach ($items as $item) {
       $node->{$item->nid} = $item;
     }
