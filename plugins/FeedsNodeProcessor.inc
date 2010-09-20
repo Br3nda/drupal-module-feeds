@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.66 2010/09/20 18:27:52 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.67 2010/09/20 18:31:45 alexb Exp $
 
 /**
  * @file
@@ -246,10 +246,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
     if (in_array($target_element, array('url', 'guid'))) {
       $target_node->feeds_node_item->$target_element = $value;
     }
-    elseif ($target_element == 'body') {
-      $target_node->teaser = node_teaser($value);
-      $target_node->body = $value;
-    }
     elseif (in_array($target_element, array('title', 'status', 'created', 'nid', 'uid'))) {
       $target_node->$target_element = $value;
     }
@@ -267,11 +263,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
      );
     // Include body field only if available.
     $type = node_type_get_type($this->config['content_type']);
-    // Using 'teaser' instead of 'body' forces entire content above the break.
-    $targets['body'] = array(
-      'name' => t('Body'),
-      'description' => t('The body of the node. The teaser will be the same as the entire body.'),
-    );
     $targets += array(
       'nid' => array(
         'name' => t('Node ID'),
