@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsCSVParser.inc,v 1.18 2010/09/17 22:46:26 alexb Exp $
+// $Id: FeedsCSVParser.inc,v 1.19 2010/09/20 15:57:25 alexb Exp $
 
 /**
  * Parses a given file as a CSV file.
@@ -13,7 +13,7 @@ class FeedsCSVParser extends FeedsParser {
 
     // Load and configure parser.
     feeds_include_library('ParserCSV.inc', 'ParserCSV');
-    $iterator = new ParserCSVIterator(realpath($batch->getFilePath()));
+    $iterator = new ParserCSVIterator($batch->getFilePath());
     $source_config = $source->getConfigFor($this);
     $parser = new ParserCSV();
     $delimiter = $source_config['delimiter'] == 'TAB' ? "\t" : $source_config['delimiter'];
