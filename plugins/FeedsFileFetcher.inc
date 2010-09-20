@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.18 2010/09/20 15:41:03 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.19 2010/09/20 16:36:10 alexb Exp $
 
 /**
  * @file
@@ -90,9 +90,8 @@ class FeedsFileFetcher extends FeedsFetcher {
 
     // If there is a file uploaded, save it, otherwise validate input on
     // file.
-    if ($file = file_save_upload('feeds', array(), $feed_dir)) {
-      file_set_status($file, FILE_STATUS_PERMANENT);
-      $values['source'] = $file->filepath;
+    if ($file = file_save_upload('feeds', array('file_validate_extensions' => array(0 => $this->config['allowed_extensions'])), $feed_dir)) {
+      $values['source'] = $file->uri;
     }
     elseif (empty($values['source'])) {
       form_set_error('feeds][source', t('Upload a file first.'));
@@ -100,8 +99,8 @@ class FeedsFileFetcher extends FeedsFetcher {
     // If a file has not been uploaded and $values['source'] is not empty, make
     // sure that this file is within Drupal's files directory as otherwise
     // potentially any file that the web server has access could be exposed.
-    elseif (!file_check_location($values['source'], file_directory_path())) {
-      form_set_error('feeds][source', t('File needs to point to a file in your Drupal file system path.'));
+    elseif (strpos($values['source'], 'public://') !== 0) {
+      form_set_error('feeds][source', t('File needs to reside within the site\'s file directory, its path needs to start with public://.'));
     }
   }
 
@@ -110,6 +109,7 @@ class FeedsFileFetcher extends FeedsFetcher {
    */
   public function configDefaults() {
     return array(
+      'allowed_extensions' => 'txt csv xml',
       'direct' => FALSE,
     );
   }
@@ -119,6 +119,12 @@ class FeedsFileFetcher extends FeedsFetcher {
    */
   public function configForm(&$form_state) {
     $form = array();
+    $form['allowed_extensions'] = array(
+      '#type' =>'textfield',
+      '#title' => t('Allowed file extensions'),
+      '#description' => t('Allowed file extensions for upload.'),
+      '#default_value' => $this->config['allowed_extensions'],
+    );
     $form['direct'] = array(
       '#type' =>'checkbox',
       '#title' => t('Supply path to file directly'),
