@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.19 2010/09/20 16:36:10 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.20 2010/09/20 16:48:55 alexb Exp $
 
 /**
  * @file
@@ -56,12 +56,14 @@ class FeedsFileFetcher extends FeedsFetcher {
   public function sourceForm($source_config) {
     $form = $info = array();
     if (!empty($source_config['source']) && file_exists($source_config['source'])) {
+      $wrapper = file_stream_wrapper_get_instance_by_uri($source_config['source']);
+      $path = $wrapper->getExternalUrl();
       $info = array(
-        'path' => $source_config['source'],
-        'size' => filesize(realpath($source_config['source'])),
+        'path' => $path,
+        'size' => filesize($source_config['source']),
       );
       if (module_exists('mimedetect')) {
-        $info['mime'] = mimedetect_mime(realpath($source_config['source']));
+        $info['mime'] = mimedetect_mime($source_config['source']);
       }
     }
     $form['source'] = array(
