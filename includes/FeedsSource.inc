@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.24 2010/09/17 23:55:35 alexb Exp $
+// $Id: FeedsSource.inc,v 1.25 2010/09/20 16:03:30 alexb Exp $
 
 /**
  * @file
@@ -342,7 +342,8 @@ class FeedsSource extends FeedsConfigurable {
     foreach ($this->importer->plugin_types as $type) {
       if ($this->importer->$type->hasSourceConfig()) {
         $class = get_class($this->importer->$type);
-        $form[$class] = $this->importer->$type->sourceForm($this->config[$class]);
+        $config = isset($this->config[$class]) ? $this->config[$class] : array();
+        $form[$class] = $this->importer->$type->sourceForm($config);
         $form[$class]['#tree'] = TRUE;
       }
     }
