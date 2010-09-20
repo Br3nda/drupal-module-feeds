@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.65 2010/09/18 01:44:47 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.66 2010/09/20 18:27:52 alexb Exp $
 
 /**
  * @file
@@ -89,16 +89,18 @@ class FeedsNodeProcessor extends FeedsProcessor {
    */
   public function clear(FeedsBatch $batch, FeedsSource $source) {
     if (!$batch->getTotal(FEEDS_CLEARING)) {
-      $total = db_query("SELECT COUNT(nid) FROM {feeds_node_item} WHERE id = :id AND feed_nid =:nid", array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField();
+      $total = db_query("SELECT COUNT(n.nid) FROM {node} n JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE fn.id = :id AND fn.feed_nid = :nid", array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField();
       $batch->setTotal(FEEDS_CLEARING, $total);
     }
     $count = variable_get('feeds_node_batch_size', FEEDS_NODE_BATCH_SIZE);
-    $nodes = db_query_range("SELECT nid FROM {feeds_node_item} WHERE id = :id AND feed_nid =:nid", 0, $count, array(':id' => $source->id, ':nid' => $source->feed_nid));
+    $nids = array();
+    $nodes = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE fn.id = :id AND fn.feed_nid = :nid", 0, $count, array(':id' => $source->id, ':nid' => $source->feed_nid));
     foreach ($nodes as $node) {
-      node_delete($node->nid);
+      $nids[] = $node->nid;
       $batch->deleted++;
     }
-    if (db_query_range("SELECT 1 FROM {feeds_node_item} WHERE id = :id AND feed_nid =:nid", 0, 1, array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField()) {
+    node_delete_multiple($nids);
+    if (db_query_range("SELECT 1 FROM {node} n JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE fn.id = :id AND fn.feed_nid = :nid", 0, 1, array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField()) {
       $batch->setProgress(FEEDS_CLEARING, $batch->deleted);
       return;
     }
