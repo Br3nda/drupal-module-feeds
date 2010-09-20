@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.17 2010/09/17 22:25:07 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.18 2010/09/20 15:41:03 alexb Exp $
 
 /**
  * @file
@@ -11,8 +11,6 @@
  * FeedsFileFetcher.
  */
 class FeedsFileBatch extends FeedsImportBatch {
-  protected $file_path;
-
   /**
    * Constructor.
    */
@@ -87,8 +85,8 @@ class FeedsFileFetcher extends FeedsFetcher {
    * Override parent::sourceFormValidate().
    */
   public function sourceFormValidate(&$values) {
-    $feed_dir = file_directory_path() .'/feeds';
-    file_prepare_directory($dir, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
+    $feed_dir = 'public://feeds';
+    file_prepare_directory($feed_dir, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
 
     // If there is a file uploaded, save it, otherwise validate input on
     // file.

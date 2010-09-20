@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.23 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsParser.inc,v 1.24 2010/09/20 15:41:03 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -247,7 +247,7 @@ class FeedsEnclosure extends FeedsElement {
     if(empty($this->file) && $this->getValue()) {
       // Check if this enclosure contains a local file.
       if (!parse_url($this->getValue(), PHP_URL_SCHEME)) {
-        if (file_check_location($this->getValue(), file_directory_path())) {
+        if (strpos($this->getValue(), 'public://') === 0) {
           if (file_exists($this->getValue())) {
             $this->file = $this->getValue();
             return $this->file;
@@ -265,7 +265,8 @@ class FeedsEnclosure extends FeedsElement {
         $this->file = copy($this->getValue(), $dest) ? $dest : 0;
       }
       else {
-        $this->file = file_save_data($this->getContent(), $dest);
+        $file = file_save_data($this->getContent(), $dest);
+        $this->file = $file ? $file->uri : 0;
       }
       if ($this->file === 0) {
         throw new Exception(t('Cannot write content to %dest', array('%dest' => $dest)));
