@@ -1,4 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.173.2.3 2010/09/17 19:36:44 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.173.2.4 2010/09/22 00:03:30 alexb Exp $
+
+Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxx
+--------------------------------
+
+- Fix emfield mapper not accepting FeedsElement objects.
 
 Feeds 6.x 1.0 Beta 7, 2010-09-17
 --------------------------------

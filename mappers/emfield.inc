@@ -1,5 +1,5 @@
 <?php
-// $Id: emfield.inc,v 1.1 2010/09/16 19:20:04 alexb Exp $
+// $Id: emfield.inc,v 1.1.2.1 2010/09/22 00:03:30 alexb Exp $
 
 /**
  * @file
@@ -45,6 +45,9 @@ function emfield_feeds_set_target(&$node, $target, $value) {
   if (is_array($value)) {
     $i = 0;
     foreach ($value as $v) {
+      if ($v instanceof FeedsElement) {
+        $field[$i]['embed'] = (string)$v;
+      }
       if (!is_array($v) && !is_object($v)) {
         $field[$i]['embed'] = $v;
       }
