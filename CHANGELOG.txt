@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.173.2.6 2010/09/25 15:31:08 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.173.2.7 2010/09/25 16:07:50 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxx
 --------------------------------
 
+- #916962 alex_b: Fix undefined feeds_reschedule() when upgrading.
 - #919172 andrewlevine, alex_b: Fix enclosure source files deleted.
 - Fix emfield mapper not handling single values properly.
 - Fix emfield mapper not accepting FeedsElement objects.
