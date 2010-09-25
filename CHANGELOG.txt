@@ -1,6 +1,6 @@
-// $Id: CHANGELOG.txt,v 1.173.2.9 2010/09/25 17:26:16 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.173.2.10 2010/09/25 17:26:56 alexb Exp $
 
-Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxx
+Feeds 6.x 1.0 Beta 8, 2010-09-25
 --------------------------------
 
 - #625196 mstrelan, alex_b: Fix array_merge(), array_intersect_key() warnings.
