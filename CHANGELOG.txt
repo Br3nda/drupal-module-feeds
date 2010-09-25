@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.173.2.5 2010/09/22 00:06:00 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.173.2.6 2010/09/25 15:31:08 alexb Exp $
 
 Feeds 6.x 1.0 xxxxxxxxxxxxxxxxxx
 --------------------------------
 
+- #919172 andrewlevine, alex_b: Fix enclosure source files deleted.
 - Fix emfield mapper not handling single values properly.
 - Fix emfield mapper not accepting FeedsElement objects.
 

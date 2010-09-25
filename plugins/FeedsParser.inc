@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.22 2010/09/15 16:44:50 alexb Exp $
+// $Id: FeedsParser.inc,v 1.22.2.1 2010/09/25 15:31:08 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -197,18 +197,28 @@ class FeedsEnclosure extends FeedsElement {
   protected $file;
 
   /**
+   * Delete flag, denoting whether a file should be deleted when this object
+   * is destroyed.
+   *
+   * @see __destruct()
+   * @see getFile()
+   */
+  protected $delete_file;
+
+  /**
    * Constructor, requires MIME type.
    */
   public function __construct($value, $mime_type) {
     parent::__construct($value);
     $this->mime_type = $mime_type;
+    $this->delete_file = FALSE;
   }
 
   /**
    * Destructor, clean up any temporary files.
    */
   public function __destruct() {
-    if (!empty($this->file)) {
+    if (!empty($this->file) && $this->delete_file) {
       file_delete($this->file);
     }
   }
@@ -236,9 +246,10 @@ class FeedsEnclosure extends FeedsElement {
 
   /**
    * @return
-   *   A temporary file path to the downloaded resource referenced by the
-   *   enclosure. Downloads resource if not downloaded yet. The file path is
-   *   valid for the time of the page load.
+   *   A path pointing to a file containing the resource referenced by the
+   *   enclosure. This method downloads the resource if it is not local. The
+   *   file path must be considered temporary and is only valid for the current
+   *   page load.
    *
    * @todo Get file extension from mime_type.
    * @todo This is not concurrency safe.
@@ -270,6 +281,7 @@ class FeedsEnclosure extends FeedsElement {
       if ($this->file === 0) {
         throw new Exception(t('Cannot write content to %dest', array('%dest' => $dest)));
       }
+      $this->delete_file = TRUE;
     }
     return $this->file;
   }
