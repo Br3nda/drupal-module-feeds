@@ -1,4 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.173.2.10 2010/09/25 17:26:56 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.173.2.11 2010/09/26 17:39:45 alexb Exp $
+
+Feeds 6.x 1.0 XXXXXXXXXXXXXXXXXX
+--------------------------------
+
+- #923318 alex_b: Fix "Fatal error: Call to a member function import() on a
+  non-object" occuring on cron.
 
 Feeds 6.x 1.0 Beta 8, 2010-09-25
 --------------------------------
