@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.21 2010/09/20 18:30:17 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.22 2010/09/29 23:25:55 alexb Exp $
 
 /**
  * @file
@@ -54,18 +54,11 @@ class FeedsFileFetcher extends FeedsFetcher {
    * Source form.
    */
   public function sourceForm($source_config) {
-    $form = $info = array();
-    if (!empty($source_config['source']) && file_exists($source_config['source'])) {
-      $wrapper = file_stream_wrapper_get_instance_by_uri($source_config['source']);
-      $path = $wrapper->getExternalUrl();
-      $info = array(
-        'path' => $path,
-        'size' => filesize($source_config['source']),
-      );
-      if (module_exists('mimedetect')) {
-        $info['mime'] = mimedetect_mime($source_config['source']);
-      }
-    }
+    $form = array();
+    $form['fid'] = array(
+      '#type' => 'value',
+      '#value' => empty($source_config['fid']) ? 0 : $source_config['fid'],
+    );
     $form['source'] = array(
       '#type' => empty($this->config['direct']) ? 'value' : 'textfield',
       '#title' => t('File'),
@@ -77,7 +70,7 @@ class FeedsFileFetcher extends FeedsFetcher {
       '#title' => empty($this->config['direct']) ? t('File') : NULL,
       '#description' => empty($source_config['source']) ? t('Select the file to be imported from your local system.') : t('Select a different file to be imported from your local system.'),
       '#theme' => 'feeds_upload',
-      '#file_info' => $info,
+      '#file_info' => empty($source_config['fid']) ? NULL : file_load($source_config['fid']),
       '#size' => 10,
     );
     return $form;
@@ -92,8 +85,10 @@ class FeedsFileFetcher extends FeedsFetcher {
 
     // If there is a file uploaded, save it, otherwise validate input on
     // file.
+    // @todo: Track usage of file, remove file when removing source.
     if ($file = file_save_upload('feeds', array('file_validate_extensions' => array(0 => $this->config['allowed_extensions'])), $feed_dir)) {
       $values['source'] = $file->uri;
+      $values['file'] = $file;
     }
     elseif (empty($values['source'])) {
       form_set_error('feeds][source', t('Upload a file first.'));
@@ -103,6 +98,39 @@ class FeedsFileFetcher extends FeedsFetcher {
     // potentially any file that the web server has access could be exposed.
     elseif (strpos($values['source'], 'public://') !== 0) {
       form_set_error('feeds][source', t('File needs to reside within the site\'s file directory, its path needs to start with public://.'));
+    }
+  }
+
+  /**
+   * Override parent::sourceSave().
+   */
+  public function sourceSave(FeedsSource $source) {
+    $source_config = $source->getConfigFor($this);
+
+    // If a new file is present, delete the old one and replace it with the new
+    // one.
+    if (isset($source_config['file'])) {
+      $file = $source_config['file'];
+      if (isset($source_config['fid'])) {
+        $this->deleteFile($source_config['fid'], $source->feed_nid);
+      }
+      $file->status = FILE_STATUS_PERMANENT;
+      file_save($file);
+      file_usage_add($file, 'feeds', get_class($this), $source->feed_nid);
+
+      $source_config['fid'] = $file->fid;
+      unset($source_config['file']);
+      $source->setConfigFor($this, $source_config);
+    }
+  }
+
+  /**
+   * Override parent::sourceDelete().
+   */
+  public function sourceDelete(FeedsSource $source) {
+    $source_config = $source->getConfigFor($this);
+    if (isset($source_config['fid'])) {
+      $this->deleteFile($source_config['fid'], $source->feed_nid);
     }
   }
 
@@ -134,5 +162,15 @@ class FeedsFileFetcher extends FeedsFetcher {
       '#default_value' => $this->config['direct'],
     );
     return $form;
+  }
+
+  /**
+   * Helper. Deletes a file.
+   */
+  protected function deleteFile($fid, $feed_nid) {
+    if ($file = file_load($fid)) {
+      file_usage_delete($file, 'feeds', get_class($this), $feed_nid);
+      file_delete($file);
+    }
   }
 }

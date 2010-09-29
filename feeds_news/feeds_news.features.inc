@@ -17,24 +17,18 @@ function feeds_news_node_info() {
   $items = array(
     'feed' => array(
       'name' => t('Feed'),
-      'module' => 'node',
+      'base' => 'node_content',
       'description' => t('Subscribe to RSS or Atom feeds. Creates nodes of the content type "Feed item" from feed content.'),
       'has_title' => '1',
       'title_label' => t('Title'),
-      'has_body' => '1',
-      'body_label' => t('Body'),
-      'min_word_count' => '0',
       'help' => '',
     ),
     'feed_item' => array(
       'name' => t('Feed item'),
-      'module' => 'node',
+      'base' => 'node_content',
       'description' => t('This content type is being used for automatically aggregated content from feeds.'),
       'has_title' => '1',
       'title_label' => t('Title'),
-      'has_body' => '1',
-      'body_label' => t('Body'),
-      'min_word_count' => '0',
       'help' => '',
     ),
   );
@@ -46,6 +40,6 @@ function feeds_news_node_info() {
  */
 function feeds_news_views_api() {
   return array(
-    'api' => '2',
+    'api' => '3.0-alpha1',
   );
 }

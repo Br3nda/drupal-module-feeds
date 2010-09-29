@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.21 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.22 2010/09/29 23:25:55 alexb Exp $
 
 /**
  * @file
@@ -98,6 +98,7 @@ class FeedsUserProcessor extends FeedsProcessor {
     // Prepare term object.
     $target_account = new stdClass();
     $target_account->uid = 0;
+    $target_account->entity_type = 'user';
     $target_account->roles = array_filter($this->config['roles']);
     $target_account->status = $this->config['status'];
 
@@ -189,7 +190,7 @@ class FeedsUserProcessor extends FeedsProcessor {
 
     // Let other modules expose mapping targets.
     self::loadMappers();
-    drupal_alter('feeds_user_processor_targets', $targets);
+    feeds_alter('feeds_processor_targets', $targets, 'user');
 
     return $targets;
   }

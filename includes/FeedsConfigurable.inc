@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsConfigurable.inc,v 1.18 2010/09/18 00:14:36 alexb Exp $
+// $Id: FeedsConfigurable.inc,v 1.19 2010/09/29 23:25:55 alexb Exp $
 
 /**
  * @file
@@ -47,7 +47,7 @@ abstract class FeedsConfigurable {
   /**
    * Instantiate a FeedsConfigurable object.
    *
-   * Don't use directly, use feeds_importer() or feeds_plugin_instance()
+   * Don't use directly, use feeds_importer() or feeds_plugin()
    * instead.
    */
   public static function instance($class, $id) {

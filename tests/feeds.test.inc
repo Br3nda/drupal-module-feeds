@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.18 2010/09/17 23:58:18 alexb Exp $
+// $Id: feeds.test.inc,v 1.19 2010/09/29 23:25:55 alexb Exp $
 
 /**
  * @file
@@ -10,14 +10,10 @@
  * Test basic Data API functionality.
  */
 class FeedsWebTestCase extends DrupalWebTestCase {
-
-  public function __construct($test_id = NULL) {
-    parent::__construct($test_id);
-    // Force the feeds test profile. This unfortunately an either-or decision:
-    // either Feeds tests run in feeds_test profile or they run in another
-    // profile. Both is not possible. See http://drupal.org/node/911354
-    $this->profile = 'feeds_test';
-  }
+  // Force the feeds test profile. This unfortunately an either-or decision:
+  // either Feeds tests run in feeds_test profile or they run in another
+  // profile. Both is not possible. See http://drupal.org/node/911354
+  protected $profile = 'feeds_test';
 
   /**
    * Debug utility. Shows current screen.
@@ -118,7 +114,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
    *   feeds_feeds_plugins()).
    */
   public function setPlugin($id, $plugin_key) {
-    if ($type = feeds_plugin_type($plugin_key)) {
+    if ($type = FeedsPlugin::typeOf($plugin_key)) {
       $edit = array(
         'plugin_key' => $plugin_key,
       );
@@ -161,9 +157,14 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     if (empty($feed_url)) {
       $feed_url = $GLOBALS['base_url'] .'/'. drupal_get_path('module', 'feeds') .'/tests/feeds/developmentseed.rss2';
     }
+
     // If content type not given, retrieve it.
     if (!$content_type) {
-      $config = unserialize(db_query("SELECT config FROM {feeds_importer} WHERE id = :id", array(':id' => $id))->fetchField());
+      $result= db_select('feeds_importer', 'f')
+        ->condition('f.id', $id, '=')
+        ->fields('f', array('config'))
+        ->execute();
+      $config = unserialize($result->fetchField());
       $content_type = $config['content_type'];
       $this->assertFalse(empty($content_type), 'Valid content type found: '. $content_type);
     }
@@ -180,8 +181,18 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $nid = $this->getNid($this->getUrl());
 
     // Check whether feed got recorded in feeds_source table.
-    $this->assertEqual(1, db_query("SELECT COUNT(*) FROM {feeds_source} WHERE id = :id AND feed_nid = :feed_nid", array(':id'=> $id, ':feed_nid' => $nid))->fetchField());
-    $source = db_query("SELECT * FROM {feeds_source} WHERE id = :id AND feed_nid = :feed_nid", array(':id'=> $id, ':feed_nid' => $nid))->fetch();
+    $query = db_select('feeds_source', 's')
+      ->condition('s.id', $id, '=')
+      ->condition('s.feed_nid', $nid, '=');
+    $query->addExpression("COUNT(*)");
+    $result = $query->execute()->fetchField();
+    $this->assertEqual(1, $result);
+
+    $source = db_select('feeds_source', 's')
+      ->condition('s.id', $id, '=')
+      ->condition('s.feed_nid', $nid, '=')
+      ->fields('s', array('config'))
+      ->execute()->fetch();
     $config = unserialize($source->config);
     $this->assertEqual($config['FeedsHTTPFetcher']['source'], $feed_url, t('URL in DB correct.'));
     return $nid;
@@ -207,7 +218,11 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     $this->assertText('has been updated.');
 
     // Check that the URL was updated in the feeds_source table.
-    $source = db_query("SELECT * FROM {feeds_source} WHERE feed_nid = :nid", array(':nid' => $nid))->fetch();
+    //$source = db_query("SELECT * FROM {feeds_source} WHERE feed_nid = :nid", array(':nid' => $nid))->fetch();
+    $source = db_select('feeds_source', 's')
+      ->condition('s.feed_nid', $nid, '=')
+      ->fields('s', array('config'))
+      ->execute()->fetch();
     $config = unserialize($source->config);
     $this->assertEqual($config['FeedsHTTPFetcher']['source'], $feed_url, t('URL in DB correct.'));
   }

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.59 2010/09/18 01:44:46 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.60 2010/09/29 23:25:55 alexb Exp $
 
 /**
  * @file
@@ -273,7 +273,7 @@ function feeds_ui_export_form($form, &$form_state, $importer) {
 function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
 
   // Get plugins and configuration.
-  $plugins = feeds_get_plugins();
+  $plugins = FeedsPlugin::all();
   $config = $importer->config;
   // Base path for changing the active container.
   $path = 'admin/structure/feeds/edit/'. $importer->id;
@@ -301,9 +301,9 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
         $active_container['title'] = t('Basic settings');
         $active_container['body'] = feeds_get_form($importer, 'configForm');
       }
-      // feeds_plugin_instance() returns a correct result because feed has been
+      // feeds_plugin() returns a correct result because feed has been
       // instantiated previously.
-      elseif (in_array($plugin_key, array_keys($plugins)) && $plugin = feeds_plugin_instance($plugin_key, $importer->id)) {
+      elseif (in_array($plugin_key, array_keys($plugins)) && $plugin = feeds_plugin($plugin_key, $importer->id)) {
         $active_container['title'] = t('Settings for !plugin', array('!plugin' => $plugins[$plugin_key]['name']));
         $active_container['body'] = feeds_get_form($plugin, 'configForm');
       }
@@ -414,7 +414,7 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
  *   A Form API form definition.
  */
 function feeds_ui_plugin_form($form, &$form_state, $importer, $type) {
-  $plugins = feeds_get_plugins_by_type($type);
+  $plugins = FeedsPlugin::byType($type);
 
   $form = array();
   $form['#importer'] = $importer;
@@ -788,9 +788,10 @@ function theme_feeds_ui_mapping_form($variables) {
     foreach ($form['#mappings'] as $i => $mapping) {
       // Some parsers do not define source options.
       $source = isset($form['source']['#options'][$mapping['source']]) ? $form['source']['#options'][$mapping['source']] : $mapping['source'];
+      $target = isset($form['target']['#options'][$mapping['target']]) ? check_plain($form['target']['#options'][$mapping['target']]) : '<em>' . t('Missing') . '</em>';
       $rows[] = array(
         check_plain($source),
-        check_plain($form['target']['#options'][$mapping['target']]),
+        $target,
         drupal_render($form['unique_flags'][$i]),
         drupal_render($form['remove_flags'][$i]),
       );

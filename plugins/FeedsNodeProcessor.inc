@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.68 2010/09/20 19:06:11 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.69 2010/09/29 23:25:55 alexb Exp $
 
 /**
  * @file
@@ -96,7 +96,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     $nids = array();
     $nodes = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE fn.id = :id AND fn.feed_nid = :nid", 0, $count, array(':id' => $source->id, ':nid' => $source->feed_nid));
     foreach ($nodes as $node) {
-      $nids[] = $node->nid;
+      $nids[$node->nid] = $node->nid;
       $batch->deleted++;
     }
     node_delete_multiple($nids);
@@ -295,7 +295,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
     // Let other modules expose mapping targets.
     self::loadMappers();
-    drupal_alter('feeds_node_processor_targets', $targets, $this->config['content_type']);
+    feeds_alter('feeds_processor_targets', $targets, 'node', $this->config['content_type']);
 
     return $targets;
   }
@@ -358,11 +358,10 @@ class FeedsNodeProcessor extends FeedsProcessor {
       $node->feeds_node_item->guid = '';
     }
 
-    static $included;
-    if (!$included) {
-      module_load_include('inc', 'node', 'node.pages');
-      $included = TRUE;
-    }
+    // Give mappers a hint at what they're operating on.
+    $node->entity_type = 'node';
+
+    // Let other modules populate default values.
     node_object_prepare($node);
 
     // Populate properties that are set by node_object_prepare().

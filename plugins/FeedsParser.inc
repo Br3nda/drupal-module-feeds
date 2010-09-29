@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsParser.inc,v 1.24 2010/09/20 15:41:03 alexb Exp $
+// $Id: FeedsParser.inc,v 1.25 2010/09/29 23:25:55 alexb Exp $
 
 /**
  * Abstract class, defines interface for parsers.
@@ -49,7 +49,7 @@ abstract class FeedsParser extends FeedsPlugin {
   public function getMappingSources() {
     self::loadMappers();
     $sources = array();
-    drupal_alter('feeds_parser_sources', $sources, feeds_importer($this->id)->config['content_type']);
+    feeds_alter('feeds_parser_sources', $sources, feeds_importer($this->id)->config['content_type']);
     if (!feeds_importer($this->id)->config['content_type']) {
       return $sources;
     }
@@ -205,15 +205,6 @@ class FeedsEnclosure extends FeedsElement {
   }
 
   /**
-   * Destructor, clean up any temporary files.
-   */
-  public function __destruct() {
-    if (!empty($this->file)) {
-      file_delete($this->file);
-    }
-  }
-
-  /**
    * @return
    *   MIME type of return value of getValue().
    */
@@ -235,41 +226,51 @@ class FeedsEnclosure extends FeedsElement {
   }
 
   /**
-   * @return
-   *   A temporary file path to the downloaded resource referenced by the
-   *   enclosure. Downloads resource if not downloaded yet. The file path is
-   *   valid for the time of the page load.
+   * Get a Drupal file object of the enclosed resource, download if necessary.
    *
-   * @todo Get file extension from mime_type.
-   * @todo This is not concurrency safe.
+   * @param $destination
+   *   The path or uri specifying the target directory in which the file is
+   *   expected. If not given, a previously defined directory will be assumed.
+   *   The default directory is tmp.
+   *
+   * @return
+   *   A file path to the enclosed resource.
+   *
+   * @todo file_destination(*, FILE_EXISTS_RENAME) is not concurrency safe.
    */
-  public function getFile() {
-    if(empty($this->file) && $this->getValue()) {
-      // Check if this enclosure contains a local file.
-      if (!parse_url($this->getValue(), PHP_URL_SCHEME)) {
-        if (strpos($this->getValue(), 'public://') === 0) {
-          if (file_exists($this->getValue())) {
-            $this->file = $this->getValue();
-            return $this->file;
-          }
-        }
-        throw new Exception(t('Invalid enclosure %enclosure', array('%enclosure' => $this->getValue())));
+  public function getFile($destination) {
+
+    if (empty($this->file) && $this->getValue()) {
+
+      // File is in the right place, nothing to do.
+      if (strpos($this->getValue(), $directory) === 0) {
+        $this->file = $this->getValue();
+        return $this->file;
       }
-      $filename = basename($this->getValue());
-      if (module_exists('transliteration')) {
-        require_once (drupal_get_path('module', 'transliteration') . '/transliteration.inc');
-        $filename = transliteration_clean_filename($filename);
-      }
-      $dest = file_destination(file_directory_temp() .'/'. $filename, FILE_EXISTS_RENAME);
-      if (ini_get('allow_url_fopen')) {
-        $this->file = copy($this->getValue(), $dest) ? $dest : 0;
+
+      // Prepare destination directory.
+      file_prepare_directory($destination, FILE_MODIFY_PERMISSIONS | FILE_CREATE_DIRECTORY);
+
+      // Copy or save file depending its location.
+      if (drupal_realpath($this->getValue())) {
+        $file         = new stdClass();
+        $file->uid    = $user->uid;
+        $file->status = FILE_STATUS_PERMANENT;
+        $file->uri    = $this->getValue();
+        $this->file = file_copy($file, $destination);
       }
       else {
-        $file = file_save_data($this->getContent(), $dest);
-        $this->file = $file ? $file->uri : 0;
+        $filename = basename($this->getValue());
+        if (module_exists('transliteration')) {
+          require_once (drupal_get_path('module', 'transliteration') . '/transliteration.inc');
+          $filename = transliteration_clean_filename($filename);
+        }
+        $this->file = file_save_data($this->getContent(), "$destination/$filename");
       }
-      if ($this->file === 0) {
-        throw new Exception(t('Cannot write content to %dest', array('%dest' => $dest)));
+
+      // We couldn't make sense of this enclosure, throw an exception.
+      if (!$this->file) {
+        throw new Exception(t('Invalid enclosure %enclosure', array('%enclosure' => $this->getValue())));
       }
     }
     return $this->file;

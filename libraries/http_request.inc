@@ -1,5 +1,5 @@
 <?php
-// $Id: http_request.inc,v 1.9 2010/09/17 22:02:45 alexb Exp $
+// $Id: http_request.inc,v 1.10 2010/09/29 23:25:55 alexb Exp $
 
 /**
  * @file
@@ -130,7 +130,7 @@ function http_request_get($url, $username = NULL, $password = NULL, $accept_inva
     // https.
     // Validate in PHP, CURLOPT_PROTOCOLS is only supported with cURL 7.19.4
     $uri = parse_url($url);
-    if ($uri['scheme'] != 'http' && $uri['scheme'] != 'https') {
+    if (isset($uri['scheme']) && $uri['scheme'] != 'http' && $uri['scheme'] != 'https') {
       $result->error = 'invalid schema '. $uri['scheme'];
       $result->code = -1003; // This corresponds to drupal_http_request()
     }

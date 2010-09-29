@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSource.inc,v 1.25 2010/09/20 16:03:30 alexb Exp $
+// $Id: FeedsSource.inc,v 1.26 2010/09/29 23:25:55 alexb Exp $
 
 /**
  * @file
@@ -224,11 +224,12 @@ class FeedsSource extends FeedsConfigurable {
    * Save configuration.
    */
   public function save() {
-    $config = $this->getConfig();
     // Alert implementers of FeedsSourceInterface to the fact that we're saving.
     foreach ($this->importer->plugin_types as $type) {
       $this->importer->$type->sourceSave($this);
     }
+    $config = $this->getConfig();
+
     // Store the source property of the fetcher in a separate column so that we
     // can do fast lookups on it.
     $source = '';
@@ -307,7 +308,7 @@ class FeedsSource extends FeedsConfigurable {
   }
 
   /**
-   * Convenience function. Returns the configuration for a specific class.
+   * Returns the configuration for a specific client class.
    *
    * @param FeedsSourceInterface $client
    *   An object that is an implementer of FeedsSourceInterface.
@@ -317,6 +318,21 @@ class FeedsSource extends FeedsConfigurable {
    */
   public function getConfigFor(FeedsSourceInterface $client) {
     return $this->config[get_class($client)];
+  }
+
+  /**
+   * Sets the configuration for a specific client class.
+   *
+   * @param FeedsSourceInterface $client
+   *   An object that is an implementer of FeedsSourceInterface.
+   * @param $config
+   *   The configuration for $client.
+   *
+   * @return
+   *   An array stored for $client.
+   */
+  public function setConfigFor(FeedsSourceInterface $client, $config) {
+    $this->config[get_class($client)] = $config;
   }
 
   /**
