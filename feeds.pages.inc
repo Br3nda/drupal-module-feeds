@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.33 2010/09/20 16:56:24 alexb Exp $
+// $Id: feeds.pages.inc,v 1.34.2.1 2010/09/29 23:56:09 alexb Exp $
 
 /**
  * @file
@@ -151,6 +151,16 @@ function feeds_fetcher_callback($importer, $feed_nid = 0) {
 }
 
 /**
+ * Template generation
+ */
+function feeds_importer_template($importer) {
+  $importer = feeds_importer_load($importer);
+  if ($importer->parser instanceof FeedsCSVParser) {
+    return $importer->parser->getTemplate();
+  }
+  return drupal_not_found();
+}
+/**
  * Theme upload widget.
  */
 function theme_feeds_upload($variables) {
@@ -159,19 +169,18 @@ function theme_feeds_upload($variables) {
   _form_set_class($element, array('form-file'));
   $description = '';
   if (!empty($element['#file_info'])) {
-    $info = $element['#file_info'];
+    $file = $element['#file_info'];
+    $wrapper = file_stream_wrapper_get_instance_by_uri($file->uri);
     $description .= '<div class="file-info">';
     $description .= '<div class="file-name">';
-    $description .= l(basename($info['path']), $info['path']);
+    $description .= l($file->filename, $wrapper->getExternalUrl());
     $description .= '</div>';
     $description .= '<div class="file-size">';
-    $description .= format_size($info['size']);
+    $description .= format_size($file->filesize);
     $description .= '</div>';
-    if (isset($info['mime'])) {
-      $description .= '<div class="file-mime">';
-      $description .= check_plain($info['mime']);
-      $description .= '</div>';
-    }
+    $description .= '<div class="file-mime">';
+    $description .= check_plain($file->filemime);
+    $description .= '</div>';
     $description .= '</div>';
   }
   $description .= '<div class="file-upload">';

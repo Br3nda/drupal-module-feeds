@@ -1,5 +1,118 @@
 <?php
-// $Id: FeedsParser.inc,v 1.24 2010/09/20 15:41:03 alexb Exp $
+// $Id: FeedsParser.inc,v 1.25.2.1 2010/09/29 23:56:10 alexb Exp $
+
+/**
+ * A result of a parsing stage.
+ */
+class FeedsParserResult extends FeedsResult {
+  protected $title;
+  protected $description;
+  protected $link;
+  protected $items;
+  protected $current_item;
+
+  /**
+   * Constructor.
+   */
+  public function __construct($items = array()) {
+    $this->title = '';
+    $this->description = '';
+    $this->link = '';
+    $this->items = $items;
+  }
+
+  /**
+   * @return
+   *   A string that is the feed's title.
+   */
+  public function getTitle() {
+    return $this->title;
+  }
+
+  /**
+   * @return
+   *   A string that is the feed's description.
+   */
+  public function getDescription() {
+    return $this->description;
+  }
+
+  /**
+   * @return
+   *   A string that is the link to the feed's site (not the actual URL of the
+   *   feed). Falls back to URL if not available.
+   */
+  public function getLink() {
+    return $this->link;
+  }
+
+  /**
+   * @todo Move to a nextItem() based approach, not consuming the item array.
+   *   Can only be done once we don't cache the entire batch object between page
+   *   loads for batching anymore.
+   *
+   * @return
+   *   Next available item or NULL if there is none. Every returned item is
+   *   removed from the internal array.
+   */
+  public function shiftItem() {
+    $this->current_item = array_shift($this->items);
+    return $this->current_item;
+  }
+
+  /**
+   * @return
+   *   Current result item.
+   */
+  public function currentItem() {
+    return empty($this->current_item) ? NULL : $this->current_item;
+  }
+
+  /**
+   * Set title.
+   */
+  public function setTitle($title) {
+    $this->title = $title;
+  }
+
+  /**
+   * Set description.
+   */
+  public function setDescription($description) {
+    $this->description = $description;
+  }
+
+  /**
+   * Set link.
+   */
+  public function setLink($link) {
+    $this->link = $link;
+  }
+
+  /**
+   * Set items.
+   *
+   * @param $items
+   *   An array of the items in the feed. Cannot be NULL.
+   */
+  public function setItems($items) {
+    $this->items = $items;
+  }
+
+  /**
+   * Add an item.
+   */
+  public function addItem($item) {
+    $this->items[] = $item;
+  }
+
+  /**
+   * Get number of items.
+   */
+  public function getItemCount() {
+    return count($this->items);
+  }
+}
 
 /**
  * Abstract class, defines interface for parsers.
@@ -11,12 +124,12 @@ abstract class FeedsParser extends FeedsPlugin {
    *
    * Extending classes must implement this method.
    *
-   * @param $batch
-   *   FeedsImportBatch returned by fetcher.
    * @param FeedsSource $source
    *   Source information.
+   * @param $fetcher_result
+   *   FeedsFetcherResult returned by fetcher.
    */
-  public abstract function parse(FeedsImportBatch $batch, FeedsSource $source);
+  public abstract function parse(FeedsSource $source, FeedsFetcherResult $fetcher_result);
 
   /**
    * Clear all caches for results for given source.
@@ -49,7 +162,7 @@ abstract class FeedsParser extends FeedsPlugin {
   public function getMappingSources() {
     self::loadMappers();
     $sources = array();
-    drupal_alter('feeds_parser_sources', $sources, feeds_importer($this->id)->config['content_type']);
+    feeds_alter('feeds_parser_sources', $sources, feeds_importer($this->id)->config['content_type']);
     if (!feeds_importer($this->id)->config['content_type']) {
       return $sources;
     }
@@ -81,11 +194,11 @@ abstract class FeedsParser extends FeedsPlugin {
    * @see FeedsProcessor::map()
    * @see FeedsCSVParser::getSourceElement().
    */
-  public function getSourceElement(FeedsImportBatch $batch, $element_key) {
-    if (($node = $batch->feedNode()) && $element_key == 'parent:uid') {
+  public function getSourceElement(FeedsSource $source, FeedsParserResult $result, $element_key) {
+    if (($node = node_load($source->feed_nid)) && $element_key == 'parent:uid') {
       return $node->uid;
     }
-    $item = $batch->currentItem();
+    $item = $result->currentItem();
     return isset($item[$element_key]) ? $item[$element_key] : '';
   }
 }
@@ -112,13 +225,16 @@ class FeedsElement {
    * @todo Make value public and deprecate use of getValue().
    *
    * @return
-   *   Standard value of this FeedsElement.
+   *   Value of this FeedsElement represented as a scalar.
    */
   public function getValue() {
     return $this->value;
   }
 
   /**
+   * Magic method __toString() for printing and string conversion of this
+   * object.
+   *
    * @return
    *   A string representation of this element.
    */
@@ -205,15 +321,6 @@ class FeedsEnclosure extends FeedsElement {
   }
 
   /**
-   * Destructor, clean up any temporary files.
-   */
-  public function __destruct() {
-    if (!empty($this->file)) {
-      file_delete($this->file);
-    }
-  }
-
-  /**
    * @return
    *   MIME type of return value of getValue().
    */
@@ -235,41 +342,51 @@ class FeedsEnclosure extends FeedsElement {
   }
 
   /**
-   * @return
-   *   A temporary file path to the downloaded resource referenced by the
-   *   enclosure. Downloads resource if not downloaded yet. The file path is
-   *   valid for the time of the page load.
+   * Get a Drupal file object of the enclosed resource, download if necessary.
    *
-   * @todo Get file extension from mime_type.
-   * @todo This is not concurrency safe.
+   * @param $destination
+   *   The path or uri specifying the target directory in which the file is
+   *   expected. If not given, a previously defined directory will be assumed.
+   *   The default directory is tmp.
+   *
+   * @return
+   *   A file path to the enclosed resource.
+   *
+   * @todo file_destination(*, FILE_EXISTS_RENAME) is not concurrency safe.
    */
-  public function getFile() {
-    if(empty($this->file) && $this->getValue()) {
-      // Check if this enclosure contains a local file.
-      if (!parse_url($this->getValue(), PHP_URL_SCHEME)) {
-        if (strpos($this->getValue(), 'public://') === 0) {
-          if (file_exists($this->getValue())) {
-            $this->file = $this->getValue();
-            return $this->file;
-          }
-        }
-        throw new Exception(t('Invalid enclosure %enclosure', array('%enclosure' => $this->getValue())));
+  public function getFile($destination) {
+
+    if (empty($this->file) && $this->getValue()) {
+
+      // File is in the right place, nothing to do.
+      if (strpos($this->getValue(), $destination) === 0) {
+        $this->file = $this->getValue();
+        return $this->file;
       }
-      $filename = basename($this->getValue());
-      if (module_exists('transliteration')) {
-        require_once (drupal_get_path('module', 'transliteration') . '/transliteration.inc');
-        $filename = transliteration_clean_filename($filename);
-      }
-      $dest = file_destination(file_directory_temp() .'/'. $filename, FILE_EXISTS_RENAME);
-      if (ini_get('allow_url_fopen')) {
-        $this->file = copy($this->getValue(), $dest) ? $dest : 0;
+
+      // Prepare destination directory.
+      file_prepare_directory($destination, FILE_MODIFY_PERMISSIONS | FILE_CREATE_DIRECTORY);
+
+      // Copy or save file depending its location.
+      if (drupal_realpath($this->getValue())) {
+        $file         = new stdClass();
+        $file->uid    = $user->uid;
+        $file->status = FILE_STATUS_PERMANENT;
+        $file->uri    = $this->getValue();
+        $this->file = file_copy($file, $destination);
       }
       else {
-        $file = file_save_data($this->getContent(), $dest);
-        $this->file = $file ? $file->uri : 0;
+        $filename = basename($this->getValue());
+        if (module_exists('transliteration')) {
+          require_once (drupal_get_path('module', 'transliteration') . '/transliteration.inc');
+          $filename = transliteration_clean_filename($filename);
+        }
+        $this->file = file_save_data($this->getContent(), "$destination/$filename");
       }
-      if ($this->file === 0) {
-        throw new Exception(t('Cannot write content to %dest', array('%dest' => $dest)));
+
+      // We couldn't make sense of this enclosure, throw an exception.
+      if (!$this->file) {
+        throw new Exception(t('Invalid enclosure %enclosure', array('%enclosure' => $this->getValue())));
       }
     }
     return $this->file;
@@ -302,20 +419,16 @@ class FeedsDateTimeElement extends FeedsElement {
 
   /**
    * Override FeedsElement::getValue().
+   *
+   * @return
+   *   The UNIX timestamp of this object's start date. Return value is
+   *   technically a string but will only contain numeric values.
    */
   public function getValue() {
-    return $this->start;
-  }
-
-  /**
-   * Implements toString magic php method.
-   */
-  public function __toString() {
-    $val = $this->getValue();
-    if ($val) {
-      return $val->format('U');
+    if ($this->start) {
+      return $this->start->format('U');
     }
-    return '';
+    return '0';
   }
 
   /**
@@ -352,36 +465,36 @@ class FeedsDateTimeElement extends FeedsElement {
    * Helper method for buildDateField(). Build a FeedsDateTimeElement object
    * from a standard formatted node.
    */
-  protected static function readDateField($node, $field_name) {
-    $field = content_fields($field_name);
+  protected static function readDateField($entity, $field_name) {
     $ret = new FeedsDateTimeElement();
-    if (isset($node->{$field_name}[0]['date']) && $node->{$field_name}[0]['date'] instanceof FeedsDateTime) {
-      $ret->start = $node->{$field_name}[0]['date'];
+    if (isset($entity->{$field_name}['und'][0]['date']) && $entity->{$field_name}['und'][0]['date'] instanceof FeedsDateTime) {
+      $ret->start = $entity->{$field_name}['und'][0]['date'];
     }
-    if (isset($node->{$field_name}[0]['date2']) && $node->{$field_name}[0]['date2'] instanceof FeedsDateTime) {
-      $ret->end = $node->{$field_name}[0]['date2'];
+    if (isset($entity->{$field_name}['und'][0]['date2']) && $entity->{$field_name}['und'][0]['date2'] instanceof FeedsDateTime) {
+      $ret->end = $entity->{$field_name}['und'][0]['date2'];
     }
     return $ret;
   }
 
   /**
-   * Build a node's date CCK field from our object.
+   * Build a entity's date field from our object.
    *
-   * @param $node
-   *   The node to build the date field on.
+   * @param $entity
+   *   The entity to build the date field on.
    * @param $field_name
    *   The name of the field to build.
    */
-  public function buildDateField($node, $field_name) {
-    $field = content_fields($field_name);
-    $oldfield = FeedsDateTimeElement::readDateField($node, $field_name);
+  public function buildDateField($entity, $field_name) {
+    $info = field_info_field($field_name);
+
+    $oldfield = FeedsDateTimeElement::readDateField($entity, $field_name);
     // Merge with any preexisting objects on the field; we take precedence.
     $oldfield = $this->merge($oldfield);
     $use_start = $oldfield->start;
     $use_end = $oldfield->end;
 
     // Set timezone if not already in the FeedsDateTime object
-    $to_tz = date_get_timezone($field['tz_handling'], date_default_timezone_name());
+    $to_tz = date_get_timezone($info['settings']['tz_handling'], date_default_timezone());
     $temp = new FeedsDateTime(NULL, new DateTimeZone($to_tz));
 
     $db_tz = '';
@@ -390,7 +503,7 @@ class FeedsDateTimeElement extends FeedsElement {
       if (!date_timezone_is_valid($use_start->getTimezone()->getName())) {
         $use_start->setTimezone(new DateTimeZone("UTC"));
       }
-      $db_tz = date_get_timezone_db($field['tz_handling'], $use_start->getTimezone()->getName());
+      $db_tz = date_get_timezone_db($info['setting']['tz_handling'], $use_start->getTimezone()->getName());
     }
     if ($use_end) {
       $use_end = $use_end->merge($temp);
@@ -398,7 +511,7 @@ class FeedsDateTimeElement extends FeedsElement {
         $use_end->setTimezone(new DateTimeZone("UTC"));
       }
       if (!$db_tz) {
-        $db_tz = date_get_timezone_db($field['tz_handling'], $use_end->getTimezone()->getName());
+        $db_tz = date_get_timezone_db($info['settings']['tz_handling'], $use_end->getTimezone()->getName());
       }
     }
     if (!$db_tz) {
@@ -406,28 +519,28 @@ class FeedsDateTimeElement extends FeedsElement {
     }
 
     $db_tz = new DateTimeZone($db_tz);
-    if (!isset($node->{$field_name})) {
-      $node->{$field_name} = array();
+    if (!isset($entity->{$field_name})) {
+      $entity->{$field_name} = array('und' => array());
     }
     if ($use_start) {
-      $node->{$field_name}[0]['timezone'] = $use_start->getTimezone()->getName();
-      $node->{$field_name}[0]['offset'] = $use_start->getOffset();
+      $entity->{$field_name}['und'][0]['timezone'] = $use_start->getTimezone()->getName();
+      $entity->{$field_name}['und'][0]['offset'] = $use_start->getOffset();
       $use_start->setTimezone($db_tz);
-      $node->{$field_name}[0]['date'] = $use_start;
+      $entity->{$field_name}['und'][0]['date'] = $use_start;
       /**
        * @todo the date_type_format line could be simplified based upon a patch
        *   DO issue #259308 could affect this, follow up on at some point.
        *   Without this, all granularity info is lost.
        *   $use_start->format(date_type_format($field['type'], $use_start->granularity));
        */
-      $node->{$field_name}[0]['value'] = $use_start->format(date_type_format($field['type']));
+      $entity->{$field_name}['und'][0]['value'] = $use_start->format(date_type_format($info['type']));
     }
     if ($use_end) {
       // Don't ever use end to set timezone (for now)
-      $node->{$field_name}[0]['offset2'] = $use_end->getOffset();
+      $entity->{$field_name}['und'][0]['offset2'] = $use_end->getOffset();
       $use_end->setTimezone($db_tz);
-      $node->{$field_name}[0]['date2'] = $use_end;
-      $node->{$field_name}[0]['value2'] = $use_end->format(date_type_format($field['type']));
+      $entity->{$field_name}['und'][0]['date2'] = $use_end;
+      $entity->{$field_name}['und'][0]['value2'] = $use_end->format(date_type_format($info['type']));
     }
   }
 }
@@ -471,24 +584,39 @@ class FeedsDateTime extends DateTime {
    * Overridden constructor.
    *
    * @param $time
-   *   time string, flexible format including timestamp.
+   *   time string, flexible format including timestamp. Invalid formats will
+   *   fall back to 'now'.
    * @param $tz
    *   PHP DateTimeZone object, NULL allowed
    */
   public function __construct($time = '', $tz = NULL) {
+    // Assume UNIX timestamp if numeric.
     if (is_numeric($time)) {
-      // Assume timestamp.
       $time = "@". $time;
     }
+
     // PHP < 5.3 doesn't like the GMT- notation for parsing timezones.
     $time = str_replace("GMT-", "-", $time);
     $time = str_replace("GMT+", "+", $time);
-    parent::__construct($time, $tz ? $tz : new DateTimeZone("UTC"));
-    $this->setGranularityFromTime($time, $tz);
+
+    // Some PHP 5.2 version's DateTime class chokes on invalid dates.
+    if (!strtotime($time)) {
+      $time = 'now';
+    }
+
+    // Create and set time zone separately, PHP 5.2.6 does not respect time zone
+    // argument in __construct().
+    parent::__construct($time);
+    $tz = $tz ? $tz : new DateTimeZone("UTC");
+    $this->setTimeZone($tz);
+
+    // Verify that timezone has not been specified as an offset.
     if (!preg_match('/[a-zA-Z]/', $this->getTimezone()->getName())) {
-      // This tz was given as just an offset, which causes problems
       $this->setTimezone(new DateTimeZone("UTC"));
     }
+
+    // Finally set granularity.
+    $this->setGranularityFromTime($time, $tz);
   }
 
   /**

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSimplePieParser.inc,v 1.17 2010/09/17 22:25:07 alexb Exp $
+// $Id: FeedsSimplePieParser.inc,v 1.18.2.1 2010/09/29 23:56:10 alexb Exp $
 
 /**
  * Adapter to present SimplePie_Enclosure as FeedsEnclosure object.
@@ -60,12 +60,12 @@ class FeedsSimplePieParser extends FeedsParser {
   /**
    * Implements FeedsParser::parse().
    */
-  public function parse(FeedsImportBatch $batch, FeedsSource $source) {
+  public function parse(FeedsSource $source, FeedsFetcherResult $fetcher_result) {
     feeds_include_library('simplepie.inc', 'simplepie');
 
     // Initialize SimplePie.
     $parser = new SimplePie();
-    $parser->set_raw_data($batch->getRaw());
+    $parser->set_raw_data($fetcher_result->getRaw());
     $parser->set_stupidly_fast(TRUE);
     $parser->encode_instead_of_strip(FALSE);
     // @todo Is caching effective when we pass in raw data?
@@ -74,9 +74,10 @@ class FeedsSimplePieParser extends FeedsParser {
     $parser->init();
 
     // Construct the standard form of the parsed feed
-    $batch->setTitle(html_entity_decode(($title = $parser->get_title()) ? $title : $this->createTitle($parser->get_description())));
-    $batch->setDescription($parser->get_description());
-    $batch->setLink(html_entity_decode($parser->get_link()));
+    $result = new FeedsParserResult();
+    $result->setTitle(html_entity_decode(($title = $parser->get_title()) ? $title : $this->createTitle($parser->get_description())));
+    $result->setDescription($parser->get_description());
+    $result->setLink(html_entity_decode($parser->get_link()));
 
     $items_num = $parser->get_item_quantity();
     for ($i = 0; $i < $items_num; $i++) {
@@ -136,10 +137,11 @@ class FeedsSimplePieParser extends FeedsParser {
       $this->parseExtensions($item, $simplepie_item);
       $item['raw'] = $simplepie_item->data;
 
-      $batch->addItem($item);
+      $result->addItem($item);
     }
     // Release parser.
     unset($parser);
+    return $result;
   }
 
   /**
@@ -211,7 +213,7 @@ class FeedsSimplePieParser extends FeedsParser {
    * Returns cache directory. Creates it if it doesn't exist.
    */
   protected function cacheDirectory() {
-    $directory = file_directory_path() .'/simplepie';
+    $directory = 'public://simplepie';
     file_prepare_directory($dir, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS);
     return $directory;
   }

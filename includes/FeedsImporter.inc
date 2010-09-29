@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.30 2010/09/18 00:47:58 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.31.2.1 2010/09/29 23:56:10 alexb Exp $
 
 /**
  * @file
@@ -27,7 +27,7 @@ class FeedsImporter extends FeedsConfigurable {
 
   // Every feed has a fetcher, a parser and a processor.
   // These variable names match the possible return values of
-  // feeds_plugin_type().
+  // FeedsPlugin::typeOf().
   protected $fetcher, $parser, $processor;
 
   // This array defines the variable names of the plugins above.
@@ -46,7 +46,7 @@ class FeedsImporter extends FeedsConfigurable {
     // Instantiate fetcher, parser and processor, set their configuration if
     // stored info is available.
     foreach ($this->plugin_types as $type) {
-      $plugin = feeds_plugin_instance($this->config[$type]['plugin_key'], $this->id);
+      $plugin = feeds_plugin($this->config[$type]['plugin_key'], $this->id);
 
       if (isset($this->config[$type]['config'])) {
         $plugin->setConfig($this->config[$type]['config']);
@@ -78,18 +78,36 @@ class FeedsImporter extends FeedsConfigurable {
    */
   public function schedule() {
     $job = array(
-      'callback' => 'feeds_importer_expire',
       'type' => $this->id,
       'period' => 0,
       'periodic' => TRUE,
     );
     if (FEEDS_EXPIRE_NEVER != $this->processor->expiryTime()) {
       $job['period'] = 3600;
-      job_scheduler()->set($job);
+      JobScheduler::get('feeds_importer_expire')->set($job);
     }
     else {
-      job_scheduler()->remove($job);
+      JobScheduler::get('feeds_importer_expire')->remove($job);
     }
+  }
+
+  /**
+   * Report how many items *should* be created on one page load by this
+   * importer.
+   *
+   * Note:
+   *
+   * It depends on whether parser implements batching if this limit is actually
+   * respected. Further, if no limit is reported it doesn't mean that the
+   * number of items that can be created on one page load is actually without
+   * limit.
+   *
+   * @return
+   *   A positive number defining the number of items that can be created on
+   *   one page load. 0 if this number is unlimited.
+   */
+  public function getLimit() {
+    return $this->processor->getLimit();
   }
 
   /**
@@ -133,7 +151,6 @@ class FeedsImporter extends FeedsConfigurable {
       ->condition('id', $this->id)
       ->execute();
     $job = array(
-      'callback' => 'feeds_importer_expire',
       'type' => $this->id,
       'id' => 0,
     );
@@ -141,7 +158,7 @@ class FeedsImporter extends FeedsConfigurable {
       feeds_reschedule($this->id);
     }
     else {
-      job_scheduler()->remove($job);
+      JobScheduler::get('feeds_importer_expire')->remove($job);
     }
   }
 
@@ -155,8 +172,8 @@ class FeedsImporter extends FeedsConfigurable {
    */
   public function setPlugin($plugin_key) {
     // $plugin_type can be either 'fetcher', 'parser' or 'processor'
-    if ($plugin_type = feeds_plugin_type($plugin_key)) {
-      if ($plugin = feeds_plugin_instance($plugin_key, $this->id)) {
+    if ($plugin_type = FeedsPlugin::typeOf($plugin_key)) {
+      if ($plugin = feeds_plugin($plugin_key, $this->id)) {
         // Unset existing plugin, switch to new plugin.
         unset($this->$plugin_type);
         $this->$plugin_type = $plugin;

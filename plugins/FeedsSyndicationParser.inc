@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSyndicationParser.inc,v 1.18 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsSyndicationParser.inc,v 1.18.2.1 2010/09/29 23:56:10 alexb Exp $
 
 /**
  * Class definition for Common Syndication Parser.
@@ -11,22 +11,24 @@ class FeedsSyndicationParser extends FeedsParser {
   /**
    * Implements FeedsParser::parse().
    */
-  public function parse(FeedsImportBatch $batch, FeedsSource $source) {
+  public function parse(FeedsSource $source, FeedsFetcherResult $fetcher_result) {
     feeds_include_library('common_syndication_parser.inc', 'common_syndication_parser');
-    $result = common_syndication_parser_parse($batch->getRaw());
-    $batch->setTitle($result['title']);
-    $batch->setDescription($result['description']);
-    $batch->setLink($result['link']);
-    if (is_array($result['items'])) {
-      foreach ($result['items'] as $item) {
+    $feed = common_syndication_parser_parse($fetcher_result->getRaw());
+    $result = new FeedsParserResult();
+    $result->setTitle($feed['title']);
+    $result->setDescription($feed['description']);
+    $result->setLink($feed['link']);
+    if (is_array($feed['items'])) {
+      foreach ($feed['items'] as $item) {
         if (isset($item['geolocations'])) {
           foreach ($item['geolocations'] as $k => $v) {
             $item['geolocations'][$k] = new FeedsGeoTermElement($v);
           }
         }
-        $batch->addItem($item);
+        $result->addItem($item);
       }
     }
+    return $result;
   }
 
   /**

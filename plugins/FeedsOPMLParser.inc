@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsOPMLParser.inc,v 1.7 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsOPMLParser.inc,v 1.7.2.1 2010/09/29 23:56:10 alexb Exp $
 
 /**
  * @file
@@ -14,11 +14,12 @@ class FeedsOPMLParser extends FeedsParser {
   /**
    * Implements FeedsParser::parse().
    */
-  public function parse(FeedsImportBatch $batch, FeedsSource $source) {
+  public function parse(FeedsSource $source, FeedsFetcherResult $fetcher_result) {
     feeds_include_library('opml_parser.inc', 'opml_parser');
-    $result = opml_parser_parse($batch->getRaw());
-    $batch->setTitle($result['title']);
-    $batch->setItems($result['items']);
+    $result = opml_parser_parse($fetcher_result->getRaw());
+    $result = new FeedsParserResult($result['items']);
+    $result->setTitle($result['title']);
+    return $result;
   }
 
   /**

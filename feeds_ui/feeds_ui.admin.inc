@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_ui.admin.inc,v 1.59 2010/09/18 01:44:46 alexb Exp $
+// $Id: feeds_ui.admin.inc,v 1.60.2.1 2010/09/29 23:56:10 alexb Exp $
 
 /**
  * @file
@@ -223,7 +223,6 @@ function feeds_ui_create_form_submit($form, &$form_state) {
  * Delete configuration form.
  */
 function feeds_ui_delete_form($form, &$form_state, $importer) {
-  $form['#redirect'] = 'admin/structure/feeds';
   $form['#importer'] = $importer;
   if ($importer->export_type & EXPORT_IN_CODE) {
     $title = t('Would you really like to revert the importer @importer?', array('@importer' => $importer->config['name']));
@@ -233,23 +232,21 @@ function feeds_ui_delete_form($form, &$form_state, $importer) {
     $title = t('Would you really like to delete the importer @importer?', array('@importer' => $importer->config['name']));
     $button_label = t('Delete');
   }
-  return confirm_form($form,
-    $title,
-    $form['#redirect'],
-    t('This action cannot be undone.'),
-    $button_label
-  );
+  return confirm_form($form, $title, 'admin/structure/feeds', t('This action cannot be undone.'), $button_label);
 }
 
 /**
  * Submit handler for feeds_ui_delete_form().
  */
 function feeds_ui_delete_form_submit($form, &$form_state) {
+  $form_state['redirect'] = 'admin/structure/feeds';
+
   // Remove importer.
   $form['#importer']->delete();
 
   // Clear cache, deleting a configuration may have an affect on menu tree.
   feeds_cache_clear();
+
 }
 
 /**
@@ -273,7 +270,7 @@ function feeds_ui_export_form($form, &$form_state, $importer) {
 function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
 
   // Get plugins and configuration.
-  $plugins = feeds_get_plugins();
+  $plugins = FeedsPlugin::all();
   $config = $importer->config;
   // Base path for changing the active container.
   $path = 'admin/structure/feeds/edit/'. $importer->id;
@@ -301,9 +298,9 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
         $active_container['title'] = t('Basic settings');
         $active_container['body'] = feeds_get_form($importer, 'configForm');
       }
-      // feeds_plugin_instance() returns a correct result because feed has been
+      // feeds_plugin() returns a correct result because feed has been
       // instantiated previously.
-      elseif (in_array($plugin_key, array_keys($plugins)) && $plugin = feeds_plugin_instance($plugin_key, $importer->id)) {
+      elseif (in_array($plugin_key, array_keys($plugins)) && $plugin = feeds_plugin($plugin_key, $importer->id)) {
         $active_container['title'] = t('Settings for !plugin', array('!plugin' => $plugins[$plugin_key]['name']));
         $active_container['body'] = feeds_get_form($plugin, 'configForm');
       }
@@ -414,7 +411,7 @@ function feeds_ui_edit_page($importer, $active = 'help', $plugin_key = '') {
  *   A Form API form definition.
  */
 function feeds_ui_plugin_form($form, &$form_state, $importer, $type) {
-  $plugins = feeds_get_plugins_by_type($type);
+  $plugins = FeedsPlugin::byType($type);
 
   $form = array();
   $form['#importer'] = $importer;
@@ -788,9 +785,10 @@ function theme_feeds_ui_mapping_form($variables) {
     foreach ($form['#mappings'] as $i => $mapping) {
       // Some parsers do not define source options.
       $source = isset($form['source']['#options'][$mapping['source']]) ? $form['source']['#options'][$mapping['source']] : $mapping['source'];
+      $target = isset($form['target']['#options'][$mapping['target']]) ? check_plain($form['target']['#options'][$mapping['target']]) : '<em>' . t('Missing') . '</em>';
       $rows[] = array(
         check_plain($source),
-        check_plain($form['target']['#options'][$mapping['target']]),
+        $target,
         drupal_render($form['unique_flags'][$i]),
         drupal_render($form['remove_flags'][$i]),
       );

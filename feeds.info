@@ -1,4 +1,4 @@
-;$Id: feeds.info,v 1.6 2010/09/16 22:30:18 alexb Exp $
+;$Id: feeds.info,v 1.7.2.1 2010/09/29 23:56:09 alexb Exp $
 name = Feeds
 description = Aggregates RSS/Atom/RDF feeds, imports CSV files and more.
 package = Feeds
@@ -6,9 +6,19 @@ dependencies[] = ctools
 dependencies[] = job_scheduler
 files[] = feeds.module
 files[] = feeds.install
-files[] = includes/FeedsBatch.inc
 files[] = includes/FeedsConfigurable.inc
 files[] = includes/FeedsImporter.inc
 files[] = includes/FeedsSource.inc
+files[] = tests/feeds.test.inc
+files[] = tests/feeds_date_time.test
+files[] = tests/feeds_mapper_date.test
+files[] = tests/feeds_mapper_field.test
+files[] = tests/feeds_mapper_test.inc
+files[] = tests/feeds_fetcher_file.test
+files[] = tests/feeds_processor_node.test
+files[] = tests/feeds_processor_term.test
+files[] = tests/feeds_processor_user.test
+files[] = tests/feeds_scheduler.test
+files[] = tests/parser_csv.test
 core = 7.x
 php = 5.2

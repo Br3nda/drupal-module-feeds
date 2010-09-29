@@ -1,13 +1,10 @@
 <?php
-// $Id: feeds_processor_user.test,v 1.4 2010/09/17 23:58:18 alexb Exp $
+// $Id: feeds_processor_user.test,v 1.4.2.1 2010/09/29 23:56:10 alexb Exp $
 
 /**
  * @file
  * Tests for plugins/FeedsUserProcessor.inc
  */
-
-// Require FeedsWebTestCase class definition.
-require_once(dirname(__FILE__) .'/feeds.test.inc');
 
 /**
  * Test aggregating a feed as data records.
@@ -29,15 +26,11 @@ class FeedsCSVtoUsersTest extends FeedsWebTestCase {
    * Set up test.
    */
   public function setUp() {
-    parent::setUp('feeds', 'feeds_ui', 'ctools', 'job_scheduler');
-
-    $this->drupalLogin(
-      $this->drupalCreateUser(
-        array(
-          'administer feeds', 'administer users',
-        )
-      )
-    );
+    parent::setUp();
+    $this->drupalLogin($this->drupalCreateUser(array(
+      'administer feeds',
+      'administer users',
+    )));
   }
 
   /**
@@ -96,7 +89,7 @@ class FeedsCSVtoUsersTest extends FeedsWebTestCase {
     // 1 user has an invalid email address, all users should be assigned
     // the manager role.
     $this->assertText('There was 1 user that could not be imported because either their name or their email was empty or not valid. Check import data and mapping settings on User processor.');
-    $this->drupalGet('admin/user/user');
+    $this->drupalGet('admin/people');
     $this->assertText('Morticia');
     $this->assertText('Fester');
     $this->assertText('Gomez');

@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsSitemapParser.inc,v 1.4 2010/09/17 17:25:19 alexb Exp $
+// $Id: FeedsSitemapParser.inc,v 1.4.2.1 2010/09/29 23:56:10 alexb Exp $
 
 /**
  * A parser for the Sitemap specification http://www.sitemaps.org/protocol.php
@@ -8,12 +8,13 @@ class FeedsSitemapParser extends FeedsParser {
   /**
    * Implements FeedsParser::parse().
    */
-  public function parse(FeedsImportBatch $batch, FeedsSource $source) {
+  public function parse(FeedsSource $source, FeedsFetcherResult $fetcher_result) {
     // Set time zone to GMT for parsing dates with strtotime().
     $tz = date_default_timezone_get();
     date_default_timezone_set('GMT');
     // Yes, using a DOM parser is a bit inefficient, but will do for now
-    $xml = new SimpleXMLElement($batch->getRaw());
+    $xml = new SimpleXMLElement($fetcher_result->getRaw());
+    $result = new FeedsParserResult();
     foreach ($xml->url as $url) {
       $item = array('url' => (string) $url->loc);
       if ($url->lastmod) {
@@ -25,9 +26,10 @@ class FeedsSitemapParser extends FeedsParser {
       if ($url->priority) {
         $item['priority'] = $url->priority;
       }
-      $batch->addItem($item);
+      $result->addItem($item);
     }
     date_default_timezone_set($tz);
+    return $result;
   }
 
   /**

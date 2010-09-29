@@ -1,5 +1,62 @@
 <?php
-// $Id: FeedsFetcher.inc,v 1.7 2010/09/15 19:40:57 alexb Exp $
+// $Id: FeedsFetcher.inc,v 1.7.4.1 2010/09/29 23:56:10 alexb Exp $
+
+/**
+ * Base class for all fetcher results.
+ */
+class FeedsFetcherResult extends FeedsResult {
+  protected $raw;
+  protected $file_path;
+
+  /**
+   * Constructor.
+   */
+  public function __construct($raw) {
+    $this->raw = $raw;
+  }
+
+  /**
+   * @return
+   *   The raw content from the source as a string.
+   *
+   * @throws Exception
+   *   Extending classes MAY throw an exception if a problem occurred.
+   */
+  public function getRaw() {
+    return $this->raw;
+  }
+
+  /**
+   * Get a path to a temporary file containing the resource provided by the
+   * fetcher.
+   *
+   * File will be deleted after DRUPAL_MAXIMUM_TEMP_FILE_AGE.
+   *
+   * @return
+   *   A path to a file containing the raw content as a source.
+   *
+   * @throws Exception
+   *   If an unexpected problem occurred.
+   */
+  public function getFilePath() {
+    if (!isset($this->file_path)) {
+      $destination = 'public://feeds';
+      if (!file_prepare_directory($destination, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
+        throw new Exception(t('Feeds directory either cannot be created or is not writable.'));
+      }
+      $this->file_path = FALSE;
+      if ($file = file_save_data($this->getRaw(), $destination . '/'. get_class($this) . REQUEST_TIME)) {
+        $file->status = 0;
+        file_save($file);
+        $this->file_path = $file->uri;
+      }
+      else {
+        throw new Exception(t('Cannot write content to %dest', array('%dest' => $destination)));
+      }
+    }
+    return $this->file_path;
+  }
+}
 
 /**
  * Abstract class, defines shared functionality between fetchers.
@@ -15,6 +72,9 @@ abstract class FeedsFetcher extends FeedsPlugin {
    *
    * @param $source
    *   Source value as entered by user through sourceForm().
+   *
+   * @return
+   *   A FeedsFetcherResult object.
    */
   public abstract function fetch(FeedsSource $source);
 

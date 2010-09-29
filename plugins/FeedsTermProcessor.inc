@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.24 2010/09/17 21:29:12 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.25.2.1 2010/09/29 23:56:10 alexb Exp $
 
 /**
  * @file
@@ -14,7 +14,7 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Implements FeedsProcessor::process().
    */
-  public function process(FeedsImportBatch $batch, FeedsSource $source) {
+  public function process(FeedsSource $source, FeedsParserResult $parser_result) {
 
     if (empty($this->config['vocabulary'])) {
       throw new Exception(t('You must define a vocabulary for Taxonomy term processor before importing.'));
@@ -23,33 +23,33 @@ class FeedsTermProcessor extends FeedsProcessor {
     // Count number of created and updated nodes.
     $created  = $updated = $no_name = 0;
 
-    while ($item = $batch->shiftItem()) {
+    while ($item = $parser_result->shiftItem()) {
 
-      if (!($tid = $this->existingItemId($batch, $source)) || $this->config['update_existing'] != FEEDS_SKIP_EXISTING) {
+      if (!($tid = $this->existingItemId($source, $parser_result)) || $this->config['update_existing'] != FEEDS_SKIP_EXISTING) {
 
         // Map item to a term.
-        $term = array();
+        $term = new stdClass();
         if ($tid && $this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
-          $term = (array) taxonomy_get_term($tid, TRUE);
-          $term = module_invoke_all('feeds_taxonomy_load', $term);
+          $term = taxonomy_term_load($tid);
         }
-        $term = $this->map($batch, $term, $source->feed_nid);
+        $term->entity_type = 'taxonomy_term';
+        $term = $this->map($source, $parser_result, $term);
 
         // Check if term name is set, otherwise continue.
-        if (empty($term['name'])) {
+        if (empty($term->name)) {
           $no_name++;
           continue;
         }
 
         // Add term id if available.
         if (!empty($tid)) {
-          $term['tid'] = $tid;
+          $term->tid = $tid;
         }
 
         // Save the term.
-        $term['feeds_importer_id'] = $this->id;
-        $term['feed_nid'] = $this->feed_nid;
-        taxonomy_save_term($term);
+        $term->feeds_importer_id = $this->id;
+        $term->feed_nid = $source->feed_nid;
+        taxonomy_term_save($term);
         if ($tid) {
           $updated++;
         }
@@ -86,11 +86,11 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Implements FeedsProcessor::clear().
    */
-  public function clear(FeedsBatch $batch, FeedsSource $source) {
+  public function clear(FeedsSource $source) {
     $deleted = 0;
     $vocabulary = $this->vocabulary();
     $terms = db_query("SELECT td.tid
-                        FROM {term_data} td
+                        FROM {taxonomy_term_data} td
                         JOIN {feeds_term_item} ft ON td.tid = ft.tid
                         WHERE td.vid = :vid
                         AND ft.id = :id
@@ -101,7 +101,7 @@ class FeedsTermProcessor extends FeedsProcessor {
                           ':feed_nid' => $source->feed_nid,
                         ));
     foreach ($terms as $term) {
-      if (taxonomy_del_term($term->tid) == SAVED_DELETED) {
+      if (taxonomy_term_delete($term->tid) == SAVED_DELETED) {
         $deleted++;
       }
     }
@@ -117,20 +117,16 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Execute mapping on an item.
    */
-  protected function map(FeedsImportBatch $batch, $target_term = NULL) {
+  protected function map(FeedsSource $source, FeedsParserResult $result, $target_term = NULL) {
     // Prepare term object, have parent class do the iterating.
     if (!$target_term) {
-      $target_term = array();
+      $target_term = new stdClass();
     }
     if (!$vocabulary = $this->vocabulary()) {
       throw new Exception(t('No vocabulary specified for term processor'));
     }
-    $target_term['vid'] = $vocabulary->vid;
-    $target_term = parent::map($batch, $target_term);
-    // Taxonomy module expects synonyms to be supplied as a single string.
-    if (isset($target_term['synonyms']) && is_array(isset($target_term['synonyms']))) {
-      $target_term['synonyms'] = implode("\n", $target_term['synonyms']);
-    }
+    $target_term->vid = $vocabulary->vid;
+    $target_term = parent::map($source, $result, $target_term);
     return $target_term;
   }
 
@@ -150,13 +146,8 @@ class FeedsTermProcessor extends FeedsProcessor {
    */
   public function configForm(&$form_state) {
     $options = array(0 => t('Select a vocabulary'));
-    foreach (taxonomy_get_vocabularies() as $vid => $vocab) {
-      if (strpos($vocab->module, 'features_') === 0) {
-        $options[$vocab->module] = $vocab->name;
-      }
-      else {
-        $options[$vid] = $vocab->name;
-      }
+    foreach (taxonomy_get_vocabularies() as $vocab) {
+      $options[$vocab->machine_name] = check_plain($vocab->name);
     }
     $form = array();
     $form['vocabulary'] = array(
@@ -203,27 +194,25 @@ class FeedsTermProcessor extends FeedsProcessor {
         'name' => t('Term description'),
         'description' => t('Description of the taxonomy term.'),
        ),
-      'synonyms' => array(
-        'name' => t('Term synonyms'),
-        'description' => t('One synonym or an array of synonyms of the taxonomy term.'),
-       ),
     );
     // Let implementers of hook_feeds_term_processor_targets() add their targets.
-    $vocabulary = $this->vocabulary();
-    drupal_alter('feeds_term_processor_targets', $targets, $vocabulary->vid);
+    if ($vocabulary = $this->vocabulary()) {
+      self::loadMappers();
+      feeds_alter('feeds_processor_targets', $targets, 'taxonomy_term', $vocabulary->machine_name);
+    }
     return $targets;
   }
 
   /**
    * Get id of an existing feed item term if available.
    */
-  protected function existingItemId(FeedsImportBatch $batch, FeedsSource $source) {
+  protected function existingItemId(FeedsSource $source, FeedsParserResult $result) {
 
     // The only possible unique target is name.
-    foreach ($this->uniqueTargets($batch) as $target => $value) {
+    foreach ($this->uniqueTargets($source, $result) as $target => $value) {
       if ($target == 'name') {
         $vocabulary = $this->vocabulary();
-        if ($tid = db_query("SELECT tid FROM {term_data} WHERE name = :name AND vid = :vid", array(':name' => $value, ':vid' => $vocabulary->vid))->fetchField()) {
+        if ($tid = db_query("SELECT tid FROM {taxonomy_term_data} WHERE name = :name AND vid = :vid", array(':name' => $value, ':vid' => $vocabulary->vid))->fetchField()) {
           return $tid;
         }
       }
@@ -233,20 +222,23 @@ class FeedsTermProcessor extends FeedsProcessor {
 
   /**
    * Return vocabulary to map to.
-   *
-   * Feeds supports looking up vocabularies by their module name as part of an
-   * effort to use the vocabulary.module field as machine name to make
-   * vocabularies exportable.
    */
   public function vocabulary() {
-    $vocabularies = taxonomy_get_vocabularies();
+    // Legacy handling for old feeds importers.
     if (is_numeric($this->config['vocabulary'])) {
-      return $vocabularies[$this->config['vocabulary']];
+      $vocabularies = taxonomy_get_vocabularies();
+      return isset($vocabularies[$this->config['vocabulary']]) ? $vocabularies[$this->config['vocabulary']] : NULL;
     }
     else {
-      foreach ($vocabularies as $vocabulary) {
-        if ($vocabulary->module == $this->config['vocabulary']) {
-          return $vocabulary;
+      if ($vocabulary = taxonomy_vocabulary_machine_name_load($this->config['vocabulary'])) {
+        return $vocabulary;
+      }
+      else {
+        $vocabularies = taxonomy_get_vocabularies();
+        foreach ($vocabularies as $vocabulary) {
+          if ($vocabulary->module == $this->config['vocabulary']) {
+            return $vocabulary;
+          }
         }
       }
     }

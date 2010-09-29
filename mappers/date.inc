@@ -1,5 +1,5 @@
 <?php
-// $Id: date.inc,v 1.4 2010/09/17 17:25:19 alexb Exp $
+// $Id: date.inc,v 1.4.2.1 2010/09/29 23:56:10 alexb Exp $
 
 /**
  * @file
@@ -7,31 +7,29 @@
  */
 
 /**
- * Implements hook_feeds_node_processor_targets_alter().
+ * Implements hook_feeds_processor_targets_alter().
  *
  * @see FeedsNodeProcessor::getMappingTargets().
  *
  * @todo Only provides "end date" target if field allows it.
  */
-function date_feeds_node_processor_targets_alter(&$targets, $content_type) {
-  $info = content_types($content_type);
-  if (isset($info['fields']) && count($info['fields'])) {
-    foreach ($info['fields'] as $field_name => $field) {
-      if (in_array($field['type'], array('date', 'datestamp', 'datetime'))) {
-        $name = isset($field['widget']['label']) ? $field['widget']['label'] : $field_name;
-        $targets[$field_name .':start'] = array(
-          'name' => $name .': Start',
-          'callback' => 'date_feeds_set_target',
-          'description' => t('The start date for the !name field. Also use if mapping both start and end.', array('!name' => $name)),
-          'real_target' => $field_name,
-        );
-        $targets[$field_name .':end'] = array(
-          'name' => $name .': End',
-          'callback' => 'date_feeds_set_target',
-          'description' => t('The end date for the @name field.', array('@name' => $name)),
-          'real_target' => $field_name,
-        );
-      }
+function date_feeds_processor_targets_alter(&$targets, $entity_type, $bundle_name) {
+  foreach (field_info_instances($entity_type, $bundle_name) as $name => $instance) {
+    $info = field_info_field($name);
+    if (in_array($info['type'], array('date', 'datestamp', 'datetime'))) {
+      $targets[$name . ':start'] = array(
+        'name' => $instance['label'] . ': Start',
+        'callback' => 'date_feeds_set_target',
+        'description' => t('The start date for the @name field. Also use if mapping both start and end.',
+          array('@name' => $instance['label'])),
+        'real_target' => $name,
+      );
+      $targets[$name . ':end'] = array(
+        'name' => $instance['label'] . ': End',
+        'callback' => 'date_feeds_set_target',
+        'description' => t('The end date for the @name field.', array('@name' => $instance['label'])),
+        'real_target' => $name,
+      );
     }
   }
 }
@@ -49,7 +47,7 @@ function date_feeds_node_processor_targets_alter(&$targets, $content_type) {
  *
  * @todo Support array of values for dates.
  */
-function date_feeds_set_target($node, $target, $feed_element) {
+function date_feeds_set_target($entity, $target, $feed_element) {
   list($field_name, $sub_field) = split(':', $target);
   if (!($feed_element instanceof FeedsDateTimeElement)) {
     if (is_array($feed_element)) {
@@ -62,5 +60,6 @@ function date_feeds_set_target($node, $target, $feed_element) {
       $feed_element = new FeedsDateTimeElement($feed_element, NULL);
     }
   }
-  $feed_element->buildDateField($node, $field_name);
+  $feed_element->buildDateField($entity, $field_name);
+
 }
