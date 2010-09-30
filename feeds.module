@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.module,v 1.74.2.1 2010/09/29 23:56:09 alexb Exp $
+// $Id: feeds.module,v 1.74.2.2 2010/09/30 19:50:08 alexb Exp $
 
 /**
  * @file
@@ -79,6 +79,7 @@ function feeds_source_import($job) {
   try {
     $source->existing()->import();
   }
+  catch (FeedsNotExistingException $e) {}
   catch (Exception $e) {
     watchdog('feeds_source_import()', $e->getMessage(), array(), WATCHDOG_ERROR);
   }
@@ -93,6 +94,7 @@ function feeds_importer_expire($job) {
   try {
     $importer->existing()->expire();
   }
+  catch (FeedsNotExistingException $e) {}
   catch (Exception $e) {
     watchdog('feeds_importer_expire()', $e->getMessage(), array(), WATCHDOG_ERROR);
   }
