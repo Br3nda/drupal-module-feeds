@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.pages.inc,v 1.34.2.1 2010/09/29 23:56:09 alexb Exp $
+// $Id: feeds.pages.inc,v 1.34.2.2 2010/10/01 20:50:17 alexb Exp $
 
 /**
  * @file
@@ -160,6 +160,7 @@ function feeds_importer_template($importer) {
   }
   return drupal_not_found();
 }
+
 /**
  * Theme upload widget.
  */
