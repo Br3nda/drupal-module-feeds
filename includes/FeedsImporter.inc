@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsImporter.inc,v 1.31.2.4 2010/10/01 20:43:02 alexb Exp $
+// $Id: FeedsImporter.inc,v 1.31.2.5 2010/10/03 15:15:48 alexb Exp $
 
 /**
  * @file
@@ -74,9 +74,16 @@ class FeedsImporter extends FeedsConfigurable {
   }
 
   /**
-   * Schedule this importer.
+   * Schedule all periodic tasks for this importer.
    */
   public function schedule() {
+    $this->scheduleExpire();
+  }
+
+  /**
+   * Schedule expiry of items.
+   */
+  public function scheduleExpire() {
     $job = array(
       'type' => $this->id,
       'period' => 0,
@@ -232,6 +239,7 @@ class FeedsImporter extends FeedsConfigurable {
       'import_period' => 1800, // Refresh every 30 minutes by default.
       'expire_period' => 3600, // Expire every hour by default, this is a hidden setting.
       'import_on_create' => TRUE, // Import on submission.
+      'process_in_background' => FALSE,
     );
   }
 
@@ -284,6 +292,12 @@ class FeedsImporter extends FeedsConfigurable {
       '#title' => t('Import on submission'),
       '#description' => t('Check if import should be started at the moment a standalone form or node form is submitted.'),
       '#default_value' => $config['import_on_create'],
+    );
+    $form['process_in_background'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Process in background'),
+      '#description' => t('For very large imports. If checked, import and delete tasks started from the web UI will be handled by a cron task in the background rather than by the browser. This does not affect periodic imports, they are handled by a cron task in any case.') . $cron_required,
+      '#default_value' => $config['process_in_background'],
     );
     return $form;
   }
