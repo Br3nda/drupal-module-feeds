@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.69.2.5 2010/10/01 22:15:41 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.69.2.6 2010/10/03 22:58:03 alexb Exp $
 
 /**
  * @file
@@ -123,9 +123,11 @@ class FeedsNodeProcessor extends FeedsProcessor {
     }
     $count = $this->getLimit();
     $nodes = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = :id AND n.created < :created", 0, $count, array(':id' => $this->id, ':created' => REQUEST_TIME - $time));
+    $nids = array();
     foreach ($nodes as $node) {
-      _feeds_node_delete($node->nid);
+      $nids[$node->nid] = $node->nid;
     }
+    node_delete_multiple($nids);
     if (db_query_range("SELECT 1 FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = :id AND n.created < :created", 0, 1, array(':id' => $this->id, ':created' => REQUEST_TIME - $time))->fetchField()) {
       return FEEDS_BATCH_ACTIVE;
     }
