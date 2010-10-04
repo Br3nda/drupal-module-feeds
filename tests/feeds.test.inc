@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.19.2.1 2010/09/29 23:56:10 alexb Exp $
+// $Id: feeds.test.inc,v 1.19.2.2 2010/10/04 19:50:36 jmiccolis Exp $
 
 /**
  * @file
@@ -320,7 +320,7 @@ class FeedsWebTestCase extends DrupalWebTestCase {
     }
     $edit = array(
       'feeds[FeedsHTTPFetcher][source]' => $feed_url,
-      );
+    );
     $nid = $this->drupalPost('import/'. $id, $edit, 'Import');
 
     // Check whether feed got recorded in feeds_source table.
