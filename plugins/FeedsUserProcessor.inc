@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.22.2.1 2010/09/29 23:56:10 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.22.2.2 2010/10/04 01:33:43 alexb Exp $
 
 /**
  * @file
@@ -10,6 +10,14 @@
  * Feeds processor plugin. Create users from feed items.
  */
 class FeedsUserProcessor extends FeedsProcessor {
+  /**
+   * Define entity type.
+   */
+  protected function __construct($id) {
+    parent::__construct($id);
+    $this->entity_type = 'user';
+  }
+
 
   /**
    * Implements FeedsProcessor::process().
@@ -23,18 +31,19 @@ class FeedsUserProcessor extends FeedsProcessor {
 
       if (!($uid = $this->existingItemId($source, $parser_result)) || $this->config['update_existing']) {
 
-        // Map item to a term.
-        $account = $this->map($source, $parser_result);
+        // Load / create new user and execute mapping.
+        if (empty($uid)) {
+          $account = $this->newUser($source);
+        }
+        else {
+          $account = $this->loadUser($source, $uid);
+        }
+        $account = $this->map($source, $parser_result, $account);
 
         // Check if user name and mail are set, otherwise continue.
         if (empty($account->name) || empty($account->mail) || !valid_email_address($account->mail)) {
           $failed++;
           continue;
-        }
-
-        // Add term id if available.
-        if (!empty($uid)) {
-          $account->uid = $uid;
         }
 
         // Save the user.
@@ -92,21 +101,6 @@ class FeedsUserProcessor extends FeedsProcessor {
   }
 
   /**
-   * Execute mapping on an item.
-   */
-  protected function map(FeedsSource $source, FeedsParserResult $result) {
-    // Prepare term object.
-    $target_account = new stdClass();
-    $target_account->uid = 0;
-    $target_account->entity_type = 'user';
-    $target_account->roles = array_filter($this->config['roles']);
-    $target_account->status = $this->config['status'];
-
-    // Have parent class do the iterating.
-    return parent::map($source, $result, $target_account);
-  }
-
-  /**
    * Override parent::configDefaults().
    */
   public function configDefaults() {
@@ -154,17 +148,11 @@ class FeedsUserProcessor extends FeedsProcessor {
   }
 
   /**
-   * Set target element.
-   */
-  public function setTargetElement(&$target_item, $target_element, $value) {
-    $target_item->$target_element = $value;
-  }
-
-  /**
    * Return available mapping targets.
    */
   public function getMappingTargets() {
-    $targets = array(
+    $targets = parent::getMappingTargets();
+    $targets += array(
       'name' => array(
         'name' => t('User name'),
         'description' => t('Name of the user.'),
@@ -199,6 +187,9 @@ class FeedsUserProcessor extends FeedsProcessor {
    * Get id of an existing feed item term if available.
    */
   protected function existingItemId(FeedsSource $source, FeedsParserResult $result) {
+    if ($uid = parent::existingItemId($source, $result)) {
+      return $uid;
+    }
 
     // Iterate through all unique targets and try to find a user for the
     // target's value.
@@ -220,5 +211,28 @@ class FeedsUserProcessor extends FeedsProcessor {
       }
     }
     return 0;
+  }
+
+  /**
+   * Creates a new user account in memory and returns it.
+   */
+  protected function newUser($source) {
+    $account = new stdClass();
+    $account->uid = 0;
+    $account->roles = array_filter($this->config['roles']);
+    $account->status = $this->config['status'];
+    $this->newItemInfo($account, $source->feed_nid);
+    return $account;
+  }
+
+  /**
+   * Loads an existing user.
+   */
+  protected function loadUser($source, $uid) {
+    $account = user_load($uid);
+    if (!$this->loadItemInfo($account)) {
+      $this->newItemInfo($account, $source->feed_nid);
+    }
+    return $account;
   }
 }

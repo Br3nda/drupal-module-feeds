@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.25.2.1 2010/09/29 23:56:10 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.25.2.2 2010/10/04 01:33:43 alexb Exp $
 
 /**
  * @file
@@ -10,6 +10,14 @@
  * Feeds processor plugin. Create taxonomy terms from feed items.
  */
 class FeedsTermProcessor extends FeedsProcessor {
+  /**
+   * Define entity type.
+   */
+  protected function __construct($id) {
+    parent::__construct($id);
+    $this->entity_type = 'taxonomy_term';
+  }
+
 
   /**
    * Implements FeedsProcessor::process().
@@ -28,11 +36,12 @@ class FeedsTermProcessor extends FeedsProcessor {
       if (!($tid = $this->existingItemId($source, $parser_result)) || $this->config['update_existing'] != FEEDS_SKIP_EXISTING) {
 
         // Map item to a term.
-        $term = new stdClass();
         if ($tid && $this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
-          $term = taxonomy_term_load($tid);
+          $term = $this->loadTerm($source, $tid);
         }
-        $term->entity_type = 'taxonomy_term';
+        else {
+          $term = $this->newTerm($source);
+        }
         $term = $this->map($source, $parser_result, $term);
 
         // Check if term name is set, otherwise continue.
@@ -91,10 +100,12 @@ class FeedsTermProcessor extends FeedsProcessor {
     $vocabulary = $this->vocabulary();
     $terms = db_query("SELECT td.tid
                         FROM {taxonomy_term_data} td
-                        JOIN {feeds_term_item} ft ON td.tid = ft.tid
+                        JOIN {feeds_item} fi
+                        ON fi.entity_type = 'taxonomy_term'
+                        AND td.tid = fi.entity_id
                         WHERE td.vid = :vid
-                        AND ft.id = :id
-                        AND ft.feed_nid = :feed_nid",
+                        AND fi.id = :id
+                        AND fi.feed_nid = :feed_nid",
                         array(
                           ':vid' => $vocabulary->vid,
                           ':id' => $this->id,
@@ -112,22 +123,6 @@ class FeedsTermProcessor extends FeedsProcessor {
     else {
       drupal_set_message(t('No terms to be deleted.'));
     }
-  }
-
-  /**
-   * Execute mapping on an item.
-   */
-  protected function map(FeedsSource $source, FeedsParserResult $result, $target_term = NULL) {
-    // Prepare term object, have parent class do the iterating.
-    if (!$target_term) {
-      $target_term = new stdClass();
-    }
-    if (!$vocabulary = $this->vocabulary()) {
-      throw new Exception(t('No vocabulary specified for term processor'));
-    }
-    $target_term->vid = $vocabulary->vid;
-    $target_term = parent::map($source, $result, $target_term);
-    return $target_term;
   }
 
   /**
@@ -184,7 +179,8 @@ class FeedsTermProcessor extends FeedsProcessor {
    * Return available mapping targets.
    */
   public function getMappingTargets() {
-    $targets = array(
+    $targets = parent::getMappingTargets();
+    $targets += array(
       'name' => array(
         'name' => t('Term name'),
         'description' => t('Name of the taxonomy term.'),
@@ -207,6 +203,9 @@ class FeedsTermProcessor extends FeedsProcessor {
    * Get id of an existing feed item term if available.
    */
   protected function existingItemId(FeedsSource $source, FeedsParserResult $result) {
+    if ($tid = parent::existingItemId($source, $result)) {
+      return $tid;
+    }
 
     // The only possible unique target is name.
     foreach ($this->uniqueTargets($source, $result) as $target => $value) {
@@ -242,5 +241,27 @@ class FeedsTermProcessor extends FeedsProcessor {
         }
       }
     }
+  }
+
+  /**
+   * Creates a new term in memory and returns it.
+   */
+  protected function newTerm($source) {
+    $term = new stdClass();
+    $this->newItemInfo($term, $source->feed_nid);
+    $vocabulary = $this->vocabulary();
+    $term->vid = $vocabulary->vid;
+    return $term;
+  }
+
+  /**
+   * Loads an existing term.
+   */
+  protected function loadTerm($source, $tid) {
+    $term = taxonomy_term_load($tid);
+    if ($this->loadItemInfo($term)) {
+      $this->newItemInfo($term, $source->feed_nid);
+    }
+    return $term;
   }
 }

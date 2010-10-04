@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.views.inc,v 1.4 2010/09/17 17:25:19 alexb Exp $
+// $Id: feeds.views.inc,v 1.4.2.1 2010/10/04 01:33:44 alexb Exp $
 
 /**
  * @file
@@ -67,19 +67,12 @@ function feeds_views_data() {
   /**
    * Expose feeds_node_item table to views.
    */
-  $data['feeds_node_item']['table'] = array(
-    'group' => 'Feeds Item',
-    'join' => array(
-      'node' => array(
-        'left_field' => 'nid',
-        'field' => 'nid',
-        'type' => 'LEFT',
-      ),
-    ),
+  $data['feeds_item']['table'] = array(
+    'group' => 'Feeds item',
   );
-  $data['feeds_node_item']['feed_nid'] = array(
+  $data['feeds_item']['feed_nid'] = array(
     'title' => t('Owner feed nid'),
-    'help' => t('The node id of the owner feed if available.'),
+    'help' => t('The node id of the owner feed node if available.'),
     'field' => array(
       'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
@@ -100,13 +93,13 @@ function feeds_views_data() {
     ),
     'relationship' => array(
       'title' => t('Owner feed'),
-      'help' => t('Relate a node to its owner feed node if available.'),
+      'help' => t('Relate a feed item to its owner feed node if available.'),
       'label' => t('Owner feed'),
       'base' => 'node',
       'base field' => 'nid',
     ),
   );
-  $data['feeds_node_item']['url'] = array(
+  $data['feeds_item']['url'] = array(
     'title' => t('Item URL'),
     'help' => t('Contains the URL of the feed item.'),
     'field' => array(
@@ -128,7 +121,7 @@ function feeds_views_data() {
       'help' => t('Sort on a Feeds Item\'s URL field.'),
     ),
   );
-  $data['feeds_node_item']['guid'] = array(
+  $data['feeds_item']['guid'] = array(
     'title' => t('Item GUID'),
     'help' => t('Contains the GUID of the feed item.'),
     'field' => array(
@@ -149,7 +142,7 @@ function feeds_views_data() {
       'help' => t('Sort on a Feeds Item\'s GUID field.'),
     ),
   );
-  $data['feeds_node_item']['imported'] = array(
+  $data['feeds_item']['imported'] = array(
     'title' => t('Import date'),
     'help' => t('Contains the import date of the feed item.'),
     'field' => array(
@@ -171,6 +164,23 @@ function feeds_views_data() {
       'help' => t('Argument on a Feeds Item\'s import date field.'),
     ),
   );
+
+  foreach (array('node', 'taxonomy_term', 'user') as $entity_type) {
+    $info = entity_get_info($entity_type);
+    $data['feeds_item']['table']['join'][$info['base table']] = array(
+      'left_field' => $info['entity keys']['id'],
+      'field' => 'entity_id',
+      'type' => 'LEFT',
+      'extra' => array(
+        array(
+          'table' => 'feeds_item',
+          'field' => 'entity_type',
+          'value' => $entity_type,
+          'operator' => '=',
+        ),
+      ),
+    );
+  }
   return $data;
 }
 

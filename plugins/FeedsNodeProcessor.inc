@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.69.2.6 2010/10/03 22:58:03 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.69.2.7 2010/10/04 01:33:43 alexb Exp $
 
 /**
  * @file
@@ -20,6 +20,14 @@ define('FEEDS_NODE_DEFAULT_FORMAT', -1);
  */
 class FeedsNodeProcessor extends FeedsProcessor {
   /**
+   * Define entity type.
+   */
+  protected function __construct($id) {
+    parent::__construct($id);
+    $this->entity_type = 'node';
+  }
+
+  /**
    * Implements FeedsProcessor::process().
    */
   public function process(FeedsSource $source, FeedsParserResult $parser_result) {
@@ -37,8 +45,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
         // Assemble node, map item to it, save.
         try {
-          $node = $this->buildNode($nid, $source->feed_nid);
-          $node->feeds_node_item->hash = $hash;
+          $node = empty($nid) ? $this->newNode($source, $hash) : $this->loadNode($source, $hash, $nid);
           $this->map($source, $parser_result, $node);
           node_save($node);
           if (!empty($nid)) {
@@ -76,17 +83,17 @@ class FeedsNodeProcessor extends FeedsProcessor {
   public function clear(FeedsSource $source) {
     $state = $source->state(FEEDS_PROCESS_CLEAR);
     if (empty($state->total)) {
-      $state->total = db_query("SELECT COUNT(n.nid) FROM {node} n JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE fn.id = :id AND fn.feed_nid = :nid", array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField();
+      $state->total = db_query("SELECT COUNT(n.nid) FROM {node} n JOIN {feeds_item} fi ON fi.entity_type = 'node' AND n.nid = fi.entity_id WHERE fi.id = :id AND fi.feed_nid = :nid", array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField();
     }
     $count = $this->getLimit();
     $nids = array();
-    $nodes = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE fn.id = :id AND fn.feed_nid = :nid", 0, $count, array(':id' => $source->id, ':nid' => $source->feed_nid));
+    $nodes = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_item} fi ON fi.entity_type = 'node' AND n.nid = fi.entity_id WHERE fi.id = :id AND fi.feed_nid = :nid", 0, $count, array(':id' => $source->id, ':nid' => $source->feed_nid));
     foreach ($nodes as $node) {
       $nids[$node->nid] = $node->nid;
       $state->deleted++;
     }
     node_delete_multiple($nids);
-    if (db_query_range("SELECT 1 FROM {node} n JOIN {feeds_node_item} fn ON n.nid = fn.nid WHERE fn.id = :id AND fn.feed_nid = :nid", 0, 1, array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField()) {
+    if (db_query_range("SELECT 1 FROM {node} n JOIN {feeds_item} fi ON fi.entity_type = 'node' AND n.nid = fi.entity_id WHERE fi.id = :id AND fi.feed_nid = :nid", 0, 1, array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField()) {
       $state->progress($state->total, $state->deleted);
       return;
     }
@@ -122,13 +129,13 @@ class FeedsNodeProcessor extends FeedsProcessor {
       return;
     }
     $count = $this->getLimit();
-    $nodes = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = :id AND n.created < :created", 0, $count, array(':id' => $this->id, ':created' => REQUEST_TIME - $time));
+    $nodes = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_item} fi ON fi.entity_type = 'node' AND n.nid = fi.entity_id WHERE fi.id = :id AND n.created < :created", 0, $count, array(':id' => $this->id, ':created' => REQUEST_TIME - $time));
     $nids = array();
     foreach ($nodes as $node) {
       $nids[$node->nid] = $node->nid;
     }
     node_delete_multiple($nids);
-    if (db_query_range("SELECT 1 FROM {node} n JOIN {feeds_node_item} fni ON n.nid = fni.nid WHERE fni.id = :id AND n.created < :created", 0, 1, array(':id' => $this->id, ':created' => REQUEST_TIME - $time))->fetchField()) {
+    if (db_query_range("SELECT 1 FROM {node} n JOIN {feeds_item} fi ON fi.entity_type = 'node' AND n.nid = fi.entity_id WHERE fi.id = :id AND n.created < :created", 0, 1, array(':id' => $this->id, ':created' => REQUEST_TIME - $time))->fetchField()) {
       return FEEDS_BATCH_ACTIVE;
     }
     return FEEDS_BATCH_COMPLETE;
@@ -139,13 +146,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
    */
   public function expiryTime() {
     return $this->config['expire'];
-  }
-
-  /**
-   * Return a count for the given items
-   */
-  public function itemCount(FeedsSource $source) {
-    return db_query("SELECT count(*) FROM {feeds_node_item} WHERE feed_nid = :feed_nid", array(':feed_nid' => $source->feed_nid))->fetchField();
   }
 
   /**
@@ -248,16 +248,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
    */
   public function setTargetElement($target_node, $target_element, $value) {
     switch ($target_element) {
-      case 'url':
-      case 'guid':
-        $target_node->feeds_node_item->$target_element = $value;
-        break;
-      case 'title':
-      case 'status':
-      case 'nid':
-      case 'uid':
-        $target_node->$target_element = $value;
-        break;
       case 'created':
         $target_node->created = REQUEST_TIME;
         if (is_numeric($value)) {
@@ -271,6 +261,9 @@ class FeedsNodeProcessor extends FeedsProcessor {
           $target_node->created = $value->getValue();
         }
         break;
+      default:
+        parent::setTargetElement($target_node, $target_element, $value);
+        break;
     }
   }
 
@@ -279,7 +272,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
    */
   public function getMappingTargets() {
     $type = node_type_get_type($this->config['content_type']);
-    $targets = array();
+    $targets = parent::getMappingTargets();
     if ($type->has_title) {
       $targets['title'] = array(
         'name' => t('Title'),
@@ -304,16 +297,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
         'name' => t('Published date'),
         'description' => t('The UNIX time when a node has been published.'),
       ),
-      'url' => array(
-        'name' => t('URL'),
-        'description' => t('The external URL of the node. E. g. the feed item URL in the case of a syndication feed. May be unique.'),
-        'optional_unique' => TRUE,
-      ),
-      'guid' => array(
-        'name' => t('GUID'),
-        'description' => t('The external GUID of the node. E. g. the feed item GUID in the case of a syndication feed. May be unique.'),
-        'optional_unique' => TRUE,
-      ),
     );
 
     // Let other modules expose mapping targets.
@@ -327,6 +310,9 @@ class FeedsNodeProcessor extends FeedsProcessor {
    * Get nid of an existing feed item node if available.
    */
   protected function existingItemId(FeedsSource $source, FeedsParserResult $result) {
+    if ($nid = parent::existingItemId($source, $result)) {
+      return $nid;
+    }
 
     // Iterate through all unique targets and test whether they do already
     // exist in the database.
@@ -334,12 +320,6 @@ class FeedsNodeProcessor extends FeedsProcessor {
       switch ($target) {
         case 'nid':
           $nid = db_query("SELECT nid FROM {node} WHERE nid = :nid", array(':nid' => $value))->fetchField();
-          break;
-        case 'url':
-          $nid = db_query("SELECT nid FROM {feeds_node_item} WHERE feed_nid = :nid AND id = :id AND url = :url", array(':nid' => $source->feed_nid, ':id' => $source->id, ':url' => $value))->fetchField();
-          break;
-        case 'guid':
-          $nid = db_query("SELECT nid FROM {feeds_node_item} WHERE feed_nid = :nid AND id = :id AND guid = :guid", array(':nid' => $source->feed_nid, ':id' => $source->id, ':guid' => $value))->fetchField();
           break;
       }
       if ($nid) {
@@ -351,77 +331,48 @@ class FeedsNodeProcessor extends FeedsProcessor {
   }
 
   /**
-   * Creates a new node object in memory and returns it.
+   * Creates a new node in memory and returns it.
    */
-  protected function buildNode($nid, $feed_nid) {
+  protected function newNode($source, $hash) {
     $node = new stdClass();
-    $populate = FALSE;
-    if (empty($nid)) {
-      $node->created = REQUEST_TIME;
-      $populate = TRUE;
-    }
-    else {
-      if ($this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
-        $node = node_load($nid, NULL, TRUE);
-      }
-      else {
-        $node = db_query("SELECT nid, vid, created FROM {node} WHERE nid = :nid", array(':nid' => $nid))->fetch();
-        $populate = TRUE;
-      }
-    }
-    if ($populate) {
-      $node->type = $this->config['content_type'];
-      $node->changed = REQUEST_TIME;
-      $node->format = ($this->config['input_format'] == FEEDS_NODE_DEFAULT_FORMAT) ? filter_fallback_format() : $this->config['input_format'];
-      $node->feeds_node_item = new stdClass();
-      $node->feeds_node_item->id = $this->id;
-      $node->feeds_node_item->imported = REQUEST_TIME;
-      $node->feeds_node_item->feed_nid = $feed_nid;
-      $node->feeds_node_item->url = '';
-      $node->feeds_node_item->guid = '';
-    }
-
-    // Give mappers a hint at what they're operating on.
-    $node->entity_type = 'node';
-
-    // Let other modules populate default values.
+    $node->type = $this->config['content_type'];
+    $node->changed = REQUEST_TIME;
+    $node->format = ($this->config['input_format'] == FEEDS_NODE_DEFAULT_FORMAT) ? filter_fallback_format() : $this->config['input_format'];
+    $node->created = REQUEST_TIME;
+    $this->newItemInfo($node, $source->feed_nid, $hash);
     node_object_prepare($node);
-
     // Populate properties that are set by node_object_prepare().
-    $node->log = 'Created/updated by FeedsNodeProcessor';
-    if ($populate) {
-      $node->uid = $this->config['author'];
-    }
+    $node->log = 'Created by FeedsNodeProcessor';
+    $node->uid = $this->config['author'];
     return $node;
   }
 
   /**
-   * Create MD5 hash of item and mappings array.
+   * Loads an existing node.
    *
-   * Include mappings as a change in mappings may have an affect on the item
-   * produced.
-   *
-   * @return Always returns a hash, even with empty, NULL, FALSE:
-   *  Empty arrays return 40cd750bba9870f18aada2478b24840a
-   *  Empty/NULL/FALSE strings return d41d8cd98f00b204e9800998ecf8427e
+   * If the update existing method is not FEEDS_UPDATE_EXISTING, only the node
+   * table will be loaded, foregoing the node_load API for better performance.
    */
-  protected function hash($item) {
-    static $serialized_mappings;
-    if (!$serialized_mappings) {
-      $serialized_mappings = serialize($this->config['mappings']);
+  protected function loadNode($source, $hash, $nid) {
+    if ($this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
+      $node = node_load($nid, NULL, TRUE);
     }
-    return hash('md5', serialize($item) . $serialized_mappings);
-  }
-
-  /**
-   * Retrieve MD5 hash of $nid from DB.
-   * @return Empty string if no item is found, hash otherwise.
-   */
-  protected function getHash($nid) {
-    if ($hash = db_query("SELECT hash FROM {feeds_node_item} WHERE nid = :nid", array(':nid' => $nid))->fetchField()) {
-      // Return with the hash.
-      return $hash;
+    else {
+      // We're replacing the existing node. Only save the absolutely necessary.
+      $node = db_query("SELECT created, nid, vid, type FROM {node} WHERE nid = :nid", array(':nid' => $nid))->fetch();
+      $node->uid = $this->config['author'];
     }
-    return '';
+    if ($this->loadItemInfo($node)) {
+      $this->newItemInfo($node, $source->feed_nid, $hash);
+    }
+    node_object_prepare($node);
+    // Populate properties that are set by node_object_prepare().
+    if ($this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
+      $node->log = 'Updated by FeedsNodeProcessor';
+    }
+    else {
+      $node->log = 'Replaced by FeedsNodeProcessor';
+    }
+    return $node;
   }
 }

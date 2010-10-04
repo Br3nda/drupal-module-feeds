@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsProcessor.inc,v 1.20.2.2 2010/10/01 22:15:41 alexb Exp $
+// $Id: FeedsProcessor.inc,v 1.20.2.3 2010/10/04 01:33:43 alexb Exp $
 
 
 // Update mode for existing items.
@@ -15,6 +15,10 @@ define('FEEDS_PROCESS_LIMIT', 50);
  * Abstract class, defines interface for processors.
  */
 abstract class FeedsProcessor extends FeedsPlugin {
+  /**
+   * Entity type this processor operates on.
+   */
+  protected $entity_type;
 
   /**
    * Process the result of the parser or previous processors.
@@ -77,10 +81,10 @@ abstract class FeedsProcessor extends FeedsPlugin {
   }
 
   /**
-   * Return the number of items imported by this processor.
+   * Counts the number of items imported by this processor.
    */
   public function itemCount(FeedsSource $source) {
-    return 0;
+    return db_query("SELECT count(*) FROM {feeds_item} WHERE entity_type = :entity_type AND feed_nid = :feed_nid", array(':entity_type' => $this->entity_type, ':feed_nid' => $source->feed_nid))->fetchField();
   }
 
   /**
@@ -203,7 +207,18 @@ abstract class FeedsProcessor extends FeedsPlugin {
    *   FALSE otherwise.
    */
   public function getMappingTargets() {
-    return array();
+    return array(
+      'url' => array(
+        'name' => t('URL'),
+        'description' => t('The external URL of the item. E. g. the feed item URL in the case of a syndication feed. May be unique.'),
+        'optional_unique' => TRUE,
+      ),
+      'guid' => array(
+        'name' => t('GUID'),
+        'description' => t('The globally unique identifier of the item. E. g. the feed item GUID in the case of a syndication feed. May be unique.'),
+        'optional_unique' => TRUE,
+      ),
+    );
   }
 
   /**
@@ -212,7 +227,15 @@ abstract class FeedsProcessor extends FeedsPlugin {
    * @ingroup mappingapi
    */
   public function setTargetElement($target_item, $target_element, $value) {
-    $target_item->$target_element = $value;
+    switch ($target_element) {
+      case 'url':
+      case 'guid':
+        $target_item->feeds_item->$target_element = $value;
+        break;
+      default:
+        $target_item->$target_element = $value;
+        break;
+    }
   }
 
   /**
@@ -224,10 +247,36 @@ abstract class FeedsProcessor extends FeedsPlugin {
    *   The source information about this import.
    * @param $result
    *   A FeedsParserResult object.
+   *
+   * @return
+   *   The serial id of an entity if found, 0 otherwise.
    */
   protected function existingItemId(FeedsSource $source, FeedsParserResult $result) {
+    $query = db_select('feeds_item')
+      ->fields('feeds_item', array('entity_id'))
+      ->condition('feed_nid', $source->feed_nid)
+      ->condition('entity_type', $this->entity_type)
+      ->condition('id', $source->id);
+
+    // Iterate through all unique targets and test whether they do already
+    // exist in the database.
+    foreach ($this->uniqueTargets($source, $result) as $target => $value) {
+      switch ($target) {
+        case 'url':
+          $entity_id = $query->condition('url', $value)->execute()->fetchField();
+          break;
+        case 'guid':
+          $entity_id = $query->condition('guid', $value)->execute()->fetchField();
+          break;
+      }
+      if (isset($entity_id)) {
+        // Return with the content id found.
+        return $entity_id;
+      }
+    }
     return 0;
   }
+
 
   /**
    * Utility function that iterates over a target array and retrieves all
@@ -251,5 +300,76 @@ abstract class FeedsProcessor extends FeedsPlugin {
       }
     }
     return $targets;
+  }
+
+  /**
+   * Adds Feeds specific information on $entity->feeds_item.
+   *
+   * @param $entity
+   *   The entity object to be populated with new item info.
+   * @param $feed_nid
+   *   The feed nid of the source that produces this entity.
+   * @param $hash
+   *   The fingerprint of the source item.
+   */
+  protected function newItemInfo($entity, $feed_nid, $hash = '') {
+    $entity->feeds_item = new stdClass();
+    $entity->feeds_item->entity_id = 0;
+    $entity->feeds_item->entity_type = $this->entity_type;
+    $entity->feeds_item->id = $this->id;
+    $entity->feeds_item->feed_nid = $feed_nid;
+    $entity->feeds_item->imported = REQUEST_TIME;
+    $entity->feeds_item->hash = $hash;
+    $entity->feeds_item->url = '';
+    $entity->feeds_item->guid = '';
+  }
+
+  /**
+   * Loads existing entity information and places it on $entity->feeds_item.
+   *
+   * @param $entity
+   *   The entity object to load item info for. Id key must be present.
+   *
+   * @return
+   *   TRUE if item info could be loaded, false if not.
+   */
+  protected function loadItemInfo($entity) {
+    $entity_info = entity_get_info($this->entity_type);
+    $key = $entity_info['entity keys']['id'];
+    if ($item_info = feeds_item_info_load($this->entity_type, $entity->$key)) {
+      $entity->feeds_item = $item_info;
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Create MD5 hash of item and mappings array.
+   *
+   * Include mappings as a change in mappings may have an affect on the item
+   * produced.
+   *
+   * @return Always returns a hash, even with empty, NULL, FALSE:
+   *  Empty arrays return 40cd750bba9870f18aada2478b24840a
+   *  Empty/NULL/FALSE strings return d41d8cd98f00b204e9800998ecf8427e
+   */
+  protected function hash($item) {
+    static $serialized_mappings;
+    if (!$serialized_mappings) {
+      $serialized_mappings = serialize($this->config['mappings']);
+    }
+    return hash('md5', serialize($item) . $serialized_mappings);
+  }
+
+  /**
+   * Retrieve MD5 hash of $nid from DB.
+   * @return Empty string if no item is found, hash otherwise.
+   */
+  protected function getHash($entity_id) {
+    if ($hash = db_query("SELECT hash FROM {feeds_item} WHERE entity_type = :type AND entity_id = :id", array(':type' => $this->entity_type, ':id' => $entity_id))->fetchField()) {
+      // Return with the hash.
+      return $hash;
+    }
+    return '';
   }
 }

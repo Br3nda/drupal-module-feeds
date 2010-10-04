@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_import.test,v 1.3.2.1 2010/09/29 23:56:09 alexb Exp $
+// $Id: feeds_import.test,v 1.3.2.2 2010/10/04 01:33:43 alexb Exp $
 
 /**
  * @file
@@ -61,7 +61,7 @@ class FeedsExamplesNodeTestCase extends FeedsWebTestCase {
 
     // Assert DB status as is and again after an additional import.
     for ($i = 0; $i < 2; $i++) {
-      $count = db_query("SELECT COUNT(*) FROM {feeds_node_item}")->fetchField();
+      $count = db_query("SELECT COUNT(*) FROM {feeds_item} WHERE entity_type = 'node'")->fetchField();
       $this->assertEqual($count, 8, 'Found correct number of items.');
       $count = db_query("SELECT COUNT(*) FROM {node} WHERE type = 'article' AND status = 1 AND uid = 0")->fetchField();
       $this->assertEqual($count, 8, 'Found correct number of items.');
