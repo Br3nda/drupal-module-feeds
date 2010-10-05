@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.69.2.8 2010/10/04 20:49:29 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.69.2.9 2010/10/05 22:28:13 alexb Exp $
 
 /**
  * @file
@@ -82,33 +82,48 @@ class FeedsNodeProcessor extends FeedsProcessor {
    */
   public function clear(FeedsSource $source) {
     $state = $source->state(FEEDS_PROCESS_CLEAR);
-    if (empty($state->total)) {
-      $state->total = db_query("SELECT COUNT(n.nid) FROM {node} n JOIN {feeds_item} fi ON fi.entity_type = 'node' AND n.nid = fi.entity_id WHERE fi.id = :id AND fi.feed_nid = :nid", array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField();
-    }
-    $count = $this->getLimit();
-    $nids = array();
-    $nodes = db_query_range("SELECT n.nid FROM {node} n JOIN {feeds_item} fi ON fi.entity_type = 'node' AND n.nid = fi.entity_id WHERE fi.id = :id AND fi.feed_nid = :nid", 0, $count, array(':id' => $source->id, ':nid' => $source->feed_nid));
-    foreach ($nodes as $node) {
-      $nids[$node->nid] = $node->nid;
-      $state->deleted++;
-    }
-    node_delete_multiple($nids);
-    if (db_query_range("SELECT 1 FROM {node} n JOIN {feeds_item} fi ON fi.entity_type = 'node' AND n.nid = fi.entity_id WHERE fi.id = :id AND fi.feed_nid = :nid", 0, 1, array(':id' => $source->id, ':nid' => $source->feed_nid))->fetchField()) {
-      $state->progress($state->total, $state->deleted);
-      return;
+
+    // Build base select statement.
+    $select = db_select('node', 'n');
+    $select->addField('n', 'nid');
+    $select->join('feeds_item', 'fi', "n.nid = fi.entity_id AND fi.entity_type = 'node'");
+    $select->condition('fi.id', $this->id);
+    $select->condition('fi.feed_nid', $source->feed_nid);
+
+    // If there is no total, query it.
+    if (!$state->total) {
+      $state->total = $select->countQuery()
+        ->execute()
+        ->fetchField();
     }
 
-    // Set message.
-    drupal_get_messages('status');
-    if ($state->deleted) {
-      drupal_set_message(format_plural($state->deleted, 'Deleted @number node.', 'Deleted @number nodes.', array('@number' => $state->deleted)));
+    // Delete a batch of items.
+    $nodes = $select->range(0, $this->getLimit())->execute();
+    $nids = array();
+    foreach ($nodes as $node) {
+      $nids[$node->nid] = $node->nid;
+    }
+    node_delete_multiple($nids);
+
+    // Report progress, take into account that we may not have deleted as
+    // many items as we have counted at first.
+    if (count($nids)) {
+      $state->deleted += count($nids);
+      $state->progress($state->total, $state->deleted);
     }
     else {
-      drupal_set_message(t('There is no content to be deleted.'));
+      $state->progress($state->total, $state->total);
     }
-    // Make sure we are finished, there may be a discrepancy between total and
-    // deleted if other processes have deleted nodes in the meantime.
-    $state->progress = FEEDS_BATCH_COMPLETE;
+
+    // Report results when done.
+    if ($source->progressClearing() == FEEDS_BATCH_COMPLETE) {
+      if ($state->deleted) {
+        drupal_set_message(format_plural($state->deleted, 'Deleted @number node.', 'Deleted @number nodes.', array('@number' => $state->deleted)));
+      }
+      else {
+        drupal_set_message(t('There is no content to be deleted.'));
+      }
+    }
   }
 
   /**
