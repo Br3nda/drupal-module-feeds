@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.25.2.7 2010/10/05 22:12:38 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.25.2.8 2010/10/05 22:26:58 alexb Exp $
 
 /**
  * @file
@@ -36,11 +36,6 @@ class FeedsTermProcessor extends FeedsProcessor {
           $term = $this->newTerm($source);
         }
         $term = $this->map($source, $parser_result, $term);
-
-        // Add term id if available.
-        if (!empty($tid)) {
-          $term->tid = $tid;
-        }
 
         // Save the term.
         $term->feeds_importer_id = $this->id;
