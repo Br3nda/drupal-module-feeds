@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.176.2.13 2010/10/04 21:20:56 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.176.2.14 2010/10/05 20:48:10 alexb Exp $
 
 Feeds 7.x 2.0 XXXXXXXXXXXXXXXXXXX
 ---------------------------------
 
+- Remove check for present name in terms that are imported. If we do such
+  validation, we need to do this on a more pluggable level.
 - Fix Feeds News tests, add a 'description' field to the  Feeds Item content
   type.
 - #728534 alex_b: Remove FeedsFeedNodeProcessor. If you have used

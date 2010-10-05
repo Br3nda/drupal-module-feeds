@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.25.2.4 2010/10/05 20:38:09 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.25.2.5 2010/10/05 20:48:10 alexb Exp $
 
 /**
  * @file
@@ -23,7 +23,7 @@ class FeedsTermProcessor extends FeedsProcessor {
    */
   public function process(FeedsSource $source, FeedsParserResult $parser_result) {
     // Count number of created and updated nodes.
-    $created  = $updated = $no_name = 0;
+    $created  = $updated = 0;
 
     while ($item = $parser_result->shiftItem()) {
       if (!($tid = $this->existingItemId($source, $parser_result)) || $this->config['update_existing'] != FEEDS_SKIP_EXISTING) {
@@ -36,12 +36,6 @@ class FeedsTermProcessor extends FeedsProcessor {
           $term = $this->newTerm($source);
         }
         $term = $this->map($source, $parser_result, $term);
-
-        // Check if term name is set, otherwise continue.
-        if (empty($term->name)) {
-          $no_name++;
-          continue;
-        }
 
         // Add term id if available.
         if (!empty($tid)) {
@@ -63,17 +57,6 @@ class FeedsTermProcessor extends FeedsProcessor {
 
     // Set messages.
     $vocabulary = $this->vocabulary();
-    if ($no_name) {
-      drupal_set_message(
-        format_plural(
-          $no_name,
-          'There was @number term that could not be imported because their name was empty. Check mapping settings on Taxomy term processor.',
-          'There were @number terms that could not be imported because their name was empty. Check mapping settings on Taxomy term processor.',
-          array('@number' => $no_name)
-        ),
-        'error'
-      );
-    }
     if ($created) {
       drupal_set_message(format_plural($created, 'Created @number term in !vocabulary.', 'Created @number terms in !vocabulary.', array('@number' => $created, '!vocabulary' => $vocabulary->name)));
     }
