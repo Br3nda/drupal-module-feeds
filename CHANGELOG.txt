@@ -1,8 +1,10 @@
-// $Id: CHANGELOG.txt,v 1.176.2.15 2010/10/05 22:06:36 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.176.2.16 2010/10/05 22:12:38 alexb Exp $
 
 Feeds 7.x 2.0 XXXXXXXXXXXXXXXXXXX
 ---------------------------------
 
+- FeedsTermProcessor: Do not filter taxonomy_term_data table by vid when
+  clearing.
 - #932572 alex_b: FeedsTermProcessor: Batch term processing.
 - Remove check for present name in terms that are imported. If we do such
   validation, we need to do this on a more pluggable level.

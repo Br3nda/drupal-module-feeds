@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.25.2.6 2010/10/05 22:06:36 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.25.2.7 2010/10/05 22:12:38 alexb Exp $
 
 /**
  * @file
@@ -81,7 +81,6 @@ class FeedsTermProcessor extends FeedsProcessor {
     $select = db_select('taxonomy_term_data', 'td');
     $select->addField('td', 'tid');
     $select->join('feeds_item', 'fi', "td.tid = fi.entity_id AND fi.entity_type = 'taxonomy_term'");
-    $select->condition('td.vid', $vocabulary->vid);
     $select->condition('fi.id', $this->id);
     $select->condition('fi.feed_nid', $source->feed_nid);
 
