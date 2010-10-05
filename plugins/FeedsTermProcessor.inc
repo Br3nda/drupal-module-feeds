@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.25.2.5 2010/10/05 20:48:10 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.25.2.6 2010/10/05 22:06:36 alexb Exp $
 
 /**
  * @file
@@ -22,11 +22,11 @@ class FeedsTermProcessor extends FeedsProcessor {
    * Implements FeedsProcessor::process().
    */
   public function process(FeedsSource $source, FeedsParserResult $parser_result) {
-    // Count number of created and updated nodes.
-    $created  = $updated = 0;
+    $state = $source->state(FEEDS_PROCESS);
 
     while ($item = $parser_result->shiftItem()) {
-      if (!($tid = $this->existingItemId($source, $parser_result)) || $this->config['update_existing'] != FEEDS_SKIP_EXISTING) {
+      if (!($tid = $this->existingItemId($source, $parser_result)) ||
+            $this->config['update_existing'] != FEEDS_SKIP_EXISTING) {
 
         // Map item to a term.
         if ($tid && $this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
@@ -47,24 +47,26 @@ class FeedsTermProcessor extends FeedsProcessor {
         $term->feed_nid = $source->feed_nid;
         taxonomy_term_save($term);
         if ($tid) {
-          $updated++;
+          $state->updated++;
         }
         else {
-          $created++;
+          $state->created++;
         }
       }
     }
 
-    // Set messages.
-    $vocabulary = $this->vocabulary();
-    if ($created) {
-      drupal_set_message(format_plural($created, 'Created @number term in !vocabulary.', 'Created @number terms in !vocabulary.', array('@number' => $created, '!vocabulary' => $vocabulary->name)));
-    }
-    elseif ($updated) {
-      drupal_set_message(format_plural($updated, 'Updated @number term in !vocabulary.', 'Updated @number terms in !vocabulary.', array('@number' => $updated, '!vocabulary' => $vocabulary->name)));
-    }
-    else {
-      drupal_set_message(t('There are no new terms.'));
+    // Set messages when done.
+    if ($source->progressImporting() == FEEDS_BATCH_COMPLETE) {
+      $vocabulary = $this->vocabulary();
+      if ($state->created) {
+        drupal_set_message(format_plural($state->created, 'Created @number term in !vocabulary.', 'Created @number terms in !vocabulary.', array('@number' => $state->created, '!vocabulary' => $vocabulary->name)));
+      }
+      elseif ($state->updated) {
+        drupal_set_message(format_plural($state->updated, 'Updated @number term in !vocabulary.', 'Updated @number terms in !vocabulary.', array('@number' => $state->updated, '!vocabulary' => $vocabulary->name)));
+      }
+      else {
+        drupal_set_message(t('There are no new terms.'));
+      }
     }
   }
 
@@ -72,33 +74,59 @@ class FeedsTermProcessor extends FeedsProcessor {
    * Implements FeedsProcessor::clear().
    */
   public function clear(FeedsSource $source) {
-    $deleted = 0;
+    $state = $source->state(FEEDS_PROCESS_CLEAR);
     $vocabulary = $this->vocabulary();
-    $terms = db_query("SELECT td.tid
-                        FROM {taxonomy_term_data} td
-                        JOIN {feeds_item} fi
-                        ON fi.entity_type = 'taxonomy_term'
-                        AND td.tid = fi.entity_id
-                        WHERE td.vid = :vid
-                        AND fi.id = :id
-                        AND fi.feed_nid = :feed_nid",
-                        array(
-                          ':vid' => $vocabulary->vid,
-                          ':id' => $this->id,
-                          ':feed_nid' => $source->feed_nid,
-                        ));
+
+    // Build base select statement.
+    $select = db_select('taxonomy_term_data', 'td');
+    $select->addField('td', 'tid');
+    $select->join('feeds_item', 'fi', "td.tid = fi.entity_id AND fi.entity_type = 'taxonomy_term'");
+    $select->condition('td.vid', $vocabulary->vid);
+    $select->condition('fi.id', $this->id);
+    $select->condition('fi.feed_nid', $source->feed_nid);
+
+    // If there is no total, query it.
+    if (!$state->total) {
+      $state->total = $select->countQuery()
+        ->execute()
+        ->fetchField();
+    }
+
+    // Delete a batch of items.
+    $terms = $select->range(0, $this->getLimit())->execute();
+    $deleted = 0;
     foreach ($terms as $term) {
       if (taxonomy_term_delete($term->tid) == SAVED_DELETED) {
         $deleted++;
       }
     }
-    // Set messages.
+
+    // Report progress, take into account that we may not have deleted as
+    // many items as we have counted at first.
     if ($deleted) {
-      drupal_set_message(format_plural($deleted, 'Deleted @number term from !vocabulary.', 'Deleted @number terms from !vocabulary.', array('@number' => $deleted, '!vocabulary' => $vocabulary->name)));
+      $state->deleted += $deleted;
+      $state->progress($state->total, $state->deleted);
     }
     else {
-      drupal_set_message(t('No terms to be deleted.'));
+      $state->progress($state->total, $state->total);
     }
+
+    // Report results when done.
+    if ($source->progressClearing() == FEEDS_BATCH_COMPLETE) {
+      if ($state->deleted) {
+        drupal_set_message(format_plural($state->deleted, 'Deleted @number term from !vocabulary.', 'Deleted @number terms from !vocabulary.', array('@number' => $state->deleted, '!vocabulary' => $vocabulary->name)));
+      }
+      else {
+        drupal_set_message(t('No terms to be deleted.'));
+      }
+    }
+  }
+
+  /**
+   * Report processing and clearing limit.
+   */
+  public function getLimit() {
+    return variable_get('feeds_process_limit', FEEDS_PROCESS_LIMIT);
   }
 
   /**
