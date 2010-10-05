@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.176.2.17 2010/10/05 22:30:14 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.176.2.18 2010/10/05 22:34:25 alexb Exp $
 
 Feeds 7.x 2.0 XXXXXXXXXXXXXXXXXXX
 ---------------------------------
 
+- Move term and user validation into a validate() method.
 - Remove check for present name and mail. Needs to be solved on a more pluggable
   level.
 - FeedsTermProcessor: Do not filter taxonomy_term_data table by vid when
