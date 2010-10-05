@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds.test.inc,v 1.19.2.3 2010/10/04 20:40:46 jmiccolis Exp $
+// $Id: feeds.test.inc,v 1.19.2.4 2010/10/05 23:00:55 alexb Exp $
 
 /**
  * @file
@@ -130,20 +130,19 @@ class FeedsWebTestCase extends DrupalWebTestCase {
 </head>
 <body>
   <outline text="Feeds test group" >
-       <outline title="Development Seed - Technological Solutions for Progressive Organizations" text="" xmlUrl="'. $path .'developmentseed.rss2" type="rss" />
-       <outline title="Magyar Nemzet Online - H’rek" text="" xmlUrl="'. $path .'feed_without_guid.rss2" type="rss" />
-       <outline title="Drupal planet" text="" type="rss" xmlUrl="'. $path .'drupalplanet.rss2" />
-    </outline>
+    <outline title="Development Seed - Technological Solutions for Progressive Organizations" text="" xmlUrl="'. $path .'developmentseed.rss2" type="rss" />
+    <outline title="Magyar Nemzet Online - H’rek" text="" xmlUrl="'. $path .'feed_without_guid.rss2" type="rss" />
+    <outline title="Drupal planet" text="" type="rss" xmlUrl="'. $path .'drupalplanet.rss2" />
+  </outline>
 </body>
 </opml>';
 
     // UTF 8 encode output string and write it to disk
     $output = utf8_encode($output);
-    $file = $this->absolute() .'/'. file_directory_path() .'/test-opml-'. $this->randomName() .'.opml';
-    $handle = fopen($file, 'w');
-    fwrite($handle, $output);
-    fclose($handle);
-    return $file;
+    $filename = file_default_scheme() . '://test-opml-'. $this->randomName() . '.opml';
+
+    $filename = file_unmanaged_save_data($output, $filename);
+    return $filename;
   }
 
   /**
