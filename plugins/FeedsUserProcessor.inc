@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.22.2.4 2010/10/05 22:34:25 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.22.2.5 2010/10/05 23:02:53 alexb Exp $
 
 /**
  * @file
@@ -42,6 +42,7 @@ class FeedsUserProcessor extends FeedsProcessor {
 
         // Save the user.
         if (!$this->validateUser($account)) {
+          $failed++;
           continue;
         }
         user_save($account, (array) $account);
