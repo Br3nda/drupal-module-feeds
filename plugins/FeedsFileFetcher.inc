@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsFileFetcher.inc,v 1.22.2.4 2010/10/03 15:49:34 alexb Exp $
+// $Id: FeedsFileFetcher.inc,v 1.22.2.5 2010/10/05 23:01:39 alexb Exp $
 
 /**
  * @file
@@ -189,7 +189,7 @@ class FeedsFileFetcher extends FeedsFetcher {
    */
   public function configDefaults() {
     return array(
-      'allowed_extensions' => 'txt csv tsv xml',
+      'allowed_extensions' => 'txt csv tsv xml opml',
       'direct' => FALSE,
     );
   }
