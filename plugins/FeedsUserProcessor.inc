@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.22.2.2 2010/10/04 01:33:43 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.22.2.3 2010/10/05 22:30:14 alexb Exp $
 
 /**
  * @file
@@ -39,12 +39,6 @@ class FeedsUserProcessor extends FeedsProcessor {
           $account = $this->loadUser($source, $uid);
         }
         $account = $this->map($source, $parser_result, $account);
-
-        // Check if user name and mail are set, otherwise continue.
-        if (empty($account->name) || empty($account->mail) || !valid_email_address($account->mail)) {
-          $failed++;
-          continue;
-        }
 
         // Save the user.
         user_save($account, (array) $account);
