@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.25.2.10 2010/10/05 23:02:38 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.25.2.11 2010/10/05 23:11:13 alexb Exp $
 
 /**
  * @file
@@ -30,17 +30,17 @@ class FeedsTermProcessor extends FeedsProcessor {
 
         // Map item to a term.
         if ($tid && $this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
-          $term = $this->loadTerm($source, $tid);
+          $term = $this->loadEntity($source, $tid);
         }
         else {
-          $term = $this->newTerm($source);
+          $term = $this->newEntity($source);
         }
         $term = $this->map($source, $parser_result, $term);
 
         // Save the term.
         $term->feeds_importer_id = $this->id;
         $term->feed_nid = $source->feed_nid;
-        if (!$this->validateTerm($term)) {
+        if (!$this->validateEntity($term)) {
           continue;
         }
         taxonomy_term_save($term);
@@ -236,7 +236,7 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Creates a new term in memory and returns it.
    */
-  protected function newTerm($source) {
+  protected function newEntity($source) {
     $term = new stdClass();
     $this->newItemInfo($term, $source->feed_nid);
     $vocabulary = $this->vocabulary();
@@ -247,7 +247,7 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Loads an existing term.
    */
-  protected function loadTerm($source, $tid) {
+  protected function loadEntity($source, $tid) {
     $term = taxonomy_term_load($tid);
     if ($this->loadItemInfo($term)) {
       $this->newItemInfo($term, $source->feed_nid);
@@ -258,7 +258,7 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Validates a term.
    */
-  protected function validateTerm($term) {
+  protected function validateEntity($term) {
     if (!isset($term->name)) {
       return FALSE;
     }

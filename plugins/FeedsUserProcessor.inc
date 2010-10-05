@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.22.2.5 2010/10/05 23:02:53 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.22.2.6 2010/10/05 23:11:13 alexb Exp $
 
 /**
  * @file
@@ -33,15 +33,15 @@ class FeedsUserProcessor extends FeedsProcessor {
 
         // Load / create new user and execute mapping.
         if (empty($uid)) {
-          $account = $this->newUser($source);
+          $account = $this->newEntity($source);
         }
         else {
-          $account = $this->loadUser($source, $uid);
+          $account = $this->loadEntity($source, $uid);
         }
         $account = $this->map($source, $parser_result, $account);
 
         // Save the user.
-        if (!$this->validateUser($account)) {
+        if (!$this->validateEntity($account)) {
           $failed++;
           continue;
         }
@@ -214,7 +214,7 @@ class FeedsUserProcessor extends FeedsProcessor {
   /**
    * Creates a new user account in memory and returns it.
    */
-  protected function newUser($source) {
+  protected function newEntity($source) {
     $account = new stdClass();
     $account->uid = 0;
     $account->roles = array_filter($this->config['roles']);
@@ -226,7 +226,7 @@ class FeedsUserProcessor extends FeedsProcessor {
   /**
    * Loads an existing user.
    */
-  protected function loadUser($source, $uid) {
+  protected function loadEntity($source, $uid) {
     $account = user_load($uid);
     if (!$this->loadItemInfo($account)) {
       $this->newItemInfo($account, $source->feed_nid);
@@ -237,7 +237,7 @@ class FeedsUserProcessor extends FeedsProcessor {
   /**
    * Validates a user account.
    */
-  protected function validateUser($account) {
+  protected function validateEntity($account) {
     if (empty($account->name) || empty($account->mail) || !valid_email_address($account->mail)) {
       return FALSE;
     }

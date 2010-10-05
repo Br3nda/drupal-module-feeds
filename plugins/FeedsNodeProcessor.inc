@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.69.2.10 2010/10/05 23:00:55 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.69.2.11 2010/10/05 23:11:13 alexb Exp $
 
 /**
  * @file
@@ -45,7 +45,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
 
         // Assemble node, map item to it, save.
         try {
-          $node = empty($nid) ? $this->newNode($source, $hash) : $this->loadNode($source, $hash, $nid);
+          $node = empty($nid) ? $this->newEntity($source, $hash) : $this->loadEntity($source, $hash, $nid);
           $this->map($source, $parser_result, $node);
           node_save($node);
           if (!empty($nid)) {
@@ -373,7 +373,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
   /**
    * Creates a new node in memory and returns it.
    */
-  protected function newNode($source, $hash) {
+  protected function newEntity($source, $hash) {
     $node = new stdClass();
     $node->type = $this->config['content_type'];
     $node->changed = REQUEST_TIME;
@@ -393,7 +393,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
    * If the update existing method is not FEEDS_UPDATE_EXISTING, only the node
    * table will be loaded, foregoing the node_load API for better performance.
    */
-  protected function loadNode($source, $hash, $nid) {
+  protected function loadEntity($source, $hash, $nid) {
     if ($this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
       $node = node_load($nid, NULL, TRUE);
     }
