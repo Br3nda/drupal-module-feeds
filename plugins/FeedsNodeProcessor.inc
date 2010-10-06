@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.69.2.11 2010/10/05 23:11:13 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.69.2.12 2010/10/06 14:12:42 alexb Exp $
 
 /**
  * @file
@@ -22,119 +22,79 @@ class FeedsNodeProcessor extends FeedsProcessor {
   /**
    * Define entity type.
    */
-  protected function __construct($id) {
-    parent::__construct($id);
-    $this->entity_type = 'node';
+  public function entityType() {
+    return 'node';
   }
 
   /**
-   * Implements FeedsProcessor::process().
+   * Implements parent::entityInfo().
    */
-  public function process(FeedsSource $source, FeedsParserResult $parser_result) {
-    $state = $source->state(FEEDS_PROCESS);
+  protected function entityInfo() {
+    $info = parent::entityInfo();
+    $info['label plural'] = t('Nodes');
+    return $info;
+  }
 
-    while ($item = $parser_result->shiftItem()) {
-      if (!($nid = $this->existingItemId($source, $parser_result)) ||
-           ($this->config['update_existing'] != FEEDS_SKIP_EXISTING)) {
+  /**
+   * Creates a new node in memory and returns it.
+   */
+  protected function newEntity(FeedsSource $source) {
+    $node = new stdClass();
+    $node->type = $this->config['content_type'];
+    $node->changed = REQUEST_TIME;
+    $node->format = ($this->config['input_format'] == FEEDS_NODE_DEFAULT_FORMAT) ? filter_fallback_format() : $this->config['input_format'];
+    $node->created = REQUEST_TIME;
+    node_object_prepare($node);
+    // Populate properties that are set by node_object_prepare().
+    $node->log = 'Created by FeedsNodeProcessor';
+    $node->uid = $this->config['author'];
+    return $node;
+  }
 
-        // Only proceed if item has actually changed.
-        $hash = $this->hash($item);
-        if (!empty($nid) && $hash == $this->getHash($nid)) {
-          continue;
-        }
-
-        // Assemble node, map item to it, save.
-        try {
-          $node = empty($nid) ? $this->newEntity($source, $hash) : $this->loadEntity($source, $hash, $nid);
-          $this->map($source, $parser_result, $node);
-          node_save($node);
-          if (!empty($nid)) {
-            $state->updated++;
-          }
-          else {
-            $state->created++;
-          }
-        }
-        catch (Exception $e) {
-          drupal_set_message($e->getMessage(), 'warning');
-          watchdog('feeds', $e->getMessage(), array(), WATCHDOG_WARNING);
-        }
-      }
-    }
-
-    // Set messages if we're done.
-    if ($source->progressImporting() != FEEDS_BATCH_COMPLETE) {
-      return;
-    }
-    if ($state->created) {
-      drupal_set_message(format_plural($state->created, 'Created @number @type node.', 'Created @number @type nodes.', array('@number' => $state->created, '@type' => node_type_get_name($this->config['content_type']))));
-    }
-    elseif ($state->updated) {
-      drupal_set_message(format_plural($state->updated, 'Updated @number @type node.', 'Updated @number @type nodes.', array('@number' => $state->updated, '@type' => node_type_get_name($this->config['content_type']))));
+  /**
+   * Loads an existing node.
+   *
+   * If the update existing method is not FEEDS_UPDATE_EXISTING, only the node
+   * table will be loaded, foregoing the node_load API for better performance.
+   */
+  protected function entityLoad(FeedsSource $source, $nid) {
+    if ($this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
+      $node = node_load($nid, NULL, TRUE);
     }
     else {
-      drupal_set_message(t('There is no new content.'));
+      // We're replacing the existing node. Only save the absolutely necessary.
+      $node = db_query("SELECT created, nid, vid, type FROM {node} WHERE nid = :nid", array(':nid' => $nid))->fetch();
+      $node->uid = $this->config['author'];
     }
+    node_object_prepare($node);
+    // Populate properties that are set by node_object_prepare().
+    if ($this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
+      $node->log = 'Updated by FeedsNodeProcessor';
+    }
+    else {
+      $node->log = 'Replaced by FeedsNodeProcessor';
+    }
+    return $node;
   }
 
   /**
-   * Implements FeedsProcessor::clear().
+   * Save a node.
    */
-  public function clear(FeedsSource $source) {
-    $state = $source->state(FEEDS_PROCESS_CLEAR);
+  public function entitySave($entity) {
+    node_save($entity);
+  }
 
-    // Build base select statement.
-    $select = db_select('node', 'n');
-    $select->addField('n', 'nid');
-    $select->join('feeds_item', 'fi', "n.nid = fi.entity_id AND fi.entity_type = 'node'");
-    $select->condition('fi.id', $this->id);
-    $select->condition('fi.feed_nid', $source->feed_nid);
-
-    // If there is no total, query it.
-    if (!$state->total) {
-      $state->total = $select->countQuery()
-        ->execute()
-        ->fetchField();
-    }
-
-    // Delete a batch of items.
-    $nodes = $select->range(0, $this->getLimit())->execute();
-    $nids = array();
-    foreach ($nodes as $node) {
-      $nids[$node->nid] = $node->nid;
-    }
+  /**
+   * Delete a series of nodes.
+   */
+  protected function entityDeleteMultiple($nids) {
     node_delete_multiple($nids);
-
-    // Report progress, take into account that we may not have deleted as
-    // many items as we have counted at first.
-    if (count($nids)) {
-      $state->deleted += count($nids);
-      $state->progress($state->total, $state->deleted);
-    }
-    else {
-      $state->progress($state->total, $state->total);
-    }
-
-    // Report results when done.
-    if ($source->progressClearing() == FEEDS_BATCH_COMPLETE) {
-      if ($state->deleted) {
-        drupal_set_message(format_plural($state->deleted, 'Deleted @number node.', 'Deleted @number nodes.', array('@number' => $state->deleted)));
-      }
-      else {
-        drupal_set_message(t('There is no content to be deleted.'));
-      }
-    }
-  }
-
-  /**
-   * Report processing and clearing limit.
-   */
-  public function getLimit() {
-    return variable_get('feeds_process_limit', FEEDS_PROCESS_LIMIT);
   }
 
   /**
    * Implement expire().
+   *
+   * @todo: move to processor stage?
    */
   public function expire($time = NULL) {
     if ($time === NULL) {
@@ -149,7 +109,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
     foreach ($nodes as $node) {
       $nids[$node->nid] = $node->nid;
     }
-    node_delete_multiple($nids);
+    $this->entityDeleteMultiple($nids);
     if (db_query_range("SELECT 1 FROM {node} n JOIN {feeds_item} fi ON fi.entity_type = 'node' AND n.nid = fi.entity_id WHERE fi.id = :id AND n.created < :created", 0, 1, array(':id' => $this->id, ':created' => REQUEST_TIME - $time))->fetchField()) {
       return FEEDS_BATCH_ACTIVE;
     }
@@ -172,11 +132,9 @@ class FeedsNodeProcessor extends FeedsProcessor {
     return array(
       'content_type' => $type,
       'input_format' => FEEDS_NODE_DEFAULT_FORMAT,
-      'update_existing' => FEEDS_SKIP_EXISTING,
       'expire' => FEEDS_EXPIRE_NEVER,
-      'mappings' => array(),
       'author' => 0,
-    );
+    ) + parent::configDefaults();
   }
 
   /**
@@ -185,7 +143,7 @@ class FeedsNodeProcessor extends FeedsProcessor {
   public function configForm(&$form_state) {
     $types = node_type_get_names();
     array_walk($types, 'check_plain');
-    $form = array();
+    $form = parent::configForm($form_state);
     $form['content_type'] = array(
       '#type' => 'select',
       '#title' => t('Content type'),
@@ -222,16 +180,10 @@ class FeedsNodeProcessor extends FeedsProcessor {
       '#description' => t('Select after how much time nodes should be deleted. The node\'s published date will be used for determining the node\'s age, see Mapping settings.'),
       '#default_value' => $this->config['expire'],
     );
-    $form['update_existing'] = array(
-      '#type' => 'radios',
-      '#title' => t('Update existing nodes'),
-      '#description' => t('Select how existing nodes should be updated. Existing nodes will be determined using mappings that are a "unique target".'),
-      '#options' => array(
-        FEEDS_SKIP_EXISTING => 'Do not update existing nodes',
-        FEEDS_REPLACE_EXISTING => 'Replace existing nodes',
-        FEEDS_UPDATE_EXISTING => 'Update existing nodes (slower than replacing them)',
-      ),
-      '#default_value' => $this->config['update_existing'],
+    $form['update_existing']['#options'] = array(
+      FEEDS_SKIP_EXISTING => 'Do not update existing nodes',
+      FEEDS_REPLACE_EXISTING => 'Replace existing nodes',
+      FEEDS_UPDATE_EXISTING => 'Update existing nodes (slower than replacing them)',
     );
     return $form;
   }
@@ -344,8 +296,8 @@ class FeedsNodeProcessor extends FeedsProcessor {
   /**
    * Get nid of an existing feed item node if available.
    */
-  protected function existingItemId(FeedsSource $source, FeedsParserResult $result) {
-    if ($nid = parent::existingItemId($source, $result)) {
+  protected function existingEntityId(FeedsSource $source, FeedsParserResult $result) {
+    if ($nid = parent::existingEntityId($source, $result)) {
       return $nid;
     }
 
@@ -368,51 +320,5 @@ class FeedsNodeProcessor extends FeedsProcessor {
       }
     }
     return 0;
-  }
-
-  /**
-   * Creates a new node in memory and returns it.
-   */
-  protected function newEntity($source, $hash) {
-    $node = new stdClass();
-    $node->type = $this->config['content_type'];
-    $node->changed = REQUEST_TIME;
-    $node->format = ($this->config['input_format'] == FEEDS_NODE_DEFAULT_FORMAT) ? filter_fallback_format() : $this->config['input_format'];
-    $node->created = REQUEST_TIME;
-    $this->newItemInfo($node, $source->feed_nid, $hash);
-    node_object_prepare($node);
-    // Populate properties that are set by node_object_prepare().
-    $node->log = 'Created by FeedsNodeProcessor';
-    $node->uid = $this->config['author'];
-    return $node;
-  }
-
-  /**
-   * Loads an existing node.
-   *
-   * If the update existing method is not FEEDS_UPDATE_EXISTING, only the node
-   * table will be loaded, foregoing the node_load API for better performance.
-   */
-  protected function loadEntity($source, $hash, $nid) {
-    if ($this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
-      $node = node_load($nid, NULL, TRUE);
-    }
-    else {
-      // We're replacing the existing node. Only save the absolutely necessary.
-      $node = db_query("SELECT created, nid, vid, type FROM {node} WHERE nid = :nid", array(':nid' => $nid))->fetch();
-      $node->uid = $this->config['author'];
-    }
-    if ($this->loadItemInfo($node)) {
-      $this->newItemInfo($node, $source->feed_nid, $hash);
-    }
-    node_object_prepare($node);
-    // Populate properties that are set by node_object_prepare().
-    if ($this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
-      $node->log = 'Updated by FeedsNodeProcessor';
-    }
-    else {
-      $node->log = 'Replaced by FeedsNodeProcessor';
-    }
-    return $node;
   }
 }

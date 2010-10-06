@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_filefield.test,v 1.9 2010/09/15 19:27:42 alexb Exp $
+// $Id: feeds_mapper_filefield.test,v 1.9.4.1 2010/10/06 14:12:43 alexb Exp $
 
 /**
  * @file
@@ -83,7 +83,7 @@ class FeedsMapperFileFieldTestCase extends FeedsMapperTestCase {
     ));
 
     $nid = $this->createFeedNode('syndication', $GLOBALS['base_url'] .'/'. drupal_get_path('module', 'feeds') .'/tests/feeds/flickr.xml');
-    $this->assertText('Created 4 '. $typename .' nodes.');
+    $this->assertText('Created 4 nodes');
 
     $filename = array('3596408735_ce2f0c4824_b', '2640019371_495c3f51a2_b', '3686290986_334c427e8c_b', '2640845934_85c11e5a18_b');
     for($i = 0; $i < 4; $i++) {

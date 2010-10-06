@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_parser_sitemap.test,v 1.4.2.1 2010/10/04 01:33:44 alexb Exp $
+// $Id: feeds_parser_sitemap.test,v 1.4.2.2 2010/10/06 14:12:43 alexb Exp $
 
 /**
  * @file
@@ -80,7 +80,7 @@ class FeedsSitemapParserTestCase extends FeedsWebTestCase {
 
     $path = $GLOBALS['base_url'] .'/'. drupal_get_path('module', 'feeds') .'/tests/feeds/';
     $nid = $this->createFeedNode('sitemap', $path .'sitemap-example.xml', 'Testing Sitemap Parser');
-    $this->assertText('Created 5 Article nodes.');
+    $this->assertText('Created 5 nodes');
 
     // Assert DB status.
     $count = db_query("SELECT COUNT(*) FROM {feeds_item} WHERE entity_type = 'node'")->fetchField();

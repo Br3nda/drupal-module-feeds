@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_link.test,v 1.5.4.1 2010/09/29 23:56:10 alexb Exp $
+// $Id: feeds_mapper_link.test,v 1.5.4.2 2010/10/06 14:12:43 alexb Exp $
 
 /**
  * @file
@@ -125,7 +125,7 @@ class FeedsMapperLinkTestCase extends FeedsMapperTestCase {
     // Import RSS file.
     $nid = $this->createFeedNode();
     // Assert 10 items aggregated after creation of the node.
-    $this->assertText('Created 10 '. $typename .' nodes.');
+    $this->assertText('Created 10 nodes');
 
     // Edit the imported node.
     $this->drupalGet('node/2/edit');

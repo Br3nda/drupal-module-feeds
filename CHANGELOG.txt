@@ -1,8 +1,18 @@
-// $Id: CHANGELOG.txt,v 1.176.2.18 2010/10/05 22:34:25 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.176.2.19 2010/10/06 14:12:42 alexb Exp $
 
 Feeds 7.x 2.0 XXXXXXXXXXXXXXXXXXX
 ---------------------------------
 
+- #932772 alex_b: FeedsProcessor: Consolidate process() and clear().
+  FeedsProcessor now implements the process() and clear() methods for creating
+  and deleting entities. The extending processors FeedsNodeProcessor,
+  FeedsTermProcessor and FeedsUserProcessor merely implement entity manipulation
+  methods (newEntity(), entityLoad(), entitySave(), entityDeleteMultiple()...).
+  This brings features previously only available on FeedsNodeProcessor to all
+  entity processors: fast change detection on imported items with hashes,
+  batching on process() and clear() and in the case of FeedsUserProcessor, the
+  actual implementation of clear(). Together with #929066 this is a further
+  step towards harmonizing features of processor plugins.
 - Move term and user validation into a validate() method.
 - Remove check for present name and mail. Needs to be solved on a more pluggable
   level.

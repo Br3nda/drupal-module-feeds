@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_emfield.test,v 1.1 2010/09/16 19:20:04 alexb Exp $
+// $Id: feeds_mapper_emfield.test,v 1.1.4.1 2010/10/06 14:12:43 alexb Exp $
 
 /**
  * @file
@@ -79,7 +79,7 @@ class FeedsMapperEmfieldTestCase extends FeedsMapperTestCase {
 
     // Import CSV file.
     $this->importFile('csv', $this->absolutePath() .'/tests/feeds/emfield.csv');
-    $this->assertText('Created 2 '. $typename .' nodes.');
+    $this->assertText('Created 2 nodes');
 
     // Check the two imported files.
     $this->drupalGet('node/1/edit');

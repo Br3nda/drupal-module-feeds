@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_date.test,v 1.5.4.2 2010/10/04 19:50:36 jmiccolis Exp $
+// $Id: feeds_mapper_date.test,v 1.5.4.3 2010/10/06 14:12:43 alexb Exp $
 
 /**
  * @file
@@ -76,7 +76,7 @@ class FeedsMapperDateTestCase extends FeedsMapperTestCase {
 
     // Import CSV file.
     $this->importFile('daterss', $this->absolutePath() .'/tests/feeds/googlenewstz.rss2');
-    $this->assertText('Created 6 '. $typename .' nodes.');
+    $this->assertText('Created 6 nodes');
 
     // Check the imported nodes.
     $values = array(

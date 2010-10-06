@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_processor_node.test,v 1.7.2.3 2010/10/04 01:33:44 alexb Exp $
+// $Id: feeds_processor_node.test,v 1.7.2.4 2010/10/06 14:12:43 alexb Exp $
 
 /**
  * @file
@@ -77,7 +77,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $nid = $this->createFeedNode();
 
     // Assert 10 items aggregated after creation of the node.
-    $this->assertText('Created 10 Article nodes.');
+    $this->assertText('Created 10 nodes');
 
     // Navigate to feed node, there should be Feeds tabs visible.
     $this->drupalGet('node/'. $nid);
@@ -109,7 +109,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
 
     // Import again.
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $this->assertText('There is no new content.');
+    $this->assertText('There are no new nodes');
 
     // Assert DB status, there still shouldn't be more than 10 items.
     $count = db_query("SELECT COUNT(*) FROM {node} n INNER JOIN {feeds_item} fi ON fi.entity_type = 'node' AND n.nid = fi.entity_id")->fetchField();
@@ -139,7 +139,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
     $feed_url = $GLOBALS['base_url'] .'/'. drupal_get_path('module', 'feeds') .'/tests/feeds/developmentseed_changes.rss2';
     $this->editFeedNode($nid, $feed_url);
     $this->drupalPost('node/' . $nid . '/import', array(), 'Import');
-    $this->assertText('Updated 2 Article nodes.');
+    $this->assertText('Updated 2 nodes');
 
     // Assert accuracy of aggregated content (check 2 updates, one original).
     $this->drupalGet('node');
@@ -149,12 +149,12 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
 
     // Import again.
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $this->assertText('There is no new content.');
+    $this->assertText('There are no new nodes');
     $this->assertFeedItemCount(10);
 
     // Now delete all items.
     $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
-    $this->assertText('Deleted 10 nodes.');
+    $this->assertText('Deleted 10 nodes');
     $this->assertFeedItemCount(0);
 
     // Change author.
@@ -166,7 +166,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
 
     // Import again.
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $this->assertText('Created 10 Article nodes.');
+    $this->assertText('Created 10 nodes');
 
     // Assert author.
     $this->drupalGet('node');
@@ -261,7 +261,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
 
     // Import, assert 10 items aggregated after creation of the node.
     $this->importURL('syndication_standalone');
-    $this->assertText('Created 10 Article nodes.');
+    $this->assertText('Created 10 nodes');
 
     // Assert accuracy of aggregated information.
     $this->drupalGet('node');
@@ -270,14 +270,14 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
 
     // Import again.
     $this->drupalPost('import/syndication_standalone', array(), 'Import');
-    $this->assertText('There is no new content.');
+    $this->assertText('There are no new nodes');
     $this->assertFeedItemCount(10);
 
     // Enable replace existing and import updated feed file.
     $this->setSettings('syndication_standalone', 'FeedsNodeProcessor', array('update_existing' => 1));
     $feed_url = $GLOBALS['base_url'] .'/'. drupal_get_path('module', 'feeds') . '/tests/feeds/developmentseed_changes.rss2';
     $this->importURL('syndication_standalone', $feed_url);
-    $this->assertText('Updated 2 Article nodes.');
+    $this->assertText('Updated 2 nodes');
 
     // Assert accuracy of aggregated information (check 2 updates, one orig).
     $this->drupalGet('node');
@@ -287,17 +287,17 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
 
     // Import again.
     $this->drupalPost('import/syndication_standalone', array(), 'Import');
-    $this->assertText('There is no new content.');
+    $this->assertText('There are no new nodes');
     $this->assertFeedItemCount(10);
 
     // Now delete all items.
     $this->drupalPost('import/syndication_standalone/delete-items', array(), 'Delete');
-    $this->assertText('Deleted 10 nodes.');
+    $this->assertText('Deleted 10 nodes');
     $this->assertFeedItemCount(0);
 
     // Import again, we should find new content.
     $this->drupalPost('import/syndication_standalone', array(), 'Import');
-    $this->assertText('Created 10 Article nodes.');
+    $this->assertText('Created 10 nodes');
     $this->assertFeedItemCount(10);
 
     // Login with new user with only access content permissions.
@@ -323,7 +323,7 @@ class FeedsRSStoNodesTest extends FeedsWebTestCase {
       'files[feeds]' => $this->absolutePath() .'/tests/feeds/drupalplanet.rss2',
     );
     $this->drupalPost('import/syndication_standalone', $edit, 'Import');
-    $this->assertText('Created 25 Article nodes.');
+    $this->assertText('Created 25 nodes');
   }
 
   /**

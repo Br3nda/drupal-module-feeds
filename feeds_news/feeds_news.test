@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_news.test,v 1.2.4.3 2010/10/05 23:00:55 alexb Exp $
+// $Id: feeds_news.test,v 1.2.4.4 2010/10/06 14:12:42 alexb Exp $
 
 /**
  * @file
@@ -61,11 +61,11 @@ class FeedsExamplesFeedTestCase extends FeedsWebTestCase {
 
     // Remove all items
     $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
-    $this->assertText('Deleted 10 nodes.');
+    $this->assertText('Deleted 10 nodes');
 
     // Import again.
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $this->assertText('Created 10 Feed item nodes.');
+    $this->assertText('Created 10 nodes');
 
     // Delete and assert all items gone.
     $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
@@ -115,14 +115,14 @@ class FeedsExamplesOPMLTestCase extends FeedsWebTestCase {
     // Import OPML and assert.
     $file = $this->generateOPML();
     $this->importFile('opml', $file);
-    $this->assertText('Created 3 Feed nodes.');
+    $this->assertText('Created 3 nodes');
     $count = db_query("SELECT COUNT(*) FROM {feeds_source}")->fetchField();
     $this->assertEqual($count, 4, 'Found correct number of items.');
 
     // Import a feed and then delete all items from it.
     $this->drupalPost('node/1/import', array(), 'Import');
-    $this->assertText('Created 10 Feed item nodes.');
+    $this->assertText('Created 10 nodes');
     $this->drupalPost('node/1/delete-items', array(), 'Delete');
-    $this->assertText('Deleted 10 nodes.');
+    $this->assertText('Deleted 10 nodes');
   }
 }

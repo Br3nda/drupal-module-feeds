@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsUserProcessor.inc,v 1.22.2.6 2010/10/05 23:11:13 alexb Exp $
+// $Id: FeedsUserProcessor.inc,v 1.22.2.7 2010/10/06 14:12:42 alexb Exp $
 
 /**
  * @file
@@ -13,89 +13,70 @@ class FeedsUserProcessor extends FeedsProcessor {
   /**
    * Define entity type.
    */
-  protected function __construct($id) {
-    parent::__construct($id);
-    $this->entity_type = 'user';
+  public function entityType() {
+    return 'user';
   }
 
+  /**
+   * Implements parent::entityInfo().
+   */
+  protected function entityInfo() {
+    $info = parent::entityInfo();
+    $info['label plural'] = t('Users');
+    return $info;
+  }
 
   /**
-   * Implements FeedsProcessor::process().
+   * Creates a new user account in memory and returns it.
    */
-  public function process(FeedsSource $source, FeedsParserResult $parser_result) {
+  protected function newEntity(FeedsSource $source) {
+    $account = new stdClass();
+    $account->uid = 0;
+    $account->roles = array_filter($this->config['roles']);
+    $account->status = $this->config['status'];
+    return $account;
+  }
 
-    // Count number of created and updated nodes.
-    $created  = $updated = $failed = 0;
+  /**
+   * Loads an existing user.
+   */
+  protected function entityLoad(FeedsSource $source, $uid) {
+    return user_load($uid);
+  }
 
-    while ($item = $parser_result->shiftItem()) {
+  /**
+   * Validates a user account.
+   */
+  protected function entityValidate($account) {
+    if (empty($account->name) || empty($account->mail) || !valid_email_address($account->mail)) {
+      throw new FeedsValidationException(t('User name missing or email not valid.'));
+    }
+  }
 
-      if (!($uid = $this->existingItemId($source, $parser_result)) || $this->config['update_existing']) {
-
-        // Load / create new user and execute mapping.
-        if (empty($uid)) {
-          $account = $this->newEntity($source);
-        }
-        else {
-          $account = $this->loadEntity($source, $uid);
-        }
-        $account = $this->map($source, $parser_result, $account);
-
-        // Save the user.
-        if (!$this->validateEntity($account)) {
-          $failed++;
-          continue;
-        }
-        user_save($account, (array) $account);
-        if ($account->uid && $account->openid) {
-          $authmap = array(
-            'uid' => $account->uid,
-            'module' => 'openid',
-            'authname' => $account->openid,
-          );
-          if (SAVED_UPDATED != drupal_write_record('authmap', $authmap, array('uid', 'module'))) {
-            drupal_write_record('authmap', $authmap);
-          }
-        }
-
-        if ($uid) {
-          $updated++;
-        }
-        else {
-          $created++;
-        }
+  /**
+   * Save a user account.
+   */
+  protected function entitySave($account) {
+    user_save($account, (array) $account);
+    if ($account->uid && $account->openid) {
+      $authmap = array(
+        'uid' => $account->uid,
+        'module' => 'openid',
+        'authname' => $account->openid,
+      );
+      if (SAVED_UPDATED != drupal_write_record('authmap', $authmap, array('uid', 'module'))) {
+        drupal_write_record('authmap', $authmap);
       }
     }
-
-    // Set messages.
-    if ($failed) {
-      drupal_set_message(
-        format_plural(
-          $failed,
-          'There was @number user that could not be imported because either their name or their email was empty or not valid. Check import data and mapping settings on User processor.',
-          'There were @number users that could not be imported because either their name or their email was empty or not valid. Check import data and mapping settings on User processor.',
-          array('@number' => $failed)
-        ),
-        'error'
-      );
-    }
-    if ($created) {
-      drupal_set_message(format_plural($created, 'Created @number user.', 'Created @number users.', array('@number' => $created)));
-    }
-    elseif ($updated) {
-      drupal_set_message(format_plural($updated, 'Updated @number user.', 'Updated @number users.', array('@number' => $updated)));
-    }
-    else {
-      drupal_set_message(t('There are no new users.'));
-    }
   }
 
   /**
-   * Implements FeedsProcessor::clear().
+   * Delete multiple user accounts.
    */
-  public function clear(FeedsSource $source) {
-    // Do not support deleting users as we have no way of knowing which ones we
-    // imported.
-    throw new Exception(t('User processor does not support deleting users.'));
+  protected function entityDeleteMultiple($uids) {
+    foreach ($uids as $uid) {
+      user_delete($uid);
+    }
   }
 
   /**
@@ -104,18 +85,15 @@ class FeedsUserProcessor extends FeedsProcessor {
   public function configDefaults() {
     return array(
       'roles' => array(),
-      'update_existing' => FALSE,
       'status' => 1,
-      'mappings' => array(),
-    );
+    ) + parent::configDefaults();
   }
 
   /**
    * Override parent::configForm().
    */
   public function configForm(&$form_state) {
-    $form = array();
-
+    $form = parent::configForm($form_state);
     $form['status'] = array(
       '#type' => 'radios',
       '#title' => t('Status'),
@@ -184,8 +162,8 @@ class FeedsUserProcessor extends FeedsProcessor {
   /**
    * Get id of an existing feed item term if available.
    */
-  protected function existingItemId(FeedsSource $source, FeedsParserResult $result) {
-    if ($uid = parent::existingItemId($source, $result)) {
+  protected function existingEntityId(FeedsSource $source, FeedsParserResult $result) {
+    if ($uid = parent::existingEntityId($source, $result)) {
       return $uid;
     }
 
@@ -209,38 +187,5 @@ class FeedsUserProcessor extends FeedsProcessor {
       }
     }
     return 0;
-  }
-
-  /**
-   * Creates a new user account in memory and returns it.
-   */
-  protected function newEntity($source) {
-    $account = new stdClass();
-    $account->uid = 0;
-    $account->roles = array_filter($this->config['roles']);
-    $account->status = $this->config['status'];
-    $this->newItemInfo($account, $source->feed_nid);
-    return $account;
-  }
-
-  /**
-   * Loads an existing user.
-   */
-  protected function loadEntity($source, $uid) {
-    $account = user_load($uid);
-    if (!$this->loadItemInfo($account)) {
-      $this->newItemInfo($account, $source->feed_nid);
-    }
-    return $account;
-  }
-
-  /**
-   * Validates a user account.
-   */
-  protected function validateEntity($account) {
-    if (empty($account->name) || empty($account->mail) || !valid_email_address($account->mail)) {
-      return FALSE;
-    }
-    return TRUE;
   }
 }

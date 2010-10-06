@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_mapper_taxonomy.test,v 1.9.2.1 2010/09/30 17:45:48 alexb Exp $
+// $Id: feeds_mapper_taxonomy.test,v 1.9.2.2 2010/10/06 14:12:43 alexb Exp $
 
 /**
  * @file
@@ -130,7 +130,7 @@ class FeedsMapperTaxonomyTestCase extends FeedsMapperTestCase {
     // Aggregate feed node with "Tag" vocabulary.
     $nid = $this->createFeedNode();
     // Assert 10 items aggregated after creation of the node.
-    $this->assertText('Created 10 Article nodes.');
+    $this->assertText('Created 10 nodes');
     // There should be 30 terms and 44 term-node relations.
     $this->assertEqual(30, db_query("SELECT count(*) FROM {term_data}")->fetchField(), "Found correct number of terms.");
     $this->assertEqual(44, db_query("SELECT count(*) FROM {term_node}")->fetchField(), "Found correct number of term-node relations.");
@@ -175,7 +175,7 @@ class FeedsMapperTaxonomyTestCase extends FeedsMapperTestCase {
 
     // Delete all items, all associations are gone.
     $this->drupalPost('node/'. $nid .'/delete-items', array(), 'Delete');
-    $this->assertText('Deleted 10 nodes.');
+    $this->assertText('Deleted 10 nodes');
     $this->assertEqual(30, db_query("SELECT count(*) FROM {term_data}")->fetchField(), "Found correct number of terms.");
     $this->assertEqual(0, db_query("SELECT count(*) FROM {term_node}")->fetchField(), "Found correct number of term-node relations.");
 
@@ -185,7 +185,7 @@ class FeedsMapperTaxonomyTestCase extends FeedsMapperTestCase {
     );
     $this->drupalPost('admin/content/taxonomy/edit/vocabulary/1', $edit, 'Save');
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $this->assertText('Created 10 Article nodes.');
+    $this->assertText('Created 10 nodes');
 
     // We should only get one term-node association per node.
     $this->assertEqual(30, db_query("SELECT count(*) FROM {term_data}")->fetchField(), "Found correct number of terms.");
@@ -200,7 +200,7 @@ class FeedsMapperTaxonomyTestCase extends FeedsMapperTestCase {
     );
     $this->drupalPost('admin/content/taxonomy/edit/vocabulary/1', $edit, 'Save');
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $this->assertText('Created 10 Article nodes.');
+    $this->assertText('Created 10 nodes');
 
     // We should get all term-node associations again.
     $this->assertEqual(30, db_query("SELECT count(*) FROM {term_data}")->fetchField(), "Found correct number of terms.");
@@ -214,7 +214,7 @@ class FeedsMapperTaxonomyTestCase extends FeedsMapperTestCase {
     $this->drupalPost(NULL, array(), 'Delete');
     $this->assertText('Deleted term');
     $this->drupalPost('node/'. $nid .'/import', array(), 'Import');
-    $this->assertText('Created 10 Article nodes.');
+    $this->assertText('Created 10 nodes');
 
     // This term should now be missing from term-node associations.
     $this->assertEqual(29, db_query("SELECT count(*) FROM {term_data}")->fetchField(), "Found correct number of terms.");

@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_processor_user.test,v 1.4.2.1 2010/09/29 23:56:10 alexb Exp $
+// $Id: feeds_processor_user.test,v 1.4.2.2 2010/10/06 14:12:43 alexb Exp $
 
 /**
  * @file
@@ -85,10 +85,10 @@ class FeedsCSVtoUsersTest extends FeedsWebTestCase {
     $this->importFile('user_import', $this->absolutePath() .'/tests/feeds/users.csv');
 
     // Assert result.
-    $this->assertText('Created 4 users.');
+    $this->assertText('Created 4 users');
     // 1 user has an invalid email address, all users should be assigned
     // the manager role.
-    $this->assertText('There was 1 user that could not be imported because either their name or their email was empty or not valid. Check import data and mapping settings on User processor.');
+    $this->assertText('Failed importing 1 user');
     $this->drupalGet('admin/people');
     $this->assertText('Morticia');
     $this->assertText('Fester');

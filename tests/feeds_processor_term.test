@@ -1,5 +1,5 @@
 <?php
-// $Id: feeds_processor_term.test,v 1.5.2.2 2010/10/04 20:40:46 jmiccolis Exp $
+// $Id: feeds_processor_term.test,v 1.5.2.3 2010/10/06 14:12:43 alexb Exp $
 
 /**
  * @file
@@ -75,7 +75,7 @@ class FeedsCSVtoTermsTest extends FeedsWebTestCase {
 
     // Import and assert.
     $this->importFile('term_import', $this->absolutePath() .'/tests/feeds/users.csv');
-    $this->assertText('Created 5 terms in Addams vocabulary.');
+    $this->assertText('Created 5 terms');
     $this->drupalGet('admin/structure/taxonomy/addams');
     $this->assertText('Morticia');
     $this->assertText('Fester');

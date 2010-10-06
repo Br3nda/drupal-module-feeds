@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.25.2.11 2010/10/05 23:11:13 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.25.2.12 2010/10/06 14:12:42 alexb Exp $
 
 /**
  * @file
@@ -13,117 +13,59 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Define entity type.
    */
-  protected function __construct($id) {
-    parent::__construct($id);
-    $this->entity_type = 'taxonomy_term';
+  public function entityType() {
+    return 'taxonomy_term';
   }
 
   /**
-   * Implements FeedsProcessor::process().
+   * Implements parent::entityInfo().
    */
-  public function process(FeedsSource $source, FeedsParserResult $parser_result) {
-    $state = $source->state(FEEDS_PROCESS);
-
-    while ($item = $parser_result->shiftItem()) {
-      if (!($tid = $this->existingItemId($source, $parser_result)) ||
-            $this->config['update_existing'] != FEEDS_SKIP_EXISTING) {
-
-        // Map item to a term.
-        if ($tid && $this->config['update_existing'] == FEEDS_UPDATE_EXISTING) {
-          $term = $this->loadEntity($source, $tid);
-        }
-        else {
-          $term = $this->newEntity($source);
-        }
-        $term = $this->map($source, $parser_result, $term);
-
-        // Save the term.
-        $term->feeds_importer_id = $this->id;
-        $term->feed_nid = $source->feed_nid;
-        if (!$this->validateEntity($term)) {
-          continue;
-        }
-        taxonomy_term_save($term);
-        if ($tid) {
-          $state->updated++;
-        }
-        else {
-          $state->created++;
-        }
-      }
-    }
-
-    // Set messages when done.
-    if ($source->progressImporting() == FEEDS_BATCH_COMPLETE) {
-      $vocabulary = $this->vocabulary();
-      if ($state->created) {
-        drupal_set_message(format_plural($state->created, 'Created @number term in !vocabulary.', 'Created @number terms in !vocabulary.', array('@number' => $state->created, '!vocabulary' => $vocabulary->name)));
-      }
-      elseif ($state->updated) {
-        drupal_set_message(format_plural($state->updated, 'Updated @number term in !vocabulary.', 'Updated @number terms in !vocabulary.', array('@number' => $state->updated, '!vocabulary' => $vocabulary->name)));
-      }
-      else {
-        drupal_set_message(t('There are no new terms.'));
-      }
-    }
+  protected function entityInfo() {
+    $info = parent::entityInfo();
+    $info['label plural'] = t('Terms');
+    return $info;
   }
 
   /**
-   * Implements FeedsProcessor::clear().
+   * Creates a new term in memory and returns it.
    */
-  public function clear(FeedsSource $source) {
-    $state = $source->state(FEEDS_PROCESS_CLEAR);
+  protected function newEntity(FeedsSource $source) {
     $vocabulary = $this->vocabulary();
+    $term = new stdClass();
+    $term->vid = $vocabulary->vid;
+    return $term;
+  }
 
-    // Build base select statement.
-    $select = db_select('taxonomy_term_data', 'td');
-    $select->addField('td', 'tid');
-    $select->join('feeds_item', 'fi', "td.tid = fi.entity_id AND fi.entity_type = 'taxonomy_term'");
-    $select->condition('fi.id', $this->id);
-    $select->condition('fi.feed_nid', $source->feed_nid);
+  /**
+   * Loads an existing term.
+   */
+  protected function entityLoad(FeedsSource $source, $tid) {
+    return taxonomy_term_load($tid);
+  }
 
-    // If there is no total, query it.
-    if (!$state->total) {
-      $state->total = $select->countQuery()
-        ->execute()
-        ->fetchField();
-    }
-
-    // Delete a batch of items.
-    $terms = $select->range(0, $this->getLimit())->execute();
-    $deleted = 0;
-    foreach ($terms as $term) {
-      if (taxonomy_term_delete($term->tid) == SAVED_DELETED) {
-        $deleted++;
-      }
-    }
-
-    // Report progress, take into account that we may not have deleted as
-    // many items as we have counted at first.
-    if ($deleted) {
-      $state->deleted += $deleted;
-      $state->progress($state->total, $state->deleted);
-    }
-    else {
-      $state->progress($state->total, $state->total);
-    }
-
-    // Report results when done.
-    if ($source->progressClearing() == FEEDS_BATCH_COMPLETE) {
-      if ($state->deleted) {
-        drupal_set_message(format_plural($state->deleted, 'Deleted @number term from !vocabulary.', 'Deleted @number terms from !vocabulary.', array('@number' => $state->deleted, '!vocabulary' => $vocabulary->name)));
-      }
-      else {
-        drupal_set_message(t('No terms to be deleted.'));
-      }
+  /**
+   * Validates a term.
+   */
+  protected function entityValidate($term) {
+    if (!isset($term->name)) {
+      throw new FeedsValidationException(t('Term name missing.'));
     }
   }
 
   /**
-   * Report processing and clearing limit.
+   * Saves a term.
    */
-  public function getLimit() {
-    return variable_get('feeds_process_limit', FEEDS_PROCESS_LIMIT);
+  protected function entitySave($term) {
+    taxonomy_term_save($term);
+  }
+
+  /**
+   * Deletes a series of terms.
+   */
+  protected function entityDeleteMultiple($tids) {
+    foreach ($tids as $tid) {
+      taxonomy_term_delete($tid);
+    }
   }
 
   /**
@@ -132,9 +74,7 @@ class FeedsTermProcessor extends FeedsProcessor {
   public function configDefaults() {
     return array(
       'vocabulary' => 0,
-      'update_existing' => FEEDS_SKIP_EXISTING,
-      'mappings' => array(),
-    );
+    ) + parent::configDefaults();
   }
 
   /**
@@ -145,24 +85,13 @@ class FeedsTermProcessor extends FeedsProcessor {
     foreach (taxonomy_get_vocabularies() as $vocab) {
       $options[$vocab->machine_name] = check_plain($vocab->name);
     }
-    $form = array();
+    $form = parent::configForm($form_state);
     $form['vocabulary'] = array(
       '#type' => 'select',
       '#title' => t('Import to vocabulary'),
       '#description' => t('Choose the vocabulary to import into. <strong>CAUTION:</strong> when deleting terms through the "Delete items" tab, Feeds will delete <em>all</em> terms from this vocabulary.'),
       '#options' => $options,
       '#default_value' => $this->config['vocabulary'],
-    );
-    $form['update_existing'] = array(
-      '#type' => 'radios',
-      '#title' => t('Update existing terms'),
-      '#description' => t('Select how existing terms should be updated. Existing terms will be determined using mappings that are a "unique target".'),
-      '#options' => array(
-        FEEDS_SKIP_EXISTING => 'Do not update existing terms',
-        FEEDS_REPLACE_EXISTING => 'Replace existing terms',
-        FEEDS_UPDATE_EXISTING => 'Update existing terms (slower than replacing them)',
-      ),
-      '#default_value' => $this->config['update_existing'],
     );
     return $form;
   }
@@ -204,8 +133,8 @@ class FeedsTermProcessor extends FeedsProcessor {
   /**
    * Get id of an existing feed item term if available.
    */
-  protected function existingItemId(FeedsSource $source, FeedsParserResult $result) {
-    if ($tid = parent::existingItemId($source, $result)) {
+  protected function existingEntityId(FeedsSource $source, FeedsParserResult $result) {
+    if ($tid = parent::existingEntityId($source, $result)) {
       return $tid;
     }
 
@@ -231,37 +160,5 @@ class FeedsTermProcessor extends FeedsProcessor {
       }
     }
     throw new Exception(t('No vocabulary defined for Taxonomy Term processor.'));
-  }
-
-  /**
-   * Creates a new term in memory and returns it.
-   */
-  protected function newEntity($source) {
-    $term = new stdClass();
-    $this->newItemInfo($term, $source->feed_nid);
-    $vocabulary = $this->vocabulary();
-    $term->vid = $vocabulary->vid;
-    return $term;
-  }
-
-  /**
-   * Loads an existing term.
-   */
-  protected function loadEntity($source, $tid) {
-    $term = taxonomy_term_load($tid);
-    if ($this->loadItemInfo($term)) {
-      $this->newItemInfo($term, $source->feed_nid);
-    }
-    return $term;
-  }
-
-  /**
-   * Validates a term.
-   */
-  protected function validateEntity($term) {
-    if (!isset($term->name)) {
-      return FALSE;
-    }
-    return TRUE;
   }
 }
