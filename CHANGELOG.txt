@@ -1,8 +1,9 @@
-// $Id: CHANGELOG.txt,v 1.176.2.19 2010/10/06 14:12:42 alexb Exp $
+// $Id: CHANGELOG.txt,v 1.176.2.20 2010/10/07 01:26:03 alexb Exp $
 
 Feeds 7.x 2.0 XXXXXXXXXXXXXXXXXXX
 ---------------------------------
 
+- Fix entity inspection in file fetcher.
 - #932772 alex_b: FeedsProcessor: Consolidate process() and clear().
   FeedsProcessor now implements the process() and clear() methods for creating
   and deleting entities. The extending processors FeedsNodeProcessor,

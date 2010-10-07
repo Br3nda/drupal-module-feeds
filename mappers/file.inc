@@ -1,5 +1,5 @@
 <?php
-// $Id: file.inc,v 1.1.2.1 2010/09/29 23:56:10 alexb Exp $
+// $Id: file.inc,v 1.1.2.2 2010/10/07 01:26:03 alexb Exp $
 
 /**
  * @file
@@ -63,9 +63,9 @@ function file_feeds_set_target($entity, $target, $value) {
 
   // Determine file destination.
   // @todo This needs review and debugging.
+  list($entity_id, $vid, $bundle_name) = entity_extract_ids($entity->feeds_item->entity_type, $entity);
+  $instance_info = field_info_instance($entity->feeds_item->entity_type, $target, $bundle_name);
   $info = field_info_field($target);
-  $bundle_name = $entity->entity_type == 'node' ? $entity->type : $entity->entity_type;
-  $instance_info = field_info_instance($entity->entity_type, $target, $bundle_name);
   $account = !empty($entity->uid) ? user_load($entity->uid) : NULL;
   $destination = file_field_widget_uri($info, $instance_info, $account);
 
