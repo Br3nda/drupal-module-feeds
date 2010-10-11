@@ -1,16 +1,10 @@
 <?php
-// $Id: FeedsNodeProcessor.inc,v 1.69.2.12 2010/10/06 14:12:42 alexb Exp $
+// $Id: FeedsNodeProcessor.inc,v 1.69.2.13 2010/10/11 20:21:56 alexb Exp $
 
 /**
  * @file
  * Class definition of FeedsNodeProcessor.
  */
-
-// Deprecated. Use FEEDS_SKIPE_EXISTING, FEEDS_REPLACE_EXISTNG,
-// FEEDS_UPDATE_EXISTING instead.
-define('FEEDS_NODE_SKIP_EXISTING', 0);
-define('FEEDS_NODE_REPLACE_EXISTING', 1);
-define('FEEDS_NODE_UPDATE_EXISTING', 2);
 
 // "Use the present default format"
 define('FEEDS_NODE_DEFAULT_FORMAT', -1);
