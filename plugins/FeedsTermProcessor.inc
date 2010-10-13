@@ -1,5 +1,5 @@
 <?php
-// $Id: FeedsTermProcessor.inc,v 1.25.2.12 2010/10/06 14:12:42 alexb Exp $
+// $Id: FeedsTermProcessor.inc,v 1.25.2.13 2010/10/13 23:05:38 alexb Exp $
 
 /**
  * @file
@@ -47,7 +47,7 @@ class FeedsTermProcessor extends FeedsProcessor {
    * Validates a term.
    */
   protected function entityValidate($term) {
-    if (!isset($term->name)) {
+    if (empty($term->name)) {
       throw new FeedsValidationException(t('Term name missing.'));
     }
   }
